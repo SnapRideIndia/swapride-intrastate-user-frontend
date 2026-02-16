@@ -14,7 +14,7 @@ export const lightColors: ColorsType = {
 
   // texts
   contentPrimary: '#000000',
-  contentSecondary: '#9e9e9e',
+  contentSecondary: '#312602',
   contenttertiary: "#C9C9C9",
   contentRed: '#BE1E2D',
   contentDisabled: '#D5d5d5',
@@ -84,7 +84,7 @@ export const darkColors: ColorsType = {
 
   // texts
   contentPrimary: '#000000',
-  contentSecondary: '#9e9e9e',
+  contentSecondary: '#312602',
   contenttertiary: "#C9C9C9",
   contentRed: '#BE1E2D',
   contentDisabled: '#D5d5d5',

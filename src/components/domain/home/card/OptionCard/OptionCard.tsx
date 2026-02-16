@@ -1,21 +1,25 @@
-import { Image, StyleSheet, View } from 'react-native'
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import { useTheme } from '../../../../../theme/ThemeProvider'
 import { useStyles } from './OptionCard.styles';
 import { ImageSource } from '../../../../../constants/images';
 import { SwText as Text } from '../../../../common/SwText/SwText';
 
-const OptionCard = () => {
-    const {colors} = useTheme();
-    const styles = useStyles(colors);
+interface IProps {
+  imgUri: any,
+  title?: string,
+  onPress?: () => void
+}
+
+const OptionCard = ({ imgUri, title, onPress }: IProps) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   return (
-    <View style={styles.container}>
-     <Image source={ImageSource.shuttel} style={styles.icon} />
-     <Text>Shuttle</Text>
-    </View>
+    <TouchableOpacity style={styles.container} onPress={onPress}>
+      <Image source={imgUri} style={styles.icon} />
+      <Text varient='medium' style={styles.title}>{title}</Text>
+    </TouchableOpacity>
   )
 }
 
-export default OptionCard
-
-const styles = StyleSheet.create({})
+export default OptionCard;

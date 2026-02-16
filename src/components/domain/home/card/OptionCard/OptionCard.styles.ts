@@ -10,9 +10,23 @@ export const useStyles = (colors: ColorsType) =>
       alignItems: 'center',
       backgroundColor: colors.background_primary,
       borderRadius: 16,
+      shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.23,
+      shadowRadius: 2.62,
+
+      elevation: 4,
     },
     icon: {
       width: 89,
       height: 50,
     },
+    title: {
+      fontSize: 12,
+      color: colors.contentSecondary
+    }
+
   });
