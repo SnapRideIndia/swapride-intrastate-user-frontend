@@ -2,4 +2,16 @@ import { StyleSheet } from 'react-native';
 import { ColorsType } from '../../../constants/ui/colors/colors.types';
 
 export const useStyles = (colors: ColorsType) =>
-  StyleSheet.create({});
+  StyleSheet.create({
+    container:{
+      flex:1,
+      backgroundColor: colors.background_primary,
+    },
+    title:{
+      marginTop: 16,
+      marginBottom: 15,
+      fontSize: 20,
+      color: colors.primaryCtaText
+    }
+  
+  });

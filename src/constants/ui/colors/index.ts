@@ -10,10 +10,12 @@ export const lightColors: ColorsType = {
 
   // common
   primary: '#072A6A',
+  primaryLight: "#1751BC",
 
   // texts
   contentPrimary: '#000000',
   contentSecondary: '#9e9e9e',
+  contenttertiary: "#C9C9C9",
   contentRed: '#BE1E2D',
   contentDisabled: '#D5d5d5',
   contentBlue: '#0A9EE3',
@@ -61,7 +63,7 @@ export const lightColors: ColorsType = {
   lightViolet: '#DCDCF8',
   lightOrange: '#FFE3CB',
   lightBlue: '#CFF0FF',
-  yellow: '#FFCC00',
+  yellow: '#FFE03D',
   darkYellow: '#F2994A',
   darkRed: '#EB5757',
   blueViolet: "#A898F3",
@@ -78,10 +80,12 @@ export const darkColors: ColorsType = {
 
   // common
   primary: '#072A6A',
+  primaryLight: "#1751BC",
 
   // texts
   contentPrimary: '#000000',
   contentSecondary: '#9e9e9e',
+  contenttertiary: "#C9C9C9",
   contentRed: '#BE1E2D',
   contentDisabled: '#D5d5d5',
   contentBlue: '#0A9EE3',
@@ -98,7 +102,7 @@ export const darkColors: ColorsType = {
   border_7: "#ffffff",
 
   //   buttons
-  button_primary: "#F5BE09",
+  button_primary: "#FFE03D",
   button_secondary: '#A898F3',
   button_tertiary: '#00749E',
 

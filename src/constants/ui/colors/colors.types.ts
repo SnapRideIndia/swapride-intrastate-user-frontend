@@ -9,10 +9,12 @@ export type ColorsType = {
 
   // common
   primary: string;
+  primaryLight: string,
 
   // texts
   contentPrimary: string;
   contentSecondary: string;
+  contenttertiary: string,
   contentRed: string,
   contentDisabled: string;
   contentBlue: string,
