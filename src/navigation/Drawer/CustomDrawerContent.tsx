@@ -63,19 +63,21 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
         showsVerticalScrollIndicator={false}
       >
         {/* header */}
-        <TouchableOpacity style={styles.header} onPress={handlePressHeader}>
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 24 }}>
-            <View style={{ width: 44, height: 44, borderRadius: 50, backgroundColor: "red" }} />
-            <View style={{ gap: 5 }}>
-              <Text varient="medium" style={styles.name}>Reem Pal</Text>
-              <Text varient="semi-bold" style={styles.number}>+91 9883656228</Text>
+       <SafeAreaView edges={['top']}>
+          <TouchableOpacity style={styles.header} onPress={handlePressHeader}>
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 24 }}>
+              <View style={{ width: 44, height: 44, borderRadius: 50, backgroundColor: "red" }} />
+              <View style={{ gap: 5 }}>
+                <Text varient="medium" style={styles.name}>Reem Pal</Text>
+                <Text varient="semi-bold" style={styles.number}>+91 9883656228</Text>
+              </View>
             </View>
-          </View>
-          <TouchableOpacity>
-            <Image source={ImageSource.rightTriangleArrow} style={{ width: 7, height: 14.58 }} />
+            <TouchableOpacity>
+              <Image source={ImageSource.rightTriangleArrow} style={{ width: 7, height: 14.58 }} />
+            </TouchableOpacity>
           </TouchableOpacity>
-        </TouchableOpacity>
 
+       </SafeAreaView>
         <View style={styles.dropDownItemsContainer}>
           {
             drawerItems.map((item) => (

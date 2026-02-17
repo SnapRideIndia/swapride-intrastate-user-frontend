@@ -4,7 +4,7 @@ import { ColorsType } from '../../../../constants/ui/colors/colors.types';
 export const useStyles = (colors: ColorsType) =>
   StyleSheet.create({
     container: {
-      paddingTop: 51,
+      paddingTop: 20,
       backgroundColor: colors.primaryLight,
       borderBottomWidth: 1,
       borderBottomColor: colors.contenttertiary,

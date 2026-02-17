@@ -11,7 +11,7 @@ export const useStyles = (colors: ColorsType) =>
       flex: 1,
       paddingLeft: 20,
       paddingRight: 30,
-      paddingTop: 30,
+      paddingTop: 10,
     },
     scrollContent: {
       flexGrow: 1,
