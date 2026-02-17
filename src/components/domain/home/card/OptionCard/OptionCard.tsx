@@ -15,7 +15,7 @@ const OptionCard = ({ imgUri, title, onPress }: IProps) => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress}>
+    <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.8}>
       <Image source={imgUri} style={styles.icon} />
       <Text varient='medium' style={styles.title}>{title}</Text>
     </TouchableOpacity>

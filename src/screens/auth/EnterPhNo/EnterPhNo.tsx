@@ -11,18 +11,13 @@ import PrimaryButton from '../../../components/common/SwButton/PrimaryButton/Pri
 
 import EnterPhno from '../../../components/domain/login/EnterPhno/EnterPhno'
 import EnterPassword from '../../../components/domain/login/EnterPassword/EnterPassword'
+import EnterOtp from '../../../components/domain/login/EnterOtp/EnterOtp'
 const EnterPhNo = () => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
   return (
     <SafeAreaView edges={["bottom"]} style={styles.container} >
-      <View>
-        <Image source={ImageSource.banner} style={styles.banner} />
-        <View style={styles.bannerTextContainer}>
-          <Text style={styles.bannerTitle} varient='bold'>Welcome to Swapride!</Text>
-          <Text style={styles.bannerSubTitle} varient='regular'>Daily office travel, made simple — book your ride in just a few taps.</Text>
-        </View>
-      </View>
+
       <KeyboardAwareScrollView
         contentContainerStyle={styles.keyboardAwareScrollContainer}
         enableOnAndroid
@@ -30,13 +25,20 @@ const EnterPhNo = () => {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-       
-       {/* <EnterPhno /> */}
+        <View>
+          <Image source={ImageSource.banner} style={styles.banner} />
+          <View style={styles.bannerTextContainer}>
+            <Text style={styles.bannerTitle} varient='bold'>Welcome to Swapride!</Text>
+            <Text style={styles.bannerSubTitle} varient='regular'>Daily office travel, made simple — book your ride in just a few taps.</Text>
+          </View>
+        </View>
 
-        {/* <EnterOtp /> */}
-        <EnterPassword />
+        {/* <EnterPhno /> */}
 
-        <View  style={styles.spacer}/>
+        <EnterOtp />
+        {/* <EnterPassword /> */}
+
+        <View style={styles.spacer} />
 
         <View style={styles.buttonContainer}>
           <PrimaryButton title='Send OTP' />

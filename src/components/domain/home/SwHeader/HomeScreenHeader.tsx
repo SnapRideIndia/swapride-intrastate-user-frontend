@@ -5,14 +5,24 @@ import { useTheme } from '../../../../theme/ThemeProvider'
 import { useStyles } from './HomeScreenHeader.styles'
 import { ImageSource } from '../../../../constants/images'
 import { SwText as Text } from '../../../common/SwText/SwText'
+import { useNavigation } from '@react-navigation/native'
 
 const HomeScreenHeader = () => {
     const { colors } = useTheme();
     const styles = useStyles(colors);
+    const navigation = useNavigation();
+    const drawer = navigation.getParent();
+
+    const openDrawer = () => {
+        if (drawer && 'openDrawer' in drawer) {
+            (drawer as { openDrawer: () => void }).openDrawer();
+        }
+    };
+
     return (
         <SafeAreaView edges={['top']} style={styles.container}>
             <View style={styles.innerContainer}>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={openDrawer}>
                     <Image source={ImageSource.menu} style={styles.menuIcon} />
                 </TouchableOpacity>
                 <TouchableOpacity>

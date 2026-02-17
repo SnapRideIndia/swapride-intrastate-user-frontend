@@ -31,4 +31,11 @@ export const ImageSource = {
     emailOutline: require('.././../assets/images/email_outline.png'),
     genderOutline: require('.././../assets/images/gender_outline.png'),
     userOutline: require('.././../assets/images/user_outline.png'),
+    // profile section
+    bookmarkOutline: require('.././../assets/images/bookmarkOutline.png'),
+    logoutOutline: require('.././../assets/images/logoutOutline.png'),
+    megaPhone: require('.././../assets/images/megaPhone.png'),
+    rightTriangleArrow: require('.././../assets/images/rightTriangleArrow.png'),
+    settingsOutline: require('.././../assets/images/settingsOutline.png'),
+    suggestYourStops: require('.././../assets/images/suggestYourStops.png'),
 }

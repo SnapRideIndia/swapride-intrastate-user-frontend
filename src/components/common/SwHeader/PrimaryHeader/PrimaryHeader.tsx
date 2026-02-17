@@ -19,7 +19,7 @@ const PrimaryHeader = ({title}:IHeaderProps) => {
     <SafeAreaView edges={["top"]} style={styles.container}>
         <View style={styles.headerInnerContainer}>
             <Image source={ImageSource.leftArrow} style={styles.backArrow} />
-           <Text>{title}</Text>
+           <Text varient='medium' style={styles.title}>{title}</Text>
         </View>
     </SafeAreaView>
   )

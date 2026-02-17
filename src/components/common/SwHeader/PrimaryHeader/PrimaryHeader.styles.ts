@@ -17,7 +17,11 @@ export const useStyles = (colors: ColorsType) =>
         alignItems: "center"
     },
     backArrow:{
-        width: 24,
-        height: 24
+        height: 15.75,
+        width: 18.75
+    },
+    title:{
+        fontSize: 18,
+        color: colors.contentPrimary
     }
   });

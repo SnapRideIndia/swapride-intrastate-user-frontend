@@ -1,11 +1,13 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import React from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { useErrorReporting } from '../../hooks/useErrorReporting';
 import ErrorBoundary from '../../components/common/ErrorBoundary/ErrorBoundary';
 import { ScreenNames } from '../constant';
-import HomeScreen from '../../screens/home/HomeScreen/HomeScreen';
+import { useTheme } from '../../theme/ThemeProvider';
+import DrawerNavigator from '../Drawer';
+import EnterPhNo from '../../screens/auth/EnterPhNo/EnterPhNo';
 
 const Stack = createNativeStackNavigator();
 
@@ -24,19 +26,29 @@ const ScreenWrapper = ({ children }: { children: React.ReactNode }) => {
 
 
 const AppNavigation = () => {
+    const { colors } = useTheme();
+
+    const styles = StyleSheet.create({
+        tabBarContainer: {
+            flex: 1,
+            backgroundColor: colors.background_primary
+        },
+    })
+
     return (
         <NavigationContainer>
             <Stack.Navigator
                 screenOptions={{ headerShown: false }}
-                initialRouteName={ScreenNames.HOME_SCREEN}
+                initialRouteName={ScreenNames.LOGIN_SCREEN}
             >
-                 <Stack.Screen name={ScreenNames.HOME_SCREEN}>
-                    {(props: any) => (
-                        <ScreenWrapper>
-                           <HomeScreen />
-                        </ScreenWrapper>
+                <Stack.Screen name={ScreenNames.DASHBOARD_SCREEN}>
+                    {() => (
+                        <View style={styles.tabBarContainer}>
+                            <DrawerNavigator />
+                        </View>
                     )}
                 </Stack.Screen>
+                <Stack.Screen name={ScreenNames.LOGIN_SCREEN} component={EnterPhNo} />
             </Stack.Navigator>
         </NavigationContainer>
     )
@@ -44,4 +56,3 @@ const AppNavigation = () => {
 
 export default AppNavigation;
 
-const styles = StyleSheet.create({})
