@@ -39,5 +39,12 @@ export const useStyles = (colors: ColorsType) =>
     resend:{
         fontSize: 16,
         color: colors.primary,
-    }
+    },
+    spacer: {
+      flex: 1,
+    },
+      buttonContainer: {
+      paddingHorizontal: 16,
+      paddingVertical: 16,
+    },
   });

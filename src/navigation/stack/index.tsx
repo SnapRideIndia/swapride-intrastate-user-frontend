@@ -8,6 +8,8 @@ import { ScreenNames } from '../constant';
 import { useTheme } from '../../theme/ThemeProvider';
 import DrawerNavigator from '../Drawer';
 import EnterPhNo from '../../screens/auth/EnterPhNo/EnterPhNo';
+import ViewProfile from '../../screens/profile/ViewProfile/ViewProfile';
+import SuggestYourStops from '../../screens/profile/SuggestYourStops/SuggestYourStops';
 
 const Stack = createNativeStackNavigator();
 
@@ -39,7 +41,7 @@ const AppNavigation = () => {
         <NavigationContainer>
             <Stack.Navigator
                 screenOptions={{ headerShown: false }}
-                initialRouteName={ScreenNames.DASHBOARD_SCREEN}
+                initialRouteName={ScreenNames.LOGIN_SCREEN}
             >
                 <Stack.Screen name={ScreenNames.DASHBOARD_SCREEN}>
                     {() => (
@@ -49,6 +51,8 @@ const AppNavigation = () => {
                     )}
                 </Stack.Screen>
                 <Stack.Screen name={ScreenNames.LOGIN_SCREEN} component={EnterPhNo} />
+                <Stack.Screen name={ScreenNames.VIEW_PROFILE} component={ViewProfile} />
+                <Stack.Screen name={ScreenNames.SUGGEST_YOUR_STOPS} component={SuggestYourStops} />
             </Stack.Navigator>
         </NavigationContainer>
     )

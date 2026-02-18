@@ -1,21 +1,31 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
+import { StyleProp, StyleSheet, Text, TextStyle, TouchableOpacity, View, ViewStyle } from 'react-native'
+import React, { ReactNode } from 'react'
 import { SwText } from '../../SwText/SwText'
 import { useTheme } from '../../../../theme/ThemeProvider'
 import { useStyles } from './PrimaryButton.styles'
 
-interface IButtonProps{
-    title: string,
-    onPress?: ()=>void
+interface IButtonProps {
+  title: string,
+  onPress?: () => void,
+  btnStyle?: StyleProp<ViewStyle>
+  textStyle?: StyleProp<TextStyle>
+  renderLeftIcon?: () => ReactNode
+  renderRightIcon?: () => ReactNode
 }
 
-const PrimaryButton = ({title, onPress}: IButtonProps) => {
-    const {colors} = useTheme();
-    const styles = useStyles(colors);
+const PrimaryButton = ({ title, onPress, btnStyle, textStyle, renderLeftIcon, renderRightIcon }: IButtonProps) => {
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
   return (
-   <TouchableOpacity style={styles.button}>
-    <SwText style={styles.title} varient='semi-bold'>{title}</SwText>
-   </TouchableOpacity>
+    <TouchableOpacity style={[styles.button, btnStyle]} onPress={onPress}>
+      {
+        renderLeftIcon?.()
+      }
+      <SwText style={[styles.title, textStyle]} varient='semi-bold'>{title}</SwText>
+      {
+        renderRightIcon?.()
+      }
+    </TouchableOpacity>
   )
 }
 

@@ -6,7 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import TabNavigator from "../Tab";
 import CustomDrawerContent from "./CustomDrawerContent";
 import { ScreenNames } from "../constant";
-import SetYourProfileScreen from "../../screens/profile/ProfileScreen/SetYourProfileScreen";
+import SetYourProfileScreen from "../../screens/profile/SetYourProfileScreen/SetYourProfileScreen";
 
 const Drawer = createDrawerNavigator();
 

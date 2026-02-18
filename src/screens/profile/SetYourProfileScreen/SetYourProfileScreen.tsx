@@ -2,7 +2,6 @@ import { Platform, ScrollView, StyleSheet, View, Image } from 'react-native'
 import React, { useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useTheme } from '../../../theme/ThemeProvider'
-import { useStyles } from './SetYourProfileScreen.styles'
 import { SwText as Text } from '../../../components/common/SwText/SwText'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { SwTextInput as TextInput } from '../../../components/common/SwTextInput/SwTextInput'
@@ -10,6 +9,7 @@ import PrimaryButton from '../../../components/common/SwButton/PrimaryButton/Pri
 import { ImageSource } from '../../../constants/images'
 import PrimaryHeader from '../../../components/common/SwHeader/PrimaryHeader/PrimaryHeader'
 import { useNavigation } from '@react-navigation/native'
+import { useStyles } from './SetYourProfileScreen.styles'
 
 const SetYourProfileScreen = () => {
     const { colors } = useTheme();

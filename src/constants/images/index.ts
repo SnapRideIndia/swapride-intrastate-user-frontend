@@ -38,4 +38,11 @@ export const ImageSource = {
     rightTriangleArrow: require('.././../assets/images/rightTriangleArrow.png'),
     settingsOutline: require('.././../assets/images/settingsOutline.png'),
     suggestYourStops: require('.././../assets/images/suggestYourStops.png'),
+    bellOutline: require('.././../assets/images/bell_outline.png'),
+    falg: require('.././../assets/images/flag.png'),
+    whatsapp: require('.././../assets/images/whatsapp.png'),
+    delete: require('.././../assets/images/delete.png'),
+    checkCircle: require('.././../assets/images/checkCircle.png'),
+    checkSquare: require('.././../assets/images/checkSquare.png'),
+    uncheckCircle: require('.././../assets/images/uncheckCircle.png'),
 }

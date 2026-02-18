@@ -26,4 +26,8 @@ export const useStyles = (colors: ColorsType) =>
       color: colors.primary,
       textDecorationLine: 'underline',
     },
+      buttonContainer: {
+      paddingHorizontal: 16,
+      paddingVertical: 16,
+    },
   });
