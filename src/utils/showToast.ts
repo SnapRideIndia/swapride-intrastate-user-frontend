@@ -12,7 +12,7 @@ export const showToast = (
         type,
         text1: message,
         text2: subMessage,
-        position: 'bottom',
+        position: 'top',
         visibilityTime: duration,
         autoHide: true,
     });

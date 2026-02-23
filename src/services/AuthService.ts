@@ -24,7 +24,19 @@ class AuthService {
       handleErrorResponse(res);
     }
 
-    return res.data.data;
+    return res.data;
+  };
+
+  registerUser = async (payload: any) => {
+    const url = `${this.baseUrl}/register`;
+    const res = await postData(url, payload);
+
+    console.log('this is the register api response ===>', res);
+    if (!res.success || !res.data) {
+      handleErrorResponse(res);
+    }
+
+    return res.data;
   };
 }
 

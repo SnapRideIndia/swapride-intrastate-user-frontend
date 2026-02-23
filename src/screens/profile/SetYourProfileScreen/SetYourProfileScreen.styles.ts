@@ -20,19 +20,40 @@ export const useStyles = (colors: ColorsType) =>
       justifyContent: 'center',
       alignItems: 'center',
     },
+    imageWrapper: {
+      position: 'relative',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
     imageContainer: {
       width: 125,
       height: 125,
-      backgroundColor: 'green',
-      borderRadius: 125,
+      backgroundColor: colors.border_3,
+      borderRadius: 62.5,
+      justifyContent: 'center',
+      alignItems: 'center',
+      overflow: 'hidden',
+    },
+    profileImage: {
+      width: '100%',
+      height: '100%',
+    },
+    placeholderIcon: {
+      width: 60,
+      height: 60,
+      opacity: 0.6,
     },
     cameraIconContainer: {
       position: 'absolute',
-      width: 35,
-      height: 35,
-      borderRadius: 35,
-      backgroundColor: 'red',
-      bottom: -10,
+      width: 36,
+      height: 36,
+      bottom: -15,
+      borderRadius: 50,
+      borderWidth: 1,
+      borderColor: colors.primary,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: colors.background_primary,
     },
     imageDes: {
       fontSize: 12,
@@ -67,7 +88,22 @@ export const useStyles = (colors: ColorsType) =>
       width: 12,
       height: 12,
     },
-    spacer:{
-        flex:1
+    spacer: {
+      flex: 1,
+    },
+    rowInputs: {
+      flexDirection: 'row',
+      gap: 20,
+      alignItems: 'flex-start',
+    },
+    flexInput: {
+      flex: 1,
+    },
+    sectionTitle: {
+      fontSize: 20,
+      color: colors.contentPrimary,
+    },
+    sectionSubtitle:{
+      fontSize: 12, color: colors.contentPrimary
     }
   });
