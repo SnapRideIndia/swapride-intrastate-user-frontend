@@ -20,7 +20,6 @@ const MainContent = () => (
 const DrawerNavigator = () => {
   const { colors } = useTheme();
 
-
   return (
     <Drawer.Navigator
       screenOptions={{

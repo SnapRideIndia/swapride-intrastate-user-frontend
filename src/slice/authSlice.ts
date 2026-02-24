@@ -10,16 +10,12 @@ export interface IAuth {
   step: AuthStep;
   acc_token: string;
   ref_token: string;
-  phNo: string;
-  verificationId: string;
 }
 
 const initialState: IAuth = {
   step: AuthStep.Step0,
   acc_token: '',
   ref_token: '',
-  phNo: '',
-  verificationId: '',
 };
 const authSlice = createSlice({
   name: 'auth',
@@ -31,18 +27,15 @@ const authSlice = createSlice({
     setRefreshToken: (state, action) => {
       state.ref_token = action.payload;
     },
-    setAuthStep: (state, action) => {
-      state.step = action.payload;
-    },
-    setPhno: (state, action) => {
-      state.phNo = action.payload;
-    },
-    setVerificationId: (state, action)=>{
-      state.verificationId = action.payload
+    setAuthStep: (state, action)=>{
+        state.step = action.payload
     }
   },
 });
 
-export const { setAccessToken, setRefreshToken, setAuthStep, setPhno, setVerificationId } =
-  authSlice.actions;
+export const {
+    setAccessToken,
+    setRefreshToken,
+    setAuthStep
+} = authSlice.actions;
 export default authSlice.reducer;

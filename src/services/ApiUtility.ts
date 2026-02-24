@@ -8,7 +8,7 @@ import { storage } from '../utils/store';
 import { StorageKeys } from '../constants/storage/storageKeys';
 
 // Base configuration
-const BASE_URL = 'http://swapride-intrastate-staging.eba-hgachq5q.ap-south-2.elasticbeanstalk.com/';
+const BASE_URL = 'http://swapride-intrastate-staging-env-1.eba-hgachq5q.ap-south-2.elasticbeanstalk.com/';
 const TIMEOUT = 120000;
 
 // Types
@@ -123,19 +123,6 @@ export const postFormData = async <T = any>(
                 'Content-Type': 'multipart/form-data',
             },
         });
-        return { data: response.data, status: response.status, success: true };
-    } catch (error) {
-        return handleError(error);
-    }
-};
-
-export const patchFormData = async <T = any>(
-    endpoint: string,
-    body: FormData,
-    config?: AxiosRequestConfig
-): Promise<ApiResponse<T>> => {
-    try {
-        const response: AxiosResponse<T> = await apiFormData.patch(endpoint, body, config);
         return { data: response.data, status: response.status, success: true };
     } catch (error) {
         return handleError(error);
