@@ -1,22 +1,26 @@
-import { ScrollView, StyleSheet, View } from 'react-native'
-import React from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { useTheme } from '../../../theme/ThemeProvider'
-import { useStyles } from './HistoryScreen.styles'
-import { SwText as Text } from '../../../components/common/SwText/SwText'
+import { ScrollView, StyleSheet, View } from 'react-native';
+import React from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTheme } from '../../../theme/ThemeProvider';
+import { useStyles } from './HistoryScreen.styles';
+import { SwText as Text } from '../../../components/common/SwText/SwText';
+import PrimaryHeader from '../../../components/common/SwHeader/PrimaryHeader/PrimaryHeader';
 
 const HistoryScreen = () => {
-    const { colors } = useTheme();
-    const styles = useStyles(colors);
-    return (
-        <SafeAreaView edges={["bottom"]} style={styles.container}>
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.contentContainerStyle}>
-                <Text>History Screen</Text>
-            </ScrollView>
-        </SafeAreaView>
-    )
-}
+  const { colors } = useTheme();
+  const styles = useStyles(colors);
+  return (
+    <SafeAreaView edges={['bottom']} style={styles.container}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.contentContainerStyle}
+      >
+        <PrimaryHeader title="History" />
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
 
-export default HistoryScreen
+export default HistoryScreen;
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({});

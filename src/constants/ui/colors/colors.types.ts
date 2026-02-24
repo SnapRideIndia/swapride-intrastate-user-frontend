@@ -15,6 +15,7 @@ export type ColorsType = {
   contentPrimary: string;
   contentSecondary: string;
   contenttertiary: string,
+  contentGreen: string,
   contentRed: string,
   contentDisabled: string;
   contentBlue: string,

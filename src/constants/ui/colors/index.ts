@@ -5,7 +5,7 @@ export const lightColors: ColorsType = {
   background_primary: '#FFFFFF',
   background_secondary: '#003B9405',
   background_green: '#06B217',
-  background_lightBlue: '#D1EFFF',
+  background_lightBlue: '#eceffa',
   background_black: '#000000',
 
   // common
@@ -16,10 +16,11 @@ export const lightColors: ColorsType = {
   contentPrimary: '#000000',
   contentSecondary: '#312602',
   contenttertiary: "#C9C9C9",
+  contentGreen: '#06B217',
   contentRed: '#BE1E2D',
   contentDisabled: '#D5d5d5',
   contentBlue: '#0A9EE3',
-  conetntBrown: '#754502',
+  conetntBrown: '#754502', 
   primaryCtaText: '#FFFFFF',
 
   // borders
@@ -33,7 +34,7 @@ export const lightColors: ColorsType = {
 
   //   buttons
   button_primary: "#F5BE09",
-  button_secondary: '#A898F3',
+  button_secondary: '#1751BC',
   button_tertiary: '#00749E',
 
   // icons
@@ -74,7 +75,7 @@ export const darkColors: ColorsType = {
   background_primary: '#FFFFFF',
   background_secondary: '#003B9405',
   background_green: '#06B217',
-  background_lightBlue: '#D1EFFF',
+  background_lightBlue: '#eceffa',
   background_black: "#0000",
 
 
@@ -86,6 +87,7 @@ export const darkColors: ColorsType = {
   contentPrimary: '#000000',
   contentSecondary: '#312602',
   contenttertiary: "#C9C9C9",
+  contentGreen: '#06B217',
   contentRed: '#BE1E2D',
   contentDisabled: '#D5d5d5',
   contentBlue: '#0A9EE3',
@@ -103,7 +105,7 @@ export const darkColors: ColorsType = {
 
   //   buttons
   button_primary: "#FFE03D",
-  button_secondary: '#A898F3',
+  button_secondary: '#1751BC',
   button_tertiary: '#00749E',
 
   // shadow color
