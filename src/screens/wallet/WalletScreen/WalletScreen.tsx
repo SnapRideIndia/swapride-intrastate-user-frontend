@@ -73,9 +73,9 @@ const WalletScreen = () => {
           </Text>
 
           <View style={styles.transactionContainer}>
-            {mockTransactions.map(transaction => (
+            {mockTransactions.map((transaction, index) => (
               <TransactionCard
-                key={transaction.date}
+                key={index}
                 type={transaction.type}
                 amount={transaction.amount}
                 date={transaction.date}
