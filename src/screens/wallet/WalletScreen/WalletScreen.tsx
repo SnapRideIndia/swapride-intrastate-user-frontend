@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import React, { useRef } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../../theme/ThemeProvider';
@@ -9,58 +9,29 @@ import BalanceCard from '../../../components/domain/wallet/card/BalanceCard/Bala
 import TransactionCard from '../../../components/domain/wallet/card/TransactionCard/TransactionCard';
 import { BottomSheetModal as BottomSheetType } from '@gorhom/bottom-sheet';
 import { AddAmountSheet } from '../../../components/domain/wallet/sheets/AddAmountSheet/AddAmountSheet';
-
-const mockTransactions: {
-  type: 'Credit' | 'Debit';
-  amount: number;
-  date: number;
-}[] = [
-  {
-    type: 'Credit',
-    amount: 100.0,
-    date: 1740451200, //timestamp in milliseconds
-  },
-  {
-    type: 'Debit',
-    amount: 50.0,
-    date: 1740451200, //timestamp in milliseconds
-  },
-  {
-    type: 'Credit',
-    amount: 100.0,
-    date: 1740451200, //timestamp in milliseconds
-  },
-  {
-    type: 'Debit',
-    amount: 50.0,
-    date: 1740451200, //timestamp in milliseconds
-  },
-  {
-    type: 'Credit',
-    amount: 100.0,
-    date: 1740451200, //timestamp in milliseconds
-  },
-  {
-    type: 'Debit',
-    amount: 50.0,
-    date: 1740451200, //timestamp in milliseconds
-  },
-  {
-    type: 'Credit',
-    amount: 100.0,
-    date: 1740451200, //timestamp in milliseconds
-  },
-  {
-    type: 'Debit',
-    amount: 50.0,
-    date: 1740451200, //timestamp in milliseconds
-  },
-];
+import { useBalance, useTransactions } from '../../../hooks/useWallet';
 
 const WalletScreen = () => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const bottomSheetRef = useRef<BottomSheetType>(null);
+
+  const {
+    data: balanceData,
+    isLoading: balanceLoading,
+    refetch: refetchBalance,
+  } = useBalance();
+  const {
+    data: transactionsData,
+    isLoading: txLoading,
+    refetch: refetchTx,
+  } = useTransactions();
+
+  const isRefreshing = balanceLoading || txLoading;
+  const handleRefresh = () => {
+    refetchBalance();
+    refetchTx();
+  };
 
   const handleOpenAddMoney = () => {
     bottomSheetRef.current?.present();
@@ -77,21 +48,31 @@ const WalletScreen = () => {
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={styles.contentContainerStyle}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefreshing}
+            onRefresh={handleRefresh}
+            tintColor={colors.primary}
+          />
+        }
       >
         <View style={styles.contentContainer}>
-          <BalanceCard balance={199.5} onAddMoney={handleOpenAddMoney} />
+          <BalanceCard
+            balance={parseFloat(balanceData?.balance || '0')}
+            onAddMoney={handleOpenAddMoney}
+          />
 
           <Text varient="semi-bold" style={styles.transactionTitle}>
             Transaction History
           </Text>
 
           <View style={styles.transactionContainer}>
-            {mockTransactions.map((transaction, index) => (
+            {(transactionsData ?? []).map((tx: any) => (
               <TransactionCard
-                key={index}
-                type={transaction.type}
-                amount={transaction.amount}
-                date={transaction.date}
+                key={tx.id}
+                type={tx.type === 'CREDIT' ? 'Credit' : 'Debit'}
+                amount={tx.amount}
+                date={tx.date}
               />
             ))}
           </View>
