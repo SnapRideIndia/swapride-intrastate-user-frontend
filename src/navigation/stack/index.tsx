@@ -10,8 +10,6 @@ import DrawerNavigator from '../Drawer';
 import EnterPhNo from '../../screens/auth/EnterPhNo/EnterPhNo';
 import ViewProfile from '../../screens/profile/ViewProfile/ViewProfile';
 import SuggestYourStops from '../../screens/profile/SuggestYourStops/SuggestYourStops';
-
-import { useDispatch } from 'react-redux';
 import TrackRideScreen from '../../screens/rides/TrackRideScreen/TrackRideScreen';
 import TicketDetailScreen from '../../screens/rides/TicketDetailScreen/TicketDetailScreen';
 import { RootStackParamList } from '../types';
