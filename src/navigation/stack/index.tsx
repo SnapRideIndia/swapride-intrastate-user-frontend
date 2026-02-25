@@ -28,30 +28,29 @@ const ScreenWrapper = ({ children }: { children: React.ReactNode }) => {
 const AppNavigation = () => {
   const { colors } = useTheme();
 
-    const styles = StyleSheet.create({
-        tabBarContainer: {
-            flex: 1,
-            backgroundColor: colors.background_primary
-        },
-    })
+  const styles = StyleSheet.create({
+    tabBarContainer: {
+      flex: 1,
+      backgroundColor: colors.background_primary,
+    },
+  });
 
-    return (
-        <NavigationContainer>
-            <Stack.Navigator
-                screenOptions={{ headerShown: false }}
-                initialRouteName={ScreenNames.LOGIN_SCREEN}
-            >
-                <Stack.Screen name={ScreenNames.DASHBOARD_SCREEN}>
-                    {() => (
-                        <View style={styles.tabBarContainer}>
-                            <DrawerNavigator />
-                        </View>
-                    )}
-                </Stack.Screen>
-                <Stack.Screen name={ScreenNames.LOGIN_SCREEN} component={EnterPhNo} />
-                <Stack.Screen name={ScreenNames.VIEW_PROFILE} component={ViewProfile} />
-                <Stack.Screen name={ScreenNames.SUGGEST_YOUR_STOPS} component={SuggestYourStops} />
-                 <Stack.Screen
+  return (
+    <NavigationContainer>
+      <Stack.Navigator
+        screenOptions={{ headerShown: false }}
+        initialRouteName={ScreenNames.LOGIN_SCREEN}
+      >
+        <Stack.Screen name={ScreenNames.DASHBOARD_SCREEN}>
+          {() => (
+            <View style={styles.tabBarContainer}>
+              <DrawerNavigator />
+            </View>
+          )}
+        </Stack.Screen>
+        <Stack.Screen name={ScreenNames.LOGIN_SCREEN} component={EnterPhNo} />
+        <Stack.Screen name={ScreenNames.VIEW_PROFILE} component={ViewProfile} />
+        <Stack.Screen
           name={ScreenNames.SUGGEST_YOUR_STOPS}
           component={SuggestYourStops}
         />
@@ -63,9 +62,9 @@ const AppNavigation = () => {
           name={ScreenNames.TICKET_DETAIL_SCREEN}
           component={TicketDetailScreen}
         />
-            </Stack.Navigator>
-        </NavigationContainer>
-    )
-}
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
 
 export default AppNavigation;

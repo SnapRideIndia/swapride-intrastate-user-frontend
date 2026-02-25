@@ -12,5 +12,4 @@ export type RootStackParamList = {
   [ScreenNames.HOME_SCREEN]: undefined;
   [ScreenNames.WALLET_SCREEN]: undefined;
   [ScreenNames.HISTORY_SCREEN]: undefined;
-  [ScreenNames.TICKET_DETAIL_SCREEN]: { ticketId: string };
 };
