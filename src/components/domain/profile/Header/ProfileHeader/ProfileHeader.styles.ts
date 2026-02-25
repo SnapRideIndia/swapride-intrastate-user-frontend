@@ -26,8 +26,8 @@ export const useStyles = (colors: ColorsType) =>
     profileContainer:{
         width: 91,
         height: 91,
-        borderRadius: 91,
-        overflow: "hidden"
+        backgroundColor: "green",
+        borderRadius: 91
     },
     detailsSection:{
         flex:1,

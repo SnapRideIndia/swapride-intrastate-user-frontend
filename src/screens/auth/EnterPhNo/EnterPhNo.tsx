@@ -9,15 +9,14 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import PrimaryButton from '../../../components/common/SwButton/PrimaryButton/PrimaryButton'
 import EnterOtp from '../../../components/domain/login/EnterOtp/EnterOtp'
 import EnterPhno from '../../../components/domain/login/EnterPhno/EnterPhno'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { RootState } from '../../../store'
 import EnterPassword from '../../../components/domain/login/EnterPassword/EnterPassword'
 const EnterPhNo = () => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const {step} = useSelector((store: RootState)=>store.auth);
-  console.log("This is current step ===>", step);
-
+  console.log("This is current step ===>", step)
   return (
     <SafeAreaView edges={["bottom"]} style={styles.container} >
 

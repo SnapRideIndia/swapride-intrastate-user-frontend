@@ -7,8 +7,6 @@ import { useStyles } from "./index.styles";
 import { SwText as Text } from "../../components/common/SwText/SwText";
 import { ImageSource } from "../../constants/images";
 import { ScreenNames } from "../constant";
-import { useFetchCurrentProfile } from "../../hooks/useProfile";
-import { useFocusEffect } from "@react-navigation/native";
 
 const drawerItems = [
   {
@@ -27,7 +25,7 @@ const drawerItems = [
     id: 3,
     iconUri: ImageSource.suggestYourStops,
     title: "Suggest your stops",
-    navigateTo: ScreenNames.SUGGEST_YOUR_STOPS
+    navigateTo: ScreenNames.SUGGEST_YOUR_STOPS_SCREEN
 
   }, {
     id: 4,
@@ -48,26 +46,14 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const { navigation } = props;
-  const { data: profileData, isLoading, isError, error, refetch } = useFetchCurrentProfile();
 
   const handlePressItem = (navScreen: any) => {
     navigation.navigate(navScreen);
   }
 
-  const handlePressHeader = () => {
-    if (!profileData.isOnboarded) {
-      navigation.navigate(ScreenNames.SET_PROFILE_SCREEN as never);
-    }else{
-      navigation.navigate(ScreenNames.VIEW_PROFILE as never);
-    }
-
+  const handlePressHeader = ()=>{
+    navigation.navigate(ScreenNames.SET_PROFILE_SCREEN as never);
   }
-  
-  useFocusEffect(React.useCallback(()=>{
-    console.log("This is refteching again ===>")
-    refetch();
-    console.log("This is profileData after refetch ===>", profileData);
-  }, []));
 
   return (
     <View style={styles.drawerContainer}>
@@ -77,13 +63,13 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
         showsVerticalScrollIndicator={false}
       >
         {/* header */}
-        <SafeAreaView edges={['top']}>
+       <SafeAreaView edges={['top']}>
           <TouchableOpacity style={styles.header} onPress={handlePressHeader}>
             <View style={{ flexDirection: "row", alignItems: "center", gap: 24 }}>
               <View style={{ width: 44, height: 44, borderRadius: 50, backgroundColor: "red" }} />
               <View style={{ gap: 5 }}>
-                <Text varient="medium" style={styles.name}>{profileData?.fullName}</Text>
-                <Text varient="semi-bold" style={styles.number}>{profileData?.mobileNumber}</Text>
+                <Text varient="medium" style={styles.name}>Reem Pal</Text>
+                <Text varient="semi-bold" style={styles.number}>+91 9883656228</Text>
               </View>
             </View>
             <TouchableOpacity>
@@ -91,7 +77,7 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
             </TouchableOpacity>
           </TouchableOpacity>
 
-        </SafeAreaView>
+       </SafeAreaView>
         <View style={styles.dropDownItemsContainer}>
           {
             drawerItems.map((item) => (

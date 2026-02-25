@@ -12,22 +12,18 @@ export const useStyles = (colors: ColorsType) =>
       width: 24,
       height: 24,
     },
-    forgotPassword: {
-      textAlign: 'right',
-      marginTop: 15,
-      textDecorationLine: 'underline',
-      color: colors.contentRed,
+    forgotPassword:{
+        textAlign: 'right',
+        marginTop: 15,
+        textDecorationLine: "underline",
+        color: colors.contentRed
     },
-    spacer: {
-      flex: 1,
+    spacer:{
+        flex:1,
     },
-    loginPhno: {
-      fontSize: 14,
-      color: colors.primary,
-      textDecorationLine: 'underline',
-    },
-    buttonContainer: {
-      paddingHorizontal: 16,
-      paddingVertical: 16,
-    },
+    loginPhno:{
+        fontSize: 14,
+        color: colors.primary,
+        textDecorationLine: 'underline'
+    }
   });
