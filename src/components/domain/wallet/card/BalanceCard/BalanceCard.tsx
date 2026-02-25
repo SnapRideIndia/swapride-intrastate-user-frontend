@@ -7,15 +7,25 @@ import PrimaryButton from '../../../../common/SwButton/PrimaryButton/PrimaryButt
 
 interface IBalanceCardProps {
   balance: number;
+  onAddMoney?: () => void;
 }
-const BalanceCard = ({balance}: IBalanceCardProps) => {
+const BalanceCard = ({ balance, onAddMoney }: IBalanceCardProps) => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
   return (
     <View style={styles.container}>
-      <Text varient="semi-bold" style={styles.cardTitle}>Current Balance</Text>
-      <Text varient="semi-bold" style={styles.balanceText}>₹ {balance}</Text>
-      <PrimaryButton btnStyle={styles.buttonStyles} textStyle={styles.buttonTextStyles} title="Add Money" onPress={() => {}} />
+      <Text varient="semi-bold" style={styles.cardTitle}>
+        Current Balance
+      </Text>
+      <Text varient="semi-bold" style={styles.balanceText}>
+        ₹ {balance}
+      </Text>
+      <PrimaryButton
+        btnStyle={styles.buttonStyles}
+        textStyle={styles.buttonTextStyles}
+        title="Add Money"
+        onPress={onAddMoney}
+      />
     </View>
   );
 };

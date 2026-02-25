@@ -1,5 +1,5 @@
 import { ScrollView, StyleSheet, View } from 'react-native';
-import React from 'react';
+import React, { useRef } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../../theme/ThemeProvider';
 import { useStyles } from './WalletScreen.styles';
@@ -7,6 +7,8 @@ import { SwText as Text } from '../../../components/common/SwText/SwText';
 import PrimaryHeader from '../../../components/common/SwHeader/PrimaryHeader/PrimaryHeader';
 import BalanceCard from '../../../components/domain/wallet/card/BalanceCard/BalanceCard';
 import TransactionCard from '../../../components/domain/wallet/card/TransactionCard/TransactionCard';
+import { BottomSheetModal as BottomSheetType } from '@gorhom/bottom-sheet';
+import { AddAmountSheet } from '../../../components/domain/wallet/sheets/AddAmountSheet/AddAmountSheet';
 
 const mockTransactions: {
   type: 'Credit' | 'Debit';
@@ -58,6 +60,17 @@ const mockTransactions: {
 const WalletScreen = () => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
+  const bottomSheetRef = useRef<BottomSheetType>(null);
+
+  const handleOpenAddMoney = () => {
+    bottomSheetRef.current?.present();
+  };
+
+  const handleContinueAddMoney = (amount: string) => {
+    console.log('Continuing with amount:', amount);
+    bottomSheetRef.current?.dismiss();
+  };
+
   return (
     <SafeAreaView edges={['bottom']} style={styles.container}>
       <PrimaryHeader title="Wallet" />
@@ -66,7 +79,7 @@ const WalletScreen = () => {
         style={styles.contentContainerStyle}
       >
         <View style={styles.contentContainer}>
-          <BalanceCard balance={199.5} />
+          <BalanceCard balance={199.5} onAddMoney={handleOpenAddMoney} />
 
           <Text varient="semi-bold" style={styles.transactionTitle}>
             Transaction History
@@ -84,6 +97,11 @@ const WalletScreen = () => {
           </View>
         </View>
       </ScrollView>
+
+      <AddAmountSheet
+        ref={bottomSheetRef}
+        onContinue={handleContinueAddMoney}
+      />
     </SafeAreaView>
   );
 };

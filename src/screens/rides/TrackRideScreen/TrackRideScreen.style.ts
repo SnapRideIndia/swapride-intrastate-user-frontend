@@ -5,7 +5,11 @@ export const useStyles = (colors: ColorsType) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: colors.background_gray,
+      backgroundColor: colors.background_primary,
+    },
+
+    scrollContainer: {
+      flexGrow: 1,
     },
 
     contentContainer: {
@@ -67,6 +71,11 @@ export const useStyles = (colors: ColorsType) =>
     buttonStyle: {
       backgroundColor: colors.background_gray,
     },
+    chatIcon: {
+      width: 18,
+      height: 18,
+      marginRight: 8,
+    },
 
     showPassRow: {
       flexDirection: 'row',
@@ -75,8 +84,43 @@ export const useStyles = (colors: ColorsType) =>
     },
 
     chevronIcon: {
-      width: 12,
-      height: 12,
-      transform: [{ rotate: '180deg' }],
+      width: 14,
+      height: 14,
+    },
+
+    helpCard: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: colors.background_primary,
+      borderRadius: 16,
+      padding: 16,
+      borderWidth: 1,
+      borderColor: colors.border_3,
+      marginTop: 20,
+    },
+    helpIconContainer: {
+      width: 44,
+      height: 44,
+      borderRadius: 22,
+      backgroundColor: colors.background_gray,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    helpIcon: {
+      width: 20,
+      height: 20,
+      tintColor: colors.contentSecondary,
+    },
+    helpTextContainer: {
+      flex: 1,
+      marginLeft: 12,
+    },
+    helpTitle: {
+      fontSize: 16,
+      color: colors.contentPrimary,
+    },
+    helpSubtext: {
+      fontSize: 12,
+      color: colors.contentSecondary,
     },
   });

@@ -13,7 +13,7 @@ export const useStyles = (colors: ColorsType) =>
 
     contentContainer: {
       padding: 26,
-      paddingHorizontal:16,
+      paddingHorizontal: 16,
       gap: 16,
     },
 
