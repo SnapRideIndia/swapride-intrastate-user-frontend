@@ -2,8 +2,11 @@ import React, { forwardRef, useImperativeHandle, useRef, useState, useEffect, us
 import { View, Platform, AppState, AppStateStatus } from 'react-native';
 import { OtpInput, OtpInputRef } from 'react-native-otp-entry';
 import Clipboard from '@react-native-clipboard/clipboard';
-import { useTheme } from '../../../theme/ThemeProvider';
 import { useStyles } from './OTPInput.styles';
+import { useTheme } from '../../../theme/ThemeProvider';
+import { useVerifyOTP } from '../../../hooks/useAuth';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../store';
 
 export interface OTPInputRef {
     clearAll: () => void;
@@ -24,6 +27,7 @@ const OTPInput = forwardRef<OTPInputRef, OTPInputProps>(
         const [otp, setOtp] = useState('');
         const appState = useRef(AppState.currentState);
 
+     
 
         // Extract OTP from SMS message - improved patterns (memoized)
         const extractOTPMemo = useCallback((message: string): string | null => {
@@ -69,20 +73,20 @@ const OTPInput = forwardRef<OTPInputRef, OTPInputProps>(
             }
 
             console.log('🔄 Filling OTP:', extractedOTP);
-            
+
             // Use setValue method directly - this is the correct API
             try {
                 if (otpRef.current) {
                     // Clear first to ensure clean state
                     otpRef.current.clear();
-                    
+
                     // Wait a bit then set the value
                     setTimeout(() => {
                         if (otpRef.current && otpRef.current.setValue) {
                             console.log('✅ Calling setValue with:', extractedOTP);
                             otpRef.current.setValue(extractedOTP);
                             setOtp(extractedOTP);
-                            
+
                             // Trigger onFilled callback after a short delay
                             if (onFilled) {
                                 setTimeout(() => {
@@ -113,7 +117,7 @@ const OTPInput = forwardRef<OTPInputRef, OTPInputProps>(
                 }
 
                 const extractedOTP = extractOTPMemo(clipboardContent);
-                
+
                 if (extractedOTP && extractedOTP.length === length) {
                     if (otp !== extractedOTP) {
                         console.log('✅ OTP found in clipboard:', extractedOTP, 'Current OTP:', otp);
@@ -140,7 +144,7 @@ const OTPInput = forwardRef<OTPInputRef, OTPInputProps>(
                 try {
                     // Check if react-native-sms-retriever is available
                     const SmsRetriever = require('react-native-sms-retriever');
-                    
+
                     // Start SMS retriever
                     const registered = await SmsRetriever.startSmsRetriever();
                     if (registered) {
@@ -148,7 +152,7 @@ const OTPInput = forwardRef<OTPInputRef, OTPInputProps>(
                         SmsRetriever.addSmsListener((event: { message: string }) => {
                             const message = event.message;
                             const extractedOTP = extractOTPMemo(message);
-                            
+
                             if (extractedOTP && extractedOTP.length === length) {
                                 console.log('📱 OTP extracted from SMS:', extractedOTP);
                                 fillOTPMemo(extractedOTP);
@@ -222,7 +226,7 @@ const OTPInput = forwardRef<OTPInputRef, OTPInputProps>(
             const initialCheck = setTimeout(() => {
                 checkClipboardForOTP();
             }, 300);
-            
+
             // Check immediately on mount
             checkClipboardForOTP();
 
