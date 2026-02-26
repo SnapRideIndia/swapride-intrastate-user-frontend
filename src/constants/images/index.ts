@@ -45,4 +45,5 @@ export const ImageSource = {
     checkCircle: require('.././../assets/images/checkCircle.png'),
     checkSquare: require('.././../assets/images/checkSquare.png'),
     uncheckCircle: require('.././../assets/images/uncheckCircle.png'),
+    edit: require('.././../assets/images/edit.png'),
 }

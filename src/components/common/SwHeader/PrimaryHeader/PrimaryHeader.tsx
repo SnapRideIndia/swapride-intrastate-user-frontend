@@ -11,10 +11,11 @@ interface IHeaderProps{
     title: string,
     showBackButton?: boolean,
     onBackPress?: ()=>void,
-    onBackBtnPress?: ()=>void
+    onBackBtnPress?: ()=>void,
+    onEdit?:()=>void
 }
 
-const PrimaryHeader = ({title, onBackBtnPress}:IHeaderProps) => {
+const PrimaryHeader = ({title, onBackBtnPress, onEdit}:IHeaderProps) => {
     const {colors} = useTheme();
     const styles = useStyles(colors);
     const navigation = useNavigation();
@@ -30,6 +31,14 @@ const PrimaryHeader = ({title, onBackBtnPress}:IHeaderProps) => {
               <Image source={ImageSource.leftArrow} style={styles.backArrow} />
           </TouchableOpacity>
            <Text varient='medium' style={styles.title}>{title}</Text>
+        </View>
+
+        <View style={styles.iconContainer}>
+          {
+            onEdit && <TouchableOpacity onPress={onEdit}>
+            <Image source={ImageSource.edit} style={styles.editIcon}/>
+            </TouchableOpacity>
+          }
         </View>
     </SafeAreaView>
   )

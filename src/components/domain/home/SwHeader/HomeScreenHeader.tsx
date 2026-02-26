@@ -41,6 +41,4 @@ const HomeScreenHeader = () => {
     )
 }
 
-export default HomeScreenHeader
-
-const styles = StyleSheet.create({})
+export default HomeScreenHeader;

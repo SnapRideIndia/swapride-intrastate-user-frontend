@@ -9,7 +9,9 @@ export const useStyles = (colors: ColorsType) =>
         paddingBottom: 20,
         borderBottomWidth: 4,
         borderColor: colors.border_3,
-        backgroundColor: colors.background_primary
+        backgroundColor: colors.background_primary,
+        flexDirection: "row",
+        alignItems: "center"
     },
     headerInnerContainer:{
         flexDirection: "row",
@@ -23,5 +25,15 @@ export const useStyles = (colors: ColorsType) =>
     title:{
         fontSize: 18,
         color: colors.contentPrimary
-    }
+    },
+      iconContainer:{
+        flex:1,
+        flexDirection: "row",
+        gap: 20,
+        justifyContent:"flex-end"
+      },
+      editIcon:{
+        width: 15,
+        height: 15
+      }
   });

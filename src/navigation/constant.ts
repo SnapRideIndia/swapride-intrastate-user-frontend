@@ -13,5 +13,6 @@ export const ScreenNames = {
     MAIN_SCREEN: "MainScreen",
     LOGIN_SCREEN: "LoginScreen",
     VIEW_PROFILE: "ViewProfileScreen",
-    SUGGEST_YOUR_STOPS: "SuggestYourStopsScreen"
+    SUGGEST_YOUR_STOPS: "SuggestYourStopsScreen",
+    BUS_SELECTION_SCREEN: "BusSelectionScreen"
 }
