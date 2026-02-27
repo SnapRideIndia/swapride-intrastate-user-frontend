@@ -23,3 +23,14 @@ export const useVerifyOTP = (
         onError
     });
 };
+
+export const useRegisterUser = (
+    onSuccess: (data: any) => void,
+    onError: (error: any) => void
+) => {
+    return useMutation({
+        mutationFn: AuthService.registerUser,
+        onSuccess,
+        onError
+    });
+};

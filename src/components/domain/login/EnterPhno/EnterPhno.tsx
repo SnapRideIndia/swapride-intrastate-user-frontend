@@ -8,7 +8,7 @@ import { ImageSource } from '../../../../constants/images';
 import { useLogin } from '../../../../hooks/useAuth';
 import PrimaryButton from '../../../common/SwButton/PrimaryButton/PrimaryButton';
 import { useDispatch, useSelector } from 'react-redux';
-import { AuthStep, setAuthStep } from '../../../../slice/authSlice';
+import { AuthStep, setAuthStep, setPhno } from '../../../../slice/authSlice';
 import { RootState } from '../../../../store';
 
 const EnterPhno = () => {
@@ -33,6 +33,7 @@ const EnterPhno = () => {
 
   const handlePressSendOtp = ()=>{
     try {
+      dispatch(setPhno(authCred.phNo));
       const data = {
         mobileNumber: authCred.phNo
       }

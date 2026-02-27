@@ -14,6 +14,7 @@ export const ScreenNames = {
   LOGIN_SCREEN: 'LoginScreen',
   VIEW_PROFILE: 'ViewProfileScreen',
   SUGGEST_YOUR_STOPS: 'SuggestYourStopsScreen',
+  BUS_SELECTION_SCREEN: 'BusSelectionScreen',
   TRACK_RIDE_SCREEN: 'TrackRideScreen',
   TICKET_DETAIL_SCREEN: 'TicketDetailScreen',
 } as const;

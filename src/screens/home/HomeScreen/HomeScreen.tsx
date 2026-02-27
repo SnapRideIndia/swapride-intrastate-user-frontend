@@ -8,11 +8,15 @@ import { SwText as Text } from '../../../components/common/SwText/SwText';
 import { useNavigation } from '@react-navigation/native';
 import OptionCard from '../../../components/domain/home/card/OptionCard/OptionCard';
 import { ImageSource } from '../../../constants/images';
+import { useFetchCurrentProfile } from '../../../hooks/useProfile';
 
 const HomeScreen = () => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const navigation = useNavigation();
+
+  // const { data: profileData, isLoading, isError, error } = useFetchCurrentProfile();
+
   useEffect(() => {
     const renderHeader = () => <HomeScreenHeader />;
     navigation.setOptions({
@@ -20,6 +24,7 @@ const HomeScreen = () => {
       header: renderHeader,
     });
   }, [navigation]);
+
   return (
     <SafeAreaView edges={["bottom"]} style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.contentContainerStyle}>
