@@ -25,5 +25,29 @@ export const useStyles = (colors: ColorsType) =>
 
     transactionContainer: {
       gap: 10,
+      paddingBottom: 20,
+      paddingHorizontal: 16,
+    },
+
+    errorText: {
+      color: colors.contentRed,
+      fontSize: 13,
+      textAlign: 'center',
+      marginTop: 8,
+    },
+
+    emptyContainer: {
+      alignItems: 'center',
+      paddingVertical: 24,
+    },
+
+    emptyText: {
+      fontSize: 14,
+      color: colors.contentSecondary,
+    },
+
+    footerLoader: {
+      paddingVertical: 16,
+      alignItems: 'center',
     },
   });

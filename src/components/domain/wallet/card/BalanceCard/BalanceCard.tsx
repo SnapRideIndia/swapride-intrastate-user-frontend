@@ -6,7 +6,7 @@ import { useTheme } from '../../../../../theme/ThemeProvider';
 import PrimaryButton from '../../../../common/SwButton/PrimaryButton/PrimaryButton';
 
 interface IBalanceCardProps {
-  balance: number;
+  balance: string | number;
   onAddMoney?: () => void;
 }
 const BalanceCard = ({ balance, onAddMoney }: IBalanceCardProps) => {

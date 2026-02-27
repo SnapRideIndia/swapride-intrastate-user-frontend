@@ -1,5 +1,10 @@
 import React, { forwardRef, useState } from 'react';
-import { View, TouchableOpacity, TextInput } from 'react-native';
+import {
+  View,
+  TouchableOpacity,
+  TextInput,
+  ActivityIndicator,
+} from 'react-native';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useTheme } from '../../../../../theme/ThemeProvider';
 import { useStyles } from './AddAmountSheet.styles';
@@ -8,21 +13,30 @@ import PrimaryButton from '../../../../common/SwButton/PrimaryButton/PrimaryButt
 import { SwBottomSheet as BottomSheet } from '../../../../common/BottomSheet/BottomSheet';
 
 interface AddAmountSheetProps {
-  onContinue?: (amount: string) => void;
+  onContinue?: (amount: number) => void;
+  isLoading?: boolean;
 }
 
 export const AddAmountSheet = forwardRef<BottomSheetModal, AddAmountSheetProps>(
-  ({ onContinue }, ref) => {
+  ({ onContinue, isLoading = false }, ref) => {
     const { colors } = useTheme();
     const styles = useStyles(colors);
     const [amount, setAmount] = useState('');
+    const [error, setError] = useState('');
 
     const handleQuickSelect = (value: string) => {
       setAmount(value);
+      setError('');
     };
 
     const handleContinue = () => {
-      onContinue?.(amount);
+      const parsed = parseFloat(amount);
+      if (!amount || isNaN(parsed) || parsed <= 0) {
+        setError('Please enter a valid amount');
+        return;
+      }
+      setError('');
+      onContinue?.(parsed);
     };
 
     return (
@@ -35,9 +49,22 @@ export const AddAmountSheet = forwardRef<BottomSheetModal, AddAmountSheetProps>(
               placeholderTextColor={colors.contentSecondary}
               keyboardType="numeric"
               value={amount}
-              onChangeText={setAmount}
+              onChangeText={text => {
+                setAmount(text);
+                setError('');
+              }}
+              editable={!isLoading}
             />
           </View>
+
+          {!!error && (
+            <Text
+              varient="regular"
+              style={{ color: colors.contentRed, fontSize: 12, marginTop: 4 }}
+            >
+              {error}
+            </Text>
+          )}
 
           <View style={styles.quickAmountRow}>
             {['100', '500', '1000'].map(val => (
@@ -45,6 +72,7 @@ export const AddAmountSheet = forwardRef<BottomSheetModal, AddAmountSheetProps>(
                 key={val}
                 style={styles.quickAmountButton}
                 onPress={() => handleQuickSelect(val)}
+                disabled={isLoading}
               >
                 <Text varient="semi-bold" style={styles.quickAmountText}>
                   {val}
@@ -54,10 +82,21 @@ export const AddAmountSheet = forwardRef<BottomSheetModal, AddAmountSheetProps>(
           </View>
 
           <PrimaryButton
-            title="Continue"
+            title={isLoading ? '' : 'Continue'}
             btnStyle={styles.continueButton}
             textStyle={styles.continueButtonText}
             onPress={handleContinue}
+            disabled={isLoading}
+            renderRightIcon={
+              isLoading
+                ? () => (
+                    <ActivityIndicator
+                      size="small"
+                      color={colors.primaryCtaText}
+                    />
+                  )
+                : undefined
+            }
           />
         </View>
       </BottomSheet>
