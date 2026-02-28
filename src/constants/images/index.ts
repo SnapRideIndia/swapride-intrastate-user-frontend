@@ -45,5 +45,23 @@ export const ImageSource = {
     checkCircle: require('.././../assets/images/checkCircle.png'),
     checkSquare: require('.././../assets/images/checkSquare.png'),
     uncheckCircle: require('.././../assets/images/uncheckCircle.png'),
-    edit: require('.././../assets/images/edit.png'),
-}
+     edit: require('.././../assets/images/edit.png'),
+
+      // history section
+  busOnTrack: require('.././../assets/images/bus_on_track.png'),
+  busYellow: require('.././../assets/images/bus_yellow.png'),
+  SeatYellow: require('.././../assets/images/seat_yellow.png'),
+
+  shareBlue: require('.././../assets/images/share.png'),
+  chevron: require('.././../assets/images/chevron.png'),
+  chevronRight: require('.././../assets/images/chevron_right.png'),
+  chatIcon: require('.././../assets/images/chat.png'),
+
+  steering: require('.././../assets/images/steering.png'),
+  mapPin: require('.././../assets/images/map_pin.png'),
+  languages: require('.././../assets/images/languages.png'),
+
+  scan: require('.././../assets/images/scan.png'),
+  qrCodePlaceholder: require('.././../assets/images/qr_code.png'),
+  swapPoints: require('.././../assets/images/swap_points.png'),
+};

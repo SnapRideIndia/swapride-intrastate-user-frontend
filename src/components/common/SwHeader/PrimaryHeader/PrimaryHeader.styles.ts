@@ -5,7 +5,7 @@ export const useStyles = (colors: ColorsType) =>
   StyleSheet.create({
     container:{
         paddingHorizontal: 27,
-        paddingTop: 37,
+        paddingTop: 20,
         paddingBottom: 20,
         borderBottomWidth: 4,
         borderColor: colors.border_3,
