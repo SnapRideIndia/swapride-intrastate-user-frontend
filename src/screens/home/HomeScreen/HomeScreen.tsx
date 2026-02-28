@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, View } from 'react-native'
+import { ScrollView, View } from 'react-native'
 import React, { useEffect } from 'react'
 import { useStyles } from './HomeScreen.styles'
 import { useTheme } from '../../../theme/ThemeProvider';
@@ -8,7 +8,6 @@ import { SwText as Text } from '../../../components/common/SwText/SwText';
 import { useNavigation } from '@react-navigation/native';
 import OptionCard from '../../../components/domain/home/card/OptionCard/OptionCard';
 import { ImageSource } from '../../../constants/images';
-import { useFetchCurrentProfile } from '../../../hooks/useProfile';
 
 const HomeScreen = () => {
   const { colors } = useTheme();

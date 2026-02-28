@@ -1,4 +1,4 @@
-import { View } from 'react-native'
+import { Image, ScrollView, View } from 'react-native'
 import React, { useEffect, useMemo, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useTheme } from '../../../theme/ThemeProvider'
@@ -7,6 +7,8 @@ import PrimaryHeader from '../../../components/common/SwHeader/PrimaryHeader/Pri
 import { useNavigation } from '@react-navigation/native'
 import TopDateTabBar from '../../../components/common/TopDateTabBar/TopDateTabBar'
 import { SwText as Text } from '../../../components/common/SwText/SwText'
+import { ImageSource } from '../../../constants/images'
+import BusSelectionCard from '../../../components/domain/busSelection/card/BusSelectionCard/BusSelectionCard'
 
 const BusSelection = () => {
   const { colors } = useTheme();
@@ -88,12 +90,15 @@ const BusSelection = () => {
         activeIndex={activeTabIndex}
         onTabPress={setActiveTabIndex}
       />
-
-      <View style={{ paddingHorizontal: 16, paddingTop: 16 }}>
-        <Text varient="medium" style={{ fontSize: 16 }}>
-          Selected: {tabs[activeTabIndex]?.title}
-        </Text>
+      <View style={styles.bannerCard}>
+        <Text varient='semi-bold' style={styles.bannerText}>Showing nearest stops & bus timings on your route</Text>
+        <Image source={ImageSource.shuttel} style={styles.shuttel} />
       </View>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.contentContainer}>
+        {
+          [1,2,3,4].map((item, _idx)=> <BusSelectionCard showLabel={true} />)
+        }
+      </ScrollView>
     </SafeAreaView>
   );
 }

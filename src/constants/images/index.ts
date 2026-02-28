@@ -46,6 +46,12 @@ export const ImageSource = {
     checkSquare: require('.././../assets/images/checkSquare.png'),
     uncheckCircle: require('.././../assets/images/uncheckCircle.png'),
      edit: require('.././../assets/images/edit.png'),
+    starBadge: require('.././../assets/images/starBadge.png'),
+    walkIcon: require('.././../assets/images/walkIcon.png'),
+    downArrow: require('.././../assets/images/downArrow.png'),
+    busTime:  require('.././../assets/images/busTime.png'),
+    locationConnection:  require('.././../assets/images/locationConnection.png'),
+    direction: require('.././../assets/images/direction.png'),
 
       // history section
   busOnTrack: require('.././../assets/images/bus_on_track.png'),

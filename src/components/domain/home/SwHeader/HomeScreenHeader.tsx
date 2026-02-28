@@ -1,4 +1,4 @@
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { Image, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useTheme } from '../../../../theme/ThemeProvider'
@@ -6,6 +6,7 @@ import { useStyles } from './HomeScreenHeader.styles'
 import { ImageSource } from '../../../../constants/images'
 import { SwText as Text } from '../../../common/SwText/SwText'
 import { useNavigation } from '@react-navigation/native'
+import { ScreenNames } from '../../../../navigation/constant'
 
 const HomeScreenHeader = () => {
     const { colors } = useTheme();
@@ -19,13 +20,17 @@ const HomeScreenHeader = () => {
         }
     };
 
+    const handlePressbellIcon=()=>{
+        navigation.navigate(ScreenNames.NOTIFICATION_SCREEN as never);
+    }
+
     return (
         <SafeAreaView edges={['top']} style={styles.container}>
             <View style={styles.innerContainer}>
                 <TouchableOpacity onPress={openDrawer}>
                     <Image source={ImageSource.menu} style={styles.menuIcon} />
                 </TouchableOpacity>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={handlePressbellIcon}>
                     <Image source={ImageSource.bell} style={styles.bellIcon} />
                 </TouchableOpacity>
             </View>

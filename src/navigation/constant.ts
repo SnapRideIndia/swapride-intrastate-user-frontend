@@ -1,5 +1,3 @@
-import HomeScreen from '../screens/home/HomeScreen/HomeScreen';
-
 export const ScreenNames = {
   DASHBOARD_SCREEN: 'DashboardScreen',
   HOME_SCREEN: 'HomeScreen',
@@ -17,4 +15,8 @@ export const ScreenNames = {
   BUS_SELECTION_SCREEN: 'BusSelectionScreen',
   TRACK_RIDE_SCREEN: 'TrackRideScreen',
   TICKET_DETAIL_SCREEN: 'TicketDetailScreen',
+  FULL_ROUTE_SCREEN: "FullRouteScreen",
+  NOTIFICATION_SCREEN: "NotificationScreen"
 } as const;
+
+   
