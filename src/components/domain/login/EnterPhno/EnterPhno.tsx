@@ -19,10 +19,10 @@ const EnterPhno = () => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const dispatch = useDispatch();
-  const {step} = useSelector((store: RootState)=>store.auth)
+  const { step } = useSelector((store: RootState) => store.auth)
 
   const onSuccessSendOTP = async (data: any) => {
-      dispatch(setAuthStep(step < 3 ? step+1 : step));
+    dispatch(setAuthStep(step < 4 ? step + 1 : step));
   }
 
   const onErrorSendOTP = async (error: any) => {
@@ -31,7 +31,8 @@ const EnterPhno = () => {
 
   const { mutate: login } = useLogin(onSuccessSendOTP, onErrorSendOTP);
 
-  const handlePressSendOtp = ()=>{
+  const handlePressSendOtp = () => {
+    console.log("Submit button clicked ===>");
     try {
       dispatch(setPhno(authCred.phNo));
       const data = {
@@ -41,6 +42,10 @@ const EnterPhno = () => {
     } catch (error) {
       console.log("This is error ===>", error)
     }
+  }
+
+  const handlePressPhno = () => {
+    dispatch(setAuthStep(AuthStep.step3));
   }
 
   const handleValueCahnge = (key: string, value: string) => {
@@ -58,14 +63,14 @@ const EnterPhno = () => {
           <Text>I agree to share my Personally identifiable Information like name,email,mobile number , etc. I agree to the Terms of service and Privacy Policy of swapride app</Text>
         </View>
         <View style={styles.spacer} />
-        <Text varient='bold' style={styles.linkText}>Login using Password</Text>
+        <Text varient='bold' style={styles.linkText} onPress={handlePressPhno}>Login using Password</Text>
       </View>
 
       <View style={styles.spacer} />
 
 
       <View style={styles.buttonContainer}>
-        <PrimaryButton title='Send OTP' onPress={handlePressSendOtp}/>
+        <PrimaryButton title='Send OTP' onPress={handlePressSendOtp} />
       </View>
     </>
 

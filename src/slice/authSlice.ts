@@ -4,6 +4,7 @@ export enum AuthStep {
   Step0 = 0,
   Step1 = 1,
   Step2 = 2,
+  step3 = 3,
 }
 
 export interface IAuth {

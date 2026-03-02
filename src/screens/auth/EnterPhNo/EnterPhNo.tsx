@@ -6,17 +6,18 @@ import { SwText as Text } from '../../../components/common/SwText/SwText'
 import { Image, Platform, View } from 'react-native'
 import { ImageSource } from '../../../constants/images'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import PrimaryButton from '../../../components/common/SwButton/PrimaryButton/PrimaryButton'
 import EnterOtp from '../../../components/domain/login/EnterOtp/EnterOtp'
 import EnterPhno from '../../../components/domain/login/EnterPhno/EnterPhno'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { RootState } from '../../../store'
+import Register from '../../../components/domain/login/Register/Register'
 import EnterPassword from '../../../components/domain/login/EnterPassword/EnterPassword'
+
 const EnterPhNo = () => {
+
   const { colors } = useTheme();
   const styles = useStyles(colors);
-  const {step} = useSelector((store: RootState)=>store.auth);
-  console.log("This is current step ===>", step);
+  const { step } = useSelector((store: RootState) => store.auth);
 
   return (
     <SafeAreaView edges={["bottom"]} style={styles.container} >
@@ -36,25 +37,19 @@ const EnterPhNo = () => {
           </View>
         </View>
 
-       {
-        step === 0 &&  <EnterPhno />
-       }
         {
-        step === 1 &&  <EnterOtp />
-       }
-       {
-        step === 2 &&  <EnterPassword />
-       }
-       
+          step === 0 && <EnterPhno />
+        }
+        {
+          step === 1 && <EnterOtp />
+        }
+        {
+          step === 2 && <Register />
+        }
+        {
+          step === 3 && <EnterPassword />
+        }
 
-        {/* <EnterOtp /> */}
-        {/* <EnterPassword /> */}
-
-        {/* <View style={styles.spacer} /> */}
-
-        {/* <View style={styles.buttonContainer}>
-          <PrimaryButton title='Send OTP' />
-        </View> */}
       </KeyboardAwareScrollView>
     </SafeAreaView>
   )

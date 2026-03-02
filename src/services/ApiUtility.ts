@@ -8,7 +8,10 @@ import { storage } from '../utils/store';
 import { StorageKeys } from '../constants/storage/storageKeys';
 
 // Base configuration
-const BASE_URL = 'http://swapride-intrastate-staging.eba-hgachq5q.ap-south-2.elasticbeanstalk.com/';
+// http://swapride-intrastate-staging-env-1.eba-hgachq5q.ap-south-2.elasticbeanstalk.com/api
+// https://c847hsc39h.execute-api.ap-south-2.amazonaws.com/api#/
+const BASE_URL = 'https://c847hsc39h.execute-api.ap-south-2.amazonaws.com/';
+// AIzaSyCtC_0HfLwBvG3KRI2ZAcAyQqRrkJSeKSE
 const TIMEOUT = 120000;
 
 // Types

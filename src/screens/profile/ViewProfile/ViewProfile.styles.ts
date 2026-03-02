@@ -43,25 +43,130 @@ export const useStyles = (colors: ColorsType) =>
       borderBottomWidth: 0.5,
       borderColor: colors.border_4,
     },
-    cardSubtitle:{
+    cardSubtitle: {
       fontSize: 14,
       lineHeight: 24,
-      color: colors.contentPrimary
+      color: colors.contentPrimary,
     },
-    spacer:{
-      flex:1
+    spacer: {
+      flex: 1,
     },
-    btnStyle:{
+    btnStyle: {
       height: 39,
       backgroundColor: colors.background_primary,
-      borderWidth:1
+      borderWidth: 1,
     },
-    logoutbtn:{
+    logoutbtn: {
       borderWidth: 0,
       height: 39,
-      backgroundColor: colors.background_primary
+      backgroundColor: colors.background_primary,
     },
-    textStyle:{
-      color: "#FF3B30"
+    textStyle: {
+      color: '#FF3B30',
+    },
+    deleteSheetBackground: {
+      backgroundColor: colors.background_primary,
+      borderTopLeftRadius: 24,
+      borderTopRightRadius: 24,
+    },
+    deleteSheetHandleIndicator: {
+      backgroundColor: colors.border_3,
+      width: 40,
+    },
+    deleteSheetHeader: {
+      paddingHorizontal: 16,
+      paddingVertical: 16,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    deleteSheetTitle: {
+      fontSize: 18,
+      color: colors.contentPrimary,
+    },
+    deleteSheetCloseButton: {
+      padding: 4,
+    },
+    deleteSheetCloseIcon: {
+      width: 16,
+      height: 16,
+      tintColor: colors.contentPrimary,
+    },
+    deleteSheetContent: {
+      paddingHorizontal: 16,
+    },
+    deleteSheetLabel: {
+      marginTop: 8,
+      marginBottom: 8,
+      fontSize: 14,
+      color: colors.contentPrimary,
+    },
+    deleteSheetInput: {
+      height: 44,
+      borderWidth: 1,
+      borderColor: colors.border_4,
+      borderRadius: 10,
+      paddingHorizontal: 14,
+      color: colors.contentPrimary,
+      backgroundColor: colors.background_primary,
+    },
+    deleteSheetButtonsRow: {
+      marginTop: 16,
+      flexDirection: 'row',
+      gap: 12,
+    },
+    deleteSheetCancelBtn: {
+      flex: 1,
+      height: 44,
+      backgroundColor: colors.background_primary,
+      borderWidth: 1,
+      borderColor: colors.border_4,
+    },
+    deleteSheetCancelText: {
+      color: colors.contentPrimary,
+    },
+    deleteSheetConfirmBtn: {
+      flex: 1,
+      height: 44,
+      backgroundColor: '#FF3B30',
+    },
+    deleteSheetConfirmText: {
+      color: '#FFFFFF',
+    },
+    headerTitle: {
+      fontSize: 16,
+      color: colors.contentPrimary,
+      width: 284,
+    },
+    crossIcon: {
+      width: 18,
+      height: 18,
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    deleteDesc: {
+      color: colors.contentPrimary,
+      width: 293,
+    },
+    inputTitle: {
+      fontSize: 16,
+      color: colors.contentPrimary,
+    },
+    inputContainer: {
+      borderBottomWidth: 1,
+      marginTop: 22,
+    },
+    inputInnerContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    btnContainer:{
+       flexDirection: "row", alignItems: "center", gap: 20, marginTop: 20 
+    },
+    btnWrapper:{
+      flex:1
     }
   });

@@ -48,7 +48,7 @@ const AppNavigation = () => {
     // react to later prop changes. Redux acc_token is empty on first render (before
     // useEffect runs), so we must read from storage directly. MMKV getString is sync.
     const tokenFromStorage = storage.getString(StorageKeys.ACCESS_TOKEN);
-    const initialRouteName = tokenFromStorage ? ScreenNames.DASHBOARD_SCREEN : ScreenNames.LOGIN_SCREEN;
+    const initialRouteName = tokenFromStorage ? ScreenNames.DASHBOARD_SCREEN : ScreenNames.SUGGEST_YOUR_STOPS;
 
     useEffect(() => {
         // Keep Redux in sync with storage for the rest of the app

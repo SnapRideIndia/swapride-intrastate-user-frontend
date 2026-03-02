@@ -70,4 +70,5 @@ export const ImageSource = {
   scan: require('.././../assets/images/scan.png'),
   qrCodePlaceholder: require('.././../assets/images/qr_code.png'),
   swapPoints: require('.././../assets/images/swap_points.png'),
+  uncheckbox: require('.././../assets/images/uncheckbox.png'),
 };
