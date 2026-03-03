@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView } from 'react-native';
 import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../../theme/ThemeProvider';
@@ -49,4 +49,4 @@ const HistoryScreen = () => {
 
 export default HistoryScreen;
 
-const styles = StyleSheet.create({});
+

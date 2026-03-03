@@ -20,6 +20,7 @@ import NotificationScreen from '../../screens/home/NotificationScreen/Notificati
 import TrackRideScreen from '../../screens/rides/TrackRideScreen/TrackRideScreen';
 import TicketDetailScreen from '../../screens/rides/TicketDetailScreen/TicketDetailScreen';
 import { RootStackParamList } from '../types';
+import SetYourProfileScreen from '../../screens/profile/SetYourProfileScreen/SetYourProfileScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -48,7 +49,7 @@ const AppNavigation = () => {
     // react to later prop changes. Redux acc_token is empty on first render (before
     // useEffect runs), so we must read from storage directly. MMKV getString is sync.
     const tokenFromStorage = storage.getString(StorageKeys.ACCESS_TOKEN);
-    const initialRouteName = tokenFromStorage ? ScreenNames.DASHBOARD_SCREEN : ScreenNames.SUGGEST_YOUR_STOPS;
+    const initialRouteName = tokenFromStorage ? ScreenNames.DASHBOARD_SCREEN : ScreenNames.LOGIN_SCREEN;
 
     useEffect(() => {
         // Keep Redux in sync with storage for the rest of the app
@@ -89,6 +90,7 @@ const AppNavigation = () => {
                 />
                 <Stack.Screen name={ScreenNames.FULL_ROUTE_SCREEN as never} component={FullRouteScreen} />
                 <Stack.Screen name={ScreenNames.NOTIFICATION_SCREEN as never} component={NotificationScreen} />
+                <Stack.Screen name={ScreenNames.SET_PROFILE_SCREEN as never} component={SetYourProfileScreen} />
             </Stack.Navigator>
         </NavigationContainer>
     );

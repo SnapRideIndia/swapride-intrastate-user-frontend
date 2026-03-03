@@ -105,5 +105,9 @@ export const useStyles = (colors: ColorsType) =>
     },
     sectionSubtitle:{
       fontSize: 12, color: colors.contentPrimary
+    },
+    cameraIcon:{
+      width: 16.13, 
+      height: 14.63
     }
   });

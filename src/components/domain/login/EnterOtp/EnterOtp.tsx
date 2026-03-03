@@ -35,8 +35,8 @@ const EnterOtp = () => {
             dispatch(setRefreshToken(data.refreshToken));
             storage.set(StorageKeys.ACCESS_TOKEN, data.accessToken);
             storage.set(StorageKeys.REFRESH_TOKEN, data.refreshToken);
+            navigation.navigate(ScreenNames.SET_PROFILE_SCREEN as never, {isFromOtp: true});
             showToast("success", "", data.message, 3000);
-            navigation.navigate(ScreenNames.DASHBOARD_SCREEN as never);
         }
     }
 

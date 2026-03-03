@@ -40,10 +40,17 @@ const authSlice = createSlice({
     },
     setVerificationId: (state, action)=>{
       state.verificationId = action.payload
+    },
+    setLogout: (state)=>{
+      state.acc_token = "";
+      state.phNo = "";
+      state.ref_token = "";
+      state.step = AuthStep.Step0;
+      state.verificationId="";
     }
   },
 });
 
-export const { setAccessToken, setRefreshToken, setAuthStep, setPhno, setVerificationId } =
+export const { setAccessToken, setRefreshToken, setAuthStep, setPhno, setVerificationId, setLogout } =
   authSlice.actions;
 export default authSlice.reducer;

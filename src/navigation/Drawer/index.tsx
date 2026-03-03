@@ -38,11 +38,6 @@ const DrawerNavigator = () => {
         component={MainContent}
         options={{ drawerLabel: () => null, drawerItemStyle: { display: "none" } }}
       />
-      <Drawer.Screen
-        name={ScreenNames.SET_PROFILE_SCREEN}
-        component={SetYourProfileScreen}
-        options={{ drawerLabel: () => null, drawerItemStyle: { display: "none" } }}
-      />
     </Drawer.Navigator>
   );
 };

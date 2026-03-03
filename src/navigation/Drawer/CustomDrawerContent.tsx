@@ -9,6 +9,11 @@ import { ImageSource } from "../../constants/images";
 import { ScreenNames } from "../constant";
 import { useFetchCurrentProfile } from "../../hooks/useProfile";
 import { useFocusEffect } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
+import { setLogout } from "../../slice/authSlice";
+import { RootState } from "../../store";
+import { storage } from "../../utils/store";
+import { StorageKeys } from "../../constants/storage/storageKeys";
 
 const drawerItems = [
   {
@@ -48,7 +53,10 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const { navigation } = props;
+  const dispatch = useDispatch();
   const { data: profileData, isLoading, isError, error, refetch } = useFetchCurrentProfile();
+  const {acc_token} = useSelector((store: RootState)=>store.auth);
+  console.log("this is acc token inside the custom drawer content ===>", acc_token)
 
   const handlePressItem = (navScreen: any) => {
     navigation.navigate(navScreen);
@@ -60,7 +68,13 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
     }else{
       navigation.navigate(ScreenNames.VIEW_PROFILE as never);
     }
+  }
 
+  const handlePressLogout = ()=>{
+    dispatch(setLogout());
+    storage.set(StorageKeys.ACCESS_TOKEN, "");
+    storage.set(StorageKeys.REFRESH_TOKEN, "");
+    navigation.navigate(ScreenNames.LOGIN_SCREEN as never);
   }
   
   useFocusEffect(React.useCallback(()=>{
@@ -107,10 +121,10 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
       </ScrollView>
 
       <SafeAreaView edges={["bottom"]} style={styles.logoutBtnSafeArea}>
-        <View style={styles.logoutBtn}>
+        <TouchableOpacity style={styles.logoutBtn} onPress={handlePressLogout}>
           <Text varient="semi-bold" style={styles.logoutTitle}>Logout</Text>
           <Image source={ImageSource.logoutOutline} style={styles.icon} />
-        </View>
+        </TouchableOpacity>
       </SafeAreaView>
     </View>
   );

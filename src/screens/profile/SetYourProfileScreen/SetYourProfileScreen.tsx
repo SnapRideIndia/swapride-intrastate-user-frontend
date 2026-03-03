@@ -32,10 +32,12 @@ const INITIAL_PROFILE: ProfileObj = {
     bloodGroup: '',
 };
 
-const SetYourProfileScreen = () => {
+const SetYourProfileScreen = ({ route }: { route: any }) => {
     const { colors } = useTheme();
     const styles = useStyles(colors);
     const navigation = useNavigation();
+    const { isFromOtp } = route.params ?? {};
+    console.log("chcking is From otp ===>", isFromOtp);
 
     const [profileObj, setProfileObj] = useState<ProfileObj>(INITIAL_PROFILE);
     const [profileImage, setProfileImage] = useState<string | null>(null);
@@ -161,7 +163,8 @@ const SetYourProfileScreen = () => {
                             )}
                         </View>
                         <View style={[styles.cameraIconContainer]}>
-                            <FontAwesome6 name="camera" size={16} color={colors.primary} />
+                            {/* <FontAwesome6 name="camera" size={16} color={colors.primary} /> */}
+                            <Image source={ImageSource.camera} style={styles.cameraIcon} />
                         </View>
                     </View>
                 </TouchableOpacity>
@@ -234,38 +237,42 @@ const SetYourProfileScreen = () => {
                         <View style={{ flex: 1 }} />
                     </View>
                 </View>
-                <View style={[styles.devider, { marginTop: 18 }]} />
+               {
+                    !isFromOtp && <View style={[styles.devider, { marginTop: 18 }]} />
+               }
 
-                <View style={styles.inputContainer}>
-                    <View style={{ gap: 10 }}>
-                        <Text varient='semi-bold' style={styles.sectionTitle}>Travel Preferences</Text>
-                        <Text varient='medium' style={styles.sectionSubtitle}>This will help us find the best stops and timings for your commute</Text>
+                {
+                    !isFromOtp && <View style={styles.inputContainer}>
+                        <View style={{ gap: 10 }}>
+                            <Text varient='semi-bold' style={styles.sectionTitle}>Travel Preferences</Text>
+                            <Text varient='medium' style={styles.sectionSubtitle}>This will help us find the best stops and timings for your commute</Text>
+                        </View>
+
+                        <TextInput
+                            title="Home Address"
+                            renderTitleIcon={() => <Image source={ImageSource.Home as ImageSourcePropType} style={styles.titleIcon} />}
+                            value={profileObj.fullName}
+                            onChangeText={(v) => updateProfile('fullName', v)}
+                            placeholder="Enter your full name"
+                        />
+
+                        <TextInput
+                            title="Office Address"
+                            renderTitleIcon={() => <Image source={ImageSource.office as ImageSourcePropType} style={styles.titleIcon} />}
+                            value={profileObj.fullName}
+                            onChangeText={(v) => updateProfile('fullName', v)}
+                            placeholder="Enter your full name"
+                        />
+
+                        <TextInput
+                            title="Office timings"
+                            renderTitleIcon={() => <Image source={ImageSource.clock as ImageSourcePropType} style={styles.titleIcon} />}
+                            value={profileObj.fullName}
+                            onChangeText={(v) => updateProfile('fullName', v)}
+                            placeholder="Enter your full name"
+                        />
                     </View>
-
-                    <TextInput
-                        title="Home Address"
-                        renderTitleIcon={() => <Image source={ImageSource.Home as ImageSourcePropType} style={styles.titleIcon} />}
-                        value={profileObj.fullName}
-                        onChangeText={(v) => updateProfile('fullName', v)}
-                        placeholder="Enter your full name"
-                    />
-
-                      <TextInput
-                        title="Office Address"
-                        renderTitleIcon={() => <Image source={ImageSource.office as ImageSourcePropType} style={styles.titleIcon} />}
-                        value={profileObj.fullName}
-                        onChangeText={(v) => updateProfile('fullName', v)}
-                        placeholder="Enter your full name"
-                    />
-
-                    <TextInput
-                        title="Office timings"
-                        renderTitleIcon={() => <Image source={ImageSource.clock as ImageSourcePropType} style={styles.titleIcon} />}
-                        value={profileObj.fullName}
-                        onChangeText={(v) => updateProfile('fullName', v)}
-                        placeholder="Enter your full name"
-                    />
-                </View>
+                }
             </KeyboardAwareScrollView>
 
             <View style={styles.spacer} />

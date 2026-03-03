@@ -14,8 +14,6 @@ export const useStyles = (colors: ColorsType) =>
     },
     keyboardAwareScrollContainer: {
       flexGrow: 1,
-      // padding: 20,
-      //   justifyContent: 'center',
       backgroundColor: '#fff',
       zIndex: 999,
     },
@@ -36,12 +34,11 @@ export const useStyles = (colors: ColorsType) =>
       lineHeight: 20,
       color: colors.primary,
     },
-
     buttonContainer: {
       paddingHorizontal: 16,
       paddingVertical: 16,
     },
     spacer: {
       flex: 1,
-    },
+    }
   });
