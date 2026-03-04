@@ -47,6 +47,10 @@ class ProfileService {
     return '';
   };
 
+  /**
+   * PATCH /users/profile (multipart/form-data)
+   * Body: profile (file, optional), email, gender (MALE/FEMALE), dateOfBirth (YYYY-MM-DD)
+   */
   updateProfile = async (profileObj: ProfileObj, profileImageUri: string | null) => {
     const url = `${this.baseUrl}/profile`;
     const formData = new FormData();

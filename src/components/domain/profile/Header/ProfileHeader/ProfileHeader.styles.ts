@@ -36,5 +36,10 @@ export const useStyles = (colors: ColorsType) =>
         color: colors.primaryCtaText,
         fontSize: 16,
         lineHeight: 24
+    },
+    edit:{
+        width: 24,
+        height: 24,
+        tintColor: colors.primaryCtaText
     }
   });

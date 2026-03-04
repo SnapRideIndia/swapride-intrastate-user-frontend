@@ -9,11 +9,11 @@ import { ImageSource } from "../../constants/images";
 import { ScreenNames } from "../constant";
 import { useFetchCurrentProfile } from "../../hooks/useProfile";
 import { useFocusEffect } from "@react-navigation/native";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setLogout } from "../../slice/authSlice";
-import { RootState } from "../../store";
 import { storage } from "../../utils/store";
 import { StorageKeys } from "../../constants/storage/storageKeys";
+import { useLogout } from "../../hooks/useAuth";
 
 const drawerItems = [
   {
@@ -55,29 +55,39 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
   const { navigation } = props;
   const dispatch = useDispatch();
   const { data: profileData, isLoading, isError, error, refetch } = useFetchCurrentProfile();
-  const {acc_token} = useSelector((store: RootState)=>store.auth);
-  console.log("this is acc token inside the custom drawer content ===>", acc_token)
+
+  const onSuccessLogout = (data: any) => {
+    console.log("This is logout reponse ===>", data)
+  }
+
+  const onErrorLogout = (error: any) => {
+    console.log("This is error response ===>", error)
+  }
+
+  const { mutate: logout } = useLogout(onSuccessLogout, onErrorLogout);
 
   const handlePressItem = (navScreen: any) => {
     navigation.navigate(navScreen);
   }
 
   const handlePressHeader = () => {
-    if (!profileData.isOnboarded) {
-      navigation.navigate(ScreenNames.SET_PROFILE_SCREEN as never);
-    }else{
-      navigation.navigate(ScreenNames.VIEW_PROFILE as never);
+    navigation.navigate(ScreenNames.VIEW_PROFILE as never);
+  }
+
+  const handlePressLogout = () => {
+    try {
+      dispatch(setLogout());
+      storage.set(StorageKeys.ACCESS_TOKEN, "");
+      storage.set(StorageKeys.REFRESH_TOKEN, "");
+      navigation.navigate(ScreenNames.LOGIN_SCREEN as never);
+      // api calling
+      logout({});
+    } catch (error) {
+      console.error("Error of logout ===>", error?.toString());
     }
   }
 
-  const handlePressLogout = ()=>{
-    dispatch(setLogout());
-    storage.set(StorageKeys.ACCESS_TOKEN, "");
-    storage.set(StorageKeys.REFRESH_TOKEN, "");
-    navigation.navigate(ScreenNames.LOGIN_SCREEN as never);
-  }
-  
-  useFocusEffect(React.useCallback(()=>{
+  useFocusEffect(React.useCallback(() => {
     console.log("This is refteching again ===>")
     refetch();
     console.log("This is profileData after refetch ===>", profileData);
@@ -94,7 +104,9 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
         <SafeAreaView edges={['top']}>
           <TouchableOpacity style={styles.header} onPress={handlePressHeader}>
             <View style={{ flexDirection: "row", alignItems: "center", gap: 24 }}>
-              <View style={{ width: 44, height: 44, borderRadius: 50, backgroundColor: "red" }} />
+              <View style={{ width: 44, height: 44, overflow: 'hidden', borderWidth: 1, borderRadius: 50, }}>
+                <Image source={{uri: profileData?.profileUrl}} style={{width: "100%", height: "100%", borderRadius: 50}} />
+              </View>
               <View style={{ gap: 5 }}>
                 <Text varient="medium" style={styles.name}>{profileData?.fullName}</Text>
                 <Text varient="semi-bold" style={styles.number}>{profileData?.mobileNumber}</Text>

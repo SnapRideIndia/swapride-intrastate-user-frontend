@@ -14,8 +14,6 @@ const HomeScreen = () => {
   const styles = useStyles(colors);
   const navigation = useNavigation();
 
-  // const { data: profileData, isLoading, isError, error } = useFetchCurrentProfile();
-
   useEffect(() => {
     const renderHeader = () => <HomeScreenHeader />;
     navigation.setOptions({

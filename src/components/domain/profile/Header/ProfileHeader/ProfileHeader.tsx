@@ -6,14 +6,19 @@ import { useStyles } from './ProfileHeader.styles'
 import { ImageSource } from '../../../../../constants/images'
 import { SwText as Text } from '../../../../common/SwText/SwText'
 import { useNavigation } from '@react-navigation/native'
+import { ScreenNames } from '../../../../../navigation/constant'
 
-const ProfileHeader = ({profileData}) => {
+const ProfileHeader = ({profileData}:{profileData: any}) => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const navigation = useNavigation();
 
   const handleBackPress = ()=>{
     navigation.goBack();
+  }
+
+  const handleEditPress = ()=>{
+    navigation.navigate(ScreenNames.SET_PROFILE_SCREEN as never);
   }
 
 
@@ -23,7 +28,10 @@ const ProfileHeader = ({profileData}) => {
         <TouchableOpacity onPress={handleBackPress}>
           <Image source={ImageSource.leftArrow} style={styles.leftArrow} />
         </TouchableOpacity>
-        <Text style={{ color: colors.primaryCtaText }}>edit</Text>
+        {/* <Text style={{ color: colors.primaryCtaText }}>edit</Text> */}
+       <TouchableOpacity onPress={handleEditPress}>
+          <Image source={ImageSource.edit} style={styles.edit} />
+       </TouchableOpacity>
       </View>
 
       <View style={styles.detailsContainer}>

@@ -16,7 +16,8 @@ export const ScreenNames = {
   TRACK_RIDE_SCREEN: 'TrackRideScreen',
   TICKET_DETAIL_SCREEN: 'TicketDetailScreen',
   FULL_ROUTE_SCREEN: "FullRouteScreen",
-  NOTIFICATION_SCREEN: "NotificationScreen"
+  NOTIFICATION_SCREEN: "NotificationScreen",
+  SET_COMMUTE: "SetCommuteScreen"
 } as const;
 
    

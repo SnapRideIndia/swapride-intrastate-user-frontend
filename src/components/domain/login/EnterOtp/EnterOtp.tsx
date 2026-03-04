@@ -7,7 +7,7 @@ import { ImageSource } from '../../../../constants/images';
 import OTPInput from '../../../common/OTP_Input/OTPInput';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../../store';
-import { setAccessToken, setAuthStep, setRefreshToken, setVerificationId } from '../../../../slice/authSlice';
+import { setAccessToken, setAuthStep, setIsNewUser, setRefreshToken, setVerificationId } from '../../../../slice/authSlice';
 import PrimaryButton from '../../../common/SwButton/PrimaryButton/PrimaryButton';
 import { useVerifyOTP } from '../../../../hooks/useAuth';
 import { showToast } from '../../../../utils/showToast';
@@ -21,22 +21,28 @@ const EnterOtp = () => {
     const styles = useStyles(colors);
     const { step } = useSelector((store: RootState) => store.auth);
     const dispatch = useDispatch();
-    const { phNo } = useSelector((store: RootState) => store.auth);
+    const { phNo, isNewUser } = useSelector((store: RootState) => store.auth);
     const navigation = useNavigation();
 
     const onSuccessVerifyOTP = (data: any) => {
         console.log("This is data of Successful Verify OTP >>>", data)
-        if(data && data?.isNewUser){
+        if (data && data?.isNewUser) {
             showToast('success', "", data?.message, 1500);
             dispatch(setAuthStep(2));
             dispatch(setVerificationId(data?.verificationId));
-        }else{
+            dispatch(setIsNewUser(true));
+            storage.set(StorageKeys.IS_NEW_USER, true);
+        } else {
             dispatch(setAccessToken(data.accessToken));
             dispatch(setRefreshToken(data.refreshToken));
             storage.set(StorageKeys.ACCESS_TOKEN, data.accessToken);
             storage.set(StorageKeys.REFRESH_TOKEN, data.refreshToken);
-            navigation.navigate(ScreenNames.SET_PROFILE_SCREEN as never, {isFromOtp: true});
             showToast("success", "", data.message, 3000);
+            if (isNewUser) {
+                (navigation as any).navigate(ScreenNames.SET_PROFILE_SCREEN as never, { isFromOtp: true });
+            }else{
+                navigation.navigate(ScreenNames.DASHBOARD_SCREEN as never);
+            }
         }
     }
 

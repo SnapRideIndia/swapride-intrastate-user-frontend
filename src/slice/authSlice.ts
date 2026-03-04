@@ -13,6 +13,7 @@ export interface IAuth {
   ref_token: string;
   phNo: string;
   verificationId: string;
+  isNewUser: boolean;
 }
 
 const initialState: IAuth = {
@@ -21,6 +22,7 @@ const initialState: IAuth = {
   ref_token: '',
   phNo: '',
   verificationId: '',
+  isNewUser: false
 };
 const authSlice = createSlice({
   name: 'auth',
@@ -47,10 +49,13 @@ const authSlice = createSlice({
       state.ref_token = "";
       state.step = AuthStep.Step0;
       state.verificationId="";
+    },
+    setIsNewUser: (state, action)=>{
+      state.isNewUser = action.payload
     }
   },
 });
 
-export const { setAccessToken, setRefreshToken, setAuthStep, setPhno, setVerificationId, setLogout } =
+export const { setAccessToken, setRefreshToken, setAuthStep, setPhno, setVerificationId, setLogout, setIsNewUser } =
   authSlice.actions;
 export default authSlice.reducer;

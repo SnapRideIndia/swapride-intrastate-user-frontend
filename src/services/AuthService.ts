@@ -38,6 +38,18 @@ class AuthService {
 
     return res.data;
   };
+
+  logout = async (payload: any) => {
+    const url = `${this.baseUrl}/logout`;
+    const res = await postData(url, payload);
+
+    console.log('this is the logout api response ===>', res);
+    if (!res.success || !res.data) {
+      handleErrorResponse(res);
+    }
+
+    return res.data;
+  };
 }
 
 

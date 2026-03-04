@@ -5,7 +5,7 @@ import {
     TouchableOpacity,
     ImageSourcePropType,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import DatePicker from 'react-native-date-picker';
@@ -16,12 +16,12 @@ import { SwTextInput as TextInput } from '../../../components/common/SwTextInput
 import PrimaryButton from '../../../components/common/SwButton/PrimaryButton/PrimaryButton';
 import { ImageSource } from '../../../constants/images';
 import PrimaryHeader from '../../../components/common/SwHeader/PrimaryHeader/PrimaryHeader';
-import { useNavigation } from '@react-navigation/native';
-import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { ImagePickerBottomSheet } from '../../../components/common/ImagePickerBottomSheet';
-import { useUpdateProfile } from '../../../hooks/useProfile';
+import { useUpdateProfile, useFetchCurrentProfile } from '../../../hooks/useProfile';
 import type { ProfileObj } from '../../../services/ProfileService';
 import { useStyles } from './SetYourProfileScreen.styles';
+import type { RootStackParamList } from '../../../navigation/types';
 
 const INITIAL_PROFILE: ProfileObj = {
     fullName: '',
@@ -32,18 +32,30 @@ const INITIAL_PROFILE: ProfileObj = {
     bloodGroup: '',
 };
 
-const SetYourProfileScreen = ({ route }: { route: any }) => {
+type SetProfileRouteProp = RouteProp<RootStackParamList, 'SetYourProfileScreen'>;
+
+const apiDateToDisplay = (yyyyMmDd: string): string => {
+    if (!yyyyMmDd) return '';
+    const parts = yyyyMmDd.split('-');
+    if (parts.length !== 3) return yyyyMmDd;
+    const [y, m, d] = parts;
+    return `${d?.padStart(2, '0')}/${m?.padStart(2, '0')}/${y}`;
+};
+
+const SetYourProfileScreen = () => {
     const { colors } = useTheme();
     const styles = useStyles(colors);
     const navigation = useNavigation();
+    const route = useRoute<SetProfileRouteProp>();
     const { isFromOtp } = route.params ?? {};
-    console.log("chcking is From otp ===>", isFromOtp);
 
     const [profileObj, setProfileObj] = useState<ProfileObj>(INITIAL_PROFILE);
     const [profileImage, setProfileImage] = useState<string | null>(null);
     const [showImagePickerSheet, setShowImagePickerSheet] = useState(false);
     const [showDatePicker, setShowDatePicker] = useState(false);
+    const hasPrefilled = useRef(false);
 
+    const { data: currentProfile } = useFetchCurrentProfile();
     const { mutate: updateProfileApi, isPending } = useUpdateProfile();
 
     useEffect(() => {
@@ -53,6 +65,23 @@ const SetYourProfileScreen = ({ route }: { route: any }) => {
             header: renderHeader,
         });
     }, [navigation]);
+
+    useEffect(() => {
+        // if (!isFromOtp || !currentProfile || hasPrefilled.current) return;
+        hasPrefilled.current = true;
+        const p = currentProfile as Record<string, unknown>;
+        setProfileObj({
+            fullName: (p.fullName as string) ?? '',
+            mobileNumber: (p.mobileNumber as string) ?? '',
+            emailAddress: (p.email as string) ?? '',
+            gender: (p.gender as string) ?? '',
+            dateOfBirth: apiDateToDisplay((p.dateOfBirth as string) ?? ''),
+            bloodGroup: (p.bloodGroup as string) ?? '',
+        });
+        if (p.profileUrl) {
+            setProfileImage(p.profileUrl as string);
+        }
+    }, [isFromOtp, currentProfile]);
 
     const updateProfile = (field: keyof ProfileObj, value: string) => {
         setProfileObj((prev) => ({ ...prev, [field]: value }));

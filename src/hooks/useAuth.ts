@@ -34,3 +34,14 @@ export const useRegisterUser = (
         onError
     });
 };
+
+export const useLogout = (
+    onSuccess: (data: any) => void,
+    onError: (error: any) => void
+) => {
+    return useMutation({
+        mutationFn: AuthService.logout,
+        onSuccess,
+        onError
+    });
+};

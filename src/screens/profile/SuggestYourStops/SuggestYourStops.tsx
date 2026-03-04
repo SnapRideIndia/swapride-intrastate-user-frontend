@@ -151,7 +151,7 @@ const SuggestYourStops = () => {
                     </View>
 
                     <View style={{ marginTop: 29, flexDirection: "row", width: 284, gap: 10 }}>
-                        <TouchableOpacity onPress={()=>setIsCheck((prev)=>!prev)}>
+                        <TouchableOpacity onPress={() => setIsCheck((prev) => !prev)}>
                             <Image source={isCheck ? ImageSource.checkSquare : ImageSource.uncheckbox} style={styles.checkSquare} />
                         </TouchableOpacity>
                         <Text>Update this info to Travel Preferences on My Profile</Text>
@@ -204,6 +204,4 @@ const SuggestYourStops = () => {
     )
 }
 
-export default SuggestYourStops
-
-const styles = StyleSheet.create({})
+export default SuggestYourStops;

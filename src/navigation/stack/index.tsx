@@ -13,7 +13,7 @@ import SuggestYourStops from '../../screens/profile/SuggestYourStops/SuggestYour
 import { storage } from '../../utils/store';
 import { StorageKeys } from '../../constants/storage/storageKeys';
 import { useDispatch } from 'react-redux';
-import { setAccessToken } from '../../slice/authSlice';
+import { setAccessToken, setIsNewUser } from '../../slice/authSlice';
 import BusSelection from '../../screens/home/BusSelection/BusSelection';
 import FullRouteScreen from '../../screens/home/FullRouteScreen/FullRouteScreen';
 import NotificationScreen from '../../screens/home/NotificationScreen/NotificationScreen';
@@ -21,6 +21,7 @@ import TrackRideScreen from '../../screens/rides/TrackRideScreen/TrackRideScreen
 import TicketDetailScreen from '../../screens/rides/TicketDetailScreen/TicketDetailScreen';
 import { RootStackParamList } from '../types';
 import SetYourProfileScreen from '../../screens/profile/SetYourProfileScreen/SetYourProfileScreen';
+import SetCommuteScreen from '../../screens/home/SetCommuteScreen/SetCommuteScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -54,6 +55,8 @@ const AppNavigation = () => {
     useEffect(() => {
         // Keep Redux in sync with storage for the rest of the app
         const token = storage.getString(StorageKeys.ACCESS_TOKEN);
+        const isNewUser = storage.getBoolean(StorageKeys.IS_NEW_USER);
+        dispatch(setIsNewUser(isNewUser));
         dispatch(setAccessToken(token ?? ''));
     }, [dispatch]);
 
@@ -61,7 +64,7 @@ const AppNavigation = () => {
         <NavigationContainer>
             <Stack.Navigator
                 screenOptions={{ headerShown: false }}
-                initialRouteName={initialRouteName}
+                initialRouteName={ScreenNames.SET_COMMUTE as never}
             >
                 <Stack.Screen name={ScreenNames.DASHBOARD_SCREEN}>
                     {() => (
@@ -91,6 +94,7 @@ const AppNavigation = () => {
                 <Stack.Screen name={ScreenNames.FULL_ROUTE_SCREEN as never} component={FullRouteScreen} />
                 <Stack.Screen name={ScreenNames.NOTIFICATION_SCREEN as never} component={NotificationScreen} />
                 <Stack.Screen name={ScreenNames.SET_PROFILE_SCREEN as never} component={SetYourProfileScreen} />
+                <Stack.Screen name={ScreenNames.SET_COMMUTE as never} component={SetCommuteScreen} />
             </Stack.Navigator>
         </NavigationContainer>
     );
