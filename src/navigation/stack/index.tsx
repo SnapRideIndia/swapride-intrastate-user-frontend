@@ -64,7 +64,7 @@ const AppNavigation = () => {
         <NavigationContainer>
             <Stack.Navigator
                 screenOptions={{ headerShown: false }}
-                initialRouteName={ScreenNames.SET_COMMUTE as never}
+                initialRouteName={initialRouteName}
             >
                 <Stack.Screen name={ScreenNames.DASHBOARD_SCREEN}>
                     {() => (

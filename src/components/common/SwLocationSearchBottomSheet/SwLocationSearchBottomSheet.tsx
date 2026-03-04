@@ -94,9 +94,9 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
         <BottomSheetScrollView
           contentContainerStyle={[
             styles.content,
-            { paddingBottom: Math.max(insets.bottom, 20) },
+            // { paddingBottom: Math.max(insets.bottom, 20) },
           ]}
-          keyboardShouldPersistTaps="handled"
+          // keyboardShouldPersistTaps="handled"
         >
           <View style={styles.header}>
             <Text varient="semi-bold" style={styles.title}>
@@ -116,7 +116,7 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
             <Image source={ImageSource.searhIcon} style={styles.searchIcon} />
             <BottomSheetTextInput
               placeholder="Search your address"
-              placeholderTextColor={colors.border_3}
+              placeholderTextColor={"#AAAAAA"}
               value={query}
               onChangeText={onChangeQuery}
               style={styles.searchInput}
@@ -135,13 +135,13 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
               <View style={styles.useCurrentLocationIconWrap}>
                 <Image source={ImageSource.gpsIcon} style={styles.useCurrentLocationIcon} />
               </View>
-              <Text style={styles.useCurrentLocationText}>Use current location</Text>
+              <Text varient='semi-bold' style={styles.useCurrentLocationText}>Use current location</Text>
             </TouchableOpacity>
           )}
 
-          <View style={styles.divider} />
+          {/* <View style={styles.divider} /> */}
 
-          <Text style={styles.sectionTitle}>Saved Addresses</Text>
+          <Text varient='semi-bold' style={styles.sectionTitle}>Saved Addresses</Text>
           {savedAddresses.map((item, idx) => (
             <View key={item.id}>
               <TouchableOpacity
@@ -156,15 +156,16 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
                   />
                 </View>
                 <View style={styles.listTextWrap}>
-                  <Text varient="semi-bold" style={styles.listTitle}>
+                  <Text varient="medium" style={styles.listTitle}>
                     {item.title}
                   </Text>
                   {!!item.subtitle && <Text style={styles.listSubtitle}>{item.subtitle}</Text>}
                 </View>
               </TouchableOpacity>
-              {idx !== savedAddresses.length - 1 && <View style={styles.rowSeparator} />}
             </View>
           ))}
+
+          <View style={styles.divider} />
 
           <Text style={styles.sectionTitle}>Recent Searches</Text>
           {recentSearches.map((item, idx) => (

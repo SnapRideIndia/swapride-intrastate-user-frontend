@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, TouchableOpacity, Image, ScrollView } from "react-native";
 import { DrawerContentComponentProps } from "@react-navigation/drawer";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -14,6 +14,7 @@ import { setLogout } from "../../slice/authSlice";
 import { storage } from "../../utils/store";
 import { StorageKeys } from "../../constants/storage/storageKeys";
 import { useLogout } from "../../hooks/useAuth";
+import { setProfileData } from "../../slice/profileSlice";
 
 const drawerItems = [
   {
@@ -86,6 +87,10 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
       console.error("Error of logout ===>", error?.toString());
     }
   }
+
+  useEffect(()=>{
+  dispatch(setProfileData(profileData));
+  },[profileData])
 
   useFocusEffect(React.useCallback(() => {
     console.log("This is refteching again ===>")

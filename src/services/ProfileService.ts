@@ -29,6 +29,8 @@ class ProfileService {
     const url = `${this.baseUrl}/me/travel-preferences`;
     const res = await fetchData<{ home: string | null; office: string | null; officeTimings: string | null }>(url);
 
+    console.log("this is response of travel preference ===>", res)
+
     if (!res.success) {
       handleErrorResponse(res);
     }
