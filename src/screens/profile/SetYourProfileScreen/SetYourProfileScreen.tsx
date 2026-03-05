@@ -71,15 +71,15 @@ const SetYourProfileScreen = () => {
         hasPrefilled.current = true;
         const p = currentProfile as Record<string, unknown>;
         setProfileObj({
-            fullName: (p.fullName as string) ?? '',
-            mobileNumber: (p.mobileNumber as string) ?? '',
-            emailAddress: (p.email as string) ?? '',
-            gender: (p.gender as string) ?? '',
-            dateOfBirth: apiDateToDisplay((p.dateOfBirth as string) ?? ''),
-            bloodGroup: (p.bloodGroup as string) ?? '',
+            fullName: (p?.fullName as string) ?? '',
+            mobileNumber: (p?.mobileNumber as string) ?? '',
+            emailAddress: (p?.email as string) ?? '',
+            gender: (p?.gender as string) ?? '',
+            dateOfBirth: apiDateToDisplay((p?.dateOfBirth as string) ?? ''),
+            bloodGroup: (p?.bloodGroup as string) ?? '',
         });
-        if (p.profileUrl) {
-            setProfileImage(p.profileUrl as string);
+        if (p?.profileUrl) {
+            setProfileImage(p?.profileUrl as string);
         }
     }, [isFromOtp, currentProfile]);
 

@@ -9,20 +9,43 @@ import { SwText as Text } from '../../../components/common/SwText/SwText'
 import { SwPickupDropInputCard } from '../../../components/common/SwPickupDropInputCard/SwPickupDropInputCard'
 import { BottomSheetModal } from '@gorhom/bottom-sheet'
 import { ImageSource } from '../../../constants/images'
-import { TextInput } from 'react-native-gesture-handler'
 import PrimaryButton from '../../../components/common/SwButton/PrimaryButton/PrimaryButton'
 import { SwLocationSearchBottomSheet, SwLocationSearchItem } from '../../../components/common/SwLocationSearchBottomSheet/SwLocationSearchBottomSheet'
+import { fetchData } from '../../../services/ApiUtility'
+import { useDispatch } from 'react-redux'
+import type { AppDispatch } from '../../../store'
+import { setCurrentLocation } from '../../../slice/profileSlice'
+import { getCurrentLocationHelper } from '../../hooks/permissions/geoLocation/helper'
+
+type PlaceSuggestion = {
+    text: string;
+    placeId: string;
+    mainText: string;
+    lat: number;
+    lng: number;
+}
 
 const SetCommuteScreen = () => {
     const { colors } = useTheme();
     const styles = useStyles(colors);
     const navigation = useNavigation();
 
+    const dispatch = useDispatch<AppDispatch>();
+
     const [pickupLocation, setPickupLocation] = useState('');
     const [dropLocation, setDropLocation] = useState('');
     const [activeLocationField, setActiveLocationField] = useState<'pickup' | 'drop'>('pickup');
     const locationSheetRef = useRef<BottomSheetModal>(null);
     const [locationQuery, setLocationQuery] = useState('');
+    const sessionTokenRef = useRef<string | null>(null);
+    const [searchResults, setSearchResults] = useState<SwLocationSearchItem[]>([]);
+
+    const getSessionToken = useCallback(() => {
+        if (!sessionTokenRef.current) {
+            sessionTokenRef.current = Math.random().toString(36).substring(2, 15);
+        }
+        return sessionTokenRef.current;
+    }, []);
 
     const savedAddresses = useMemo<SwLocationSearchItem[]>(
         () => [
@@ -54,6 +77,54 @@ const SetCommuteScreen = () => {
         [],
     );
 
+    const handleUseCurrentLocation = useCallback(async () => {
+        const position = await getCurrentLocationHelper();
+        if (!position || !position.coords) {
+            return;
+        }
+
+        const { latitude, longitude } = position.coords;
+        dispatch(setCurrentLocation({ latitude, longitude }));
+    }, [dispatch]);
+
+    useEffect(() => {
+        if (!locationQuery || locationQuery.trim().length < 2) {
+            setSearchResults([]);
+            return;
+        }
+
+        const token = getSessionToken();
+
+        const timeoutId = setTimeout(() => {
+            (async () => {
+                const res = await fetchData<PlaceSuggestion[]>('/search/place-autocomplete', {
+                    params: {
+                        input: locationQuery,
+                        sessionToken: token,
+                    },
+                });
+
+                if (!res.success || !res.data) {
+                    setSearchResults([]);
+                    return;
+                }
+
+                const items: SwLocationSearchItem[] = res.data.map(place => ({
+                    id: place.placeId,
+                    title: place.mainText || place.text,
+                    subtitle: place.text,
+                    iconSource: ImageSource.searhIcon,
+                }));
+
+                setSearchResults(items);
+            })();
+        }, 400);
+
+        return () => {
+            clearTimeout(timeoutId);
+        };
+    }, [locationQuery, getSessionToken]);
+
     const handleSelectLocation = useCallback(
         (item: SwLocationSearchItem) => {
             if (activeLocationField === 'pickup') setPickupLocation(item.title);
@@ -66,6 +137,8 @@ const SetCommuteScreen = () => {
     const openLocationSheet = useCallback((field: 'pickup' | 'drop') => {
         setActiveLocationField(field);
         setLocationQuery('');
+        setSearchResults([]);
+        sessionTokenRef.current = null;
         locationSheetRef.current?.present();
     }, []);
 
@@ -127,14 +200,17 @@ const SetCommuteScreen = () => {
                     title={activeLocationField === 'pickup' ? 'Search Pickup Address' : 'Search Drop Address'}
                     query={locationQuery}
                     onChangeQuery={setLocationQuery}
+                    searchResults={searchResults}
                     showUseCurrentLocation
-                    onPressUseCurrentLocation={() => {
-                        // Hook into GPS later if needed
-                    }}
+                    onPressUseCurrentLocation={handleUseCurrentLocation}
                     savedAddresses={savedAddresses}
                     recentSearches={recentSearches}
                     onPressItem={handleSelectLocation}
-                    onClose={() => setLocationQuery('')}
+                    onClose={() => {
+                        setLocationQuery('');
+                        setSearchResults([]);
+                        sessionTokenRef.current = null;
+                    }}
                 />
 
             </ScrollView>

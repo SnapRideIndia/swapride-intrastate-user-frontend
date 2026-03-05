@@ -133,5 +133,62 @@ export const useStyles = (colors: ColorsType) =>
       backgroundColor: colors.border_4,
       marginLeft: 38,
     },
+    // Dropdown container for suggestions (positioned over content below)
+    dropdownContainer: {
+      position: 'absolute',
+      top: 52, // just below the search input (height 45 + small gap)
+      left: 0,
+      right: 0,
+      borderWidth: 1,
+      borderColor: colors.border_3,
+      borderRadius: 12,
+      backgroundColor: colors.background_primary,
+      maxHeight: 280,
+      overflow: 'hidden',
+      elevation: 3,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 8,
+      zIndex: 10,
+    },
+    dropdownItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
+      paddingVertical: 12,
+      paddingHorizontal: 14,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: colors.border_4,
+    },
+    dropdownItemLast: {
+      borderBottomWidth: 0,
+    },
+    dropdownItemIcon: {
+      width: 36,
+      height: 36,
+      borderRadius: 999,
+      backgroundColor: '#ECEFFA',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    dropdownItemIconImg: {
+      width: 16,
+      height: 16,
+      tintColor: '#1751BC',
+    },
+    dropdownItemTextWrap: {
+      flex: 1,
+    },
+    dropdownItemTitle: {
+      fontSize: 14,
+      color: colors.contentPrimary,
+      lineHeight: 20,
+    },
+    dropdownItemSubtitle: {
+      fontSize: 12,
+      color: colors.contenttertiary,
+      marginTop: 2,
+    },
   });
 

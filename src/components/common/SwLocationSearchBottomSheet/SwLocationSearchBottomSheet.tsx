@@ -1,6 +1,6 @@
 import React, { forwardRef, useCallback, useMemo } from 'react';
 import type { ImageSourcePropType } from 'react-native';
-import { Image, TextInput, TouchableOpacity, View } from 'react-native';
+import { Image, ScrollView, TouchableOpacity, View } from 'react-native';
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
@@ -26,6 +26,9 @@ type Props = {
   query: string;
   onChangeQuery: (text: string) => void;
 
+  // Autocomplete search results shown as dropdown suggestions
+  searchResults?: SwLocationSearchItem[];
+
   showUseCurrentLocation?: boolean;
   onPressUseCurrentLocation?: () => void;
 
@@ -42,6 +45,7 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
       title,
       query,
       onChangeQuery,
+      searchResults = [],
       showUseCurrentLocation = true,
       onPressUseCurrentLocation,
       savedAddresses = [],
@@ -112,18 +116,60 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
             </TouchableOpacity>
           </View>
 
-          <View style={styles.searchContainer}>
-            <Image source={ImageSource.searhIcon} style={styles.searchIcon} />
-            <BottomSheetTextInput
-              placeholder="Search your address"
-              placeholderTextColor={"#AAAAAA"}
-              value={query}
-              onChangeText={onChangeQuery}
-              style={styles.searchInput}
-              autoCorrect={false}
-              autoCapitalize="none"
-              returnKeyType="search"
-            />
+          {/* Search input with absolutely positioned dropdown */}
+          <View style={{ position: 'relative' }}>
+            <View style={styles.searchContainer}>
+              <Image source={ImageSource.searhIcon} style={styles.searchIcon} />
+              <BottomSheetTextInput
+                placeholder="Search your address"
+                placeholderTextColor={"#AAAAAA"}
+                value={query}
+                onChangeText={onChangeQuery}
+                style={styles.searchInput}
+                autoCorrect={false}
+                autoCapitalize="none"
+                returnKeyType="search"
+              />
+            </View>
+
+            {!!query && searchResults.length > 0 && (
+              <View style={styles.dropdownContainer}>
+                <ScrollView
+                  keyboardShouldPersistTaps="handled"
+                  showsVerticalScrollIndicator={true}
+                  nestedScrollEnabled
+                >
+                  {searchResults.map((item, idx) => (
+                    <TouchableOpacity
+                      key={item.id}
+                      activeOpacity={0.85}
+                      onPress={() => onPressItem?.(item)}
+                      style={[
+                        styles.dropdownItem,
+                        idx === searchResults.length - 1 && styles.dropdownItemLast,
+                      ]}
+                    >
+                      <View style={styles.dropdownItemIcon}>
+                        <Image
+                          source={item.iconSource ?? ImageSource.searhIcon}
+                          style={styles.dropdownItemIconImg}
+                        />
+                      </View>
+                      <View style={styles.dropdownItemTextWrap}>
+                        <Text varient="medium" style={styles.dropdownItemTitle} numberOfLines={1}>
+                          {item.title}
+                        </Text>
+                        {!!item.subtitle && (
+                          <Text style={styles.dropdownItemSubtitle} numberOfLines={2}>
+                            {item.subtitle}
+                          </Text>
+                        )}
+                      </View>
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+              </View>
+            )}
           </View>
 
           {showUseCurrentLocation && (
