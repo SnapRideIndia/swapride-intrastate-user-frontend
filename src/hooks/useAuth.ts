@@ -1,5 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
 import AuthService from "../services/AuthService";
+import { useDispatch } from "react-redux";
+import { storage } from "../utils/store";
+import { StorageKeys } from "../constants/storage/storageKeys";
+import { setAccessToken, setRefreshToken } from "../slice/authSlice";
 
 export const useLogin = (onSuccess: (data: any) => void, onError: (error: any) => void) => {
   return useMutation({
@@ -25,15 +29,6 @@ export const useRegisterUser = (onSuccess: (data: any) => void, onError: (error:
   });
 };
 
-<<<<<<< Updated upstream
-export const useLogout = (onSuccess: (data: any) => void, onError: (error: any) => void) => {
-  return useMutation({
-    mutationFn: AuthService.logout,
-    onSuccess,
-    onError,
-  });
-};
-=======
 export const useLogout = (
     onSuccess: (data: any) => void,
     onError: (error: any) => void
@@ -73,4 +68,3 @@ export const useRefreshToken = (
         onError,
     });
 };
->>>>>>> Stashed changes
