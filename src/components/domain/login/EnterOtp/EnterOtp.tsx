@@ -74,7 +74,7 @@ const EnterOtp = () => {
     <>
       <View style={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.title} varient="semi-bold">
+          <Text style={styles.title} variant="semi-bold">
             Enter OTP
           </Text>
           <TouchableOpacity onPress={handlePressCross}>
@@ -87,11 +87,11 @@ const EnterOtp = () => {
           <View style={styles.resendOtpContainer}>
             <View style={[styles.resendOtpContainer, { gap: 8 }]}>
               <Image source={ImageSource.call} style={styles.callIcon} />
-              <Text varient="semi-bold" style={styles.resend}>
+              <Text variant="semi-bold" style={styles.resend}>
                 Get OTP on Call
               </Text>
             </View>
-            <Text varient="semi-bold">Resend OTP</Text>
+            <Text variant="semi-bold">Resend OTP</Text>
           </View>
         </View>
       </View>

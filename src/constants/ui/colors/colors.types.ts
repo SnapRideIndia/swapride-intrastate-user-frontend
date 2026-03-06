@@ -6,6 +6,7 @@ export type ColorsType = {
   background_green: string;
   background_black: string;
   background_gray: string;
+  background_success_light: string;
 
   // common
   primary: string;
@@ -17,6 +18,7 @@ export type ColorsType = {
   contentSecondary: string;
   contenttertiary: string;
   contentGreen: string;
+  contentSuccess: string;
   contentRed: string;
   contentDisabled: string;
   contentBlue: string;

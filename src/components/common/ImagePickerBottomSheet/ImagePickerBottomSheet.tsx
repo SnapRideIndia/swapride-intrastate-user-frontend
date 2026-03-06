@@ -32,14 +32,14 @@ export const ImagePickerBottomSheet = ({ visible, onClose, onSelectCamera, onSel
       <Pressable style={styles.overlay} onPress={onClose}>
         <Pressable style={[styles.sheet, { backgroundColor: colors.background_primary }]} onPress={e => e.stopPropagation()}>
           <View style={[styles.handle, { backgroundColor: colors.border_3 }]} />
-          <Text varient="semi-bold" style={[styles.title, { color: colors.contentPrimary }]}>
+          <Text variant="semi-bold" style={[styles.title, { color: colors.contentPrimary }]}>
             Choose photo
           </Text>
           <View style={styles.optionsContainer}>
             <TouchableOpacity style={[styles.option, { borderColor: colors.border_1 }]} onPress={handleCamera} activeOpacity={0.7}>
               <FontAwesome6 name="camera" size={28} color={colors.primary} />
               <View style={styles.optionTextContainer}>
-                <Text varient="semi-bold" style={[styles.optionText, { color: colors.contentPrimary }]}>
+                <Text variant="semi-bold" style={[styles.optionText, { color: colors.contentPrimary }]}>
                   Take Photo
                 </Text>
                 <Text style={[styles.optionSubtext, { color: colors.contentSecondary }]}>Use camera to capture</Text>
@@ -48,7 +48,7 @@ export const ImagePickerBottomSheet = ({ visible, onClose, onSelectCamera, onSel
             <TouchableOpacity style={[styles.option, { borderColor: colors.border_1 }]} onPress={handleGallery} activeOpacity={0.7}>
               <FontAwesome6 name="images" size={28} color={colors.primary} />
               <View style={styles.optionTextContainer}>
-                <Text varient="semi-bold" style={[styles.optionText, { color: colors.contentPrimary }]}>
+                <Text variant="semi-bold" style={[styles.optionText, { color: colors.contentPrimary }]}>
                   Choose from Gallery
                 </Text>
                 <Text style={[styles.optionSubtext, { color: colors.contentSecondary }]}>Pick from your photos</Text>

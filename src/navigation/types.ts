@@ -12,4 +12,8 @@ export type RootStackParamList = {
   [ScreenNames.HOME_SCREEN]: undefined;
   [ScreenNames.WALLET_SCREEN]: undefined;
   [ScreenNames.HISTORY_SCREEN]: undefined;
+  [ScreenNames.CONFIRM_BOOKING_DETAILS]: undefined;
+  [ScreenNames.BOOKING_OPTIONS]: undefined;
+  [ScreenNames.PAYMENT_OPTIONS]: undefined;
+  [ScreenNames.BOOKING_SUCCESS]: undefined;
 };

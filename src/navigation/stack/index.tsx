@@ -22,6 +22,10 @@ import TicketDetailScreen from '../../screens/rides/TicketDetailScreen/TicketDet
 import { RootStackParamList } from '../types';
 import SetYourProfileScreen from '../../screens/profile/SetYourProfileScreen/SetYourProfileScreen';
 import SetCommuteScreen from '../../screens/home/SetCommuteScreen/SetCommuteScreen';
+import ConfirmBookingDetails from '../../screens/Bookings/ConfirmBookingDetails/ConfirmBookingDetails';
+import BookingOptions from '../../screens/Bookings/BookingOptions/BookingOptions';
+import PaymentOptions from '../../screens/Bookings/PaymentOptions/PaymentOptions';
+import BookingSuccess from '../../screens/Bookings/BookingSuccess/BookingSuccess';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -80,6 +84,10 @@ const AppNavigation = () => {
         <Stack.Screen name={ScreenNames.NOTIFICATION_SCREEN as never} component={NotificationScreen} />
         <Stack.Screen name={ScreenNames.SET_PROFILE_SCREEN as never} component={SetYourProfileScreen} />
         <Stack.Screen name={ScreenNames.SET_COMMUTE as never} component={SetCommuteScreen} />
+        <Stack.Screen name={ScreenNames.CONFIRM_BOOKING_DETAILS as never} component={ConfirmBookingDetails} />
+        <Stack.Screen name={ScreenNames.BOOKING_OPTIONS as never} component={BookingOptions} />
+        <Stack.Screen name={ScreenNames.PAYMENT_OPTIONS as never} component={PaymentOptions} />
+        <Stack.Screen name={ScreenNames.BOOKING_SUCCESS as never} component={BookingSuccess} />
       </Stack.Navigator>
     </NavigationContainer>
   );

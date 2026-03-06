@@ -54,14 +54,14 @@ const NotificationCard = () => {
               alignItems: 'center',
             }}
           >
-            <Text varient="semi-bold" style={styles.title}>
+            <Text variant="semi-bold" style={styles.title}>
               Pickup in 5 minutes
             </Text>
-            <Text varient="semi-bold" style={styles.min}>
+            <Text variant="semi-bold" style={styles.min}>
               10 Min ago
             </Text>
           </View>
-          <Text varient="medium" style={styles.subTitle}>
+          <Text variant="medium" style={styles.subTitle}>
             Please wait at the Main Gate pickup point.
           </Text>
         </View>

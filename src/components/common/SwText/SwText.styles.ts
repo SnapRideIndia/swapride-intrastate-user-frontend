@@ -2,10 +2,10 @@ import { StyleSheet } from 'react-native';
 import { getFontFamilyByFW } from './SwText';
 import { ColorsType } from '../../../constants/ui/colors/colors.types';
 
-export const useStyles = (colors: ColorsType, varient: 'regular' | 'bold' | 'semi-bold' | 'medium') =>
+export const useStyles = (colors: ColorsType, variant: 'regular' | 'bold' | 'semi-bold' | 'medium') =>
   StyleSheet.create({
     textStyle: {
-      fontFamily: getFontFamilyByFW(varient),
+      fontFamily: getFontFamilyByFW(variant),
       color: colors.contentPrimary,
       fontSize: 14,
     },

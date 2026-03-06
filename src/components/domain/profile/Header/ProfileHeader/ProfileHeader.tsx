@@ -35,16 +35,16 @@ const ProfileHeader = ({ profileData }: { profileData: any }) => {
 
       <View style={styles.detailsContainer}>
         <View style={styles.detailsSection}>
-          <Text varient="semi-bold" style={[styles.detailtext, { marginBottom: 8, fontSize: 20 }]}>
+          <Text variant="semi-bold" style={[styles.detailtext, { marginBottom: 8, fontSize: 20 }]}>
             {profileData?.fullName}
           </Text>
-          <Text varient="medium" style={[styles.detailtext]}>
+          <Text variant="medium" style={[styles.detailtext]}>
             {profileData?.mobileNumber}
           </Text>
-          <Text varient="medium" style={[styles.detailtext]}>
+          <Text variant="medium" style={[styles.detailtext]}>
             {profileData?.email}
           </Text>
-          <Text varient="medium" style={[styles.detailtext]}>
+          <Text variant="medium" style={[styles.detailtext]}>
             {profileData?.gender}
           </Text>
         </View>

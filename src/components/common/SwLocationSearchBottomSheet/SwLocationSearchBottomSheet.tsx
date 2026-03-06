@@ -97,7 +97,7 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
           // keyboardShouldPersistTaps="handled"
         >
           <View style={styles.header}>
-            <Text varient="semi-bold" style={styles.title}>
+            <Text variant="semi-bold" style={styles.title}>
               {title}
             </Text>
             <TouchableOpacity
@@ -140,7 +140,7 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
                         <Image source={item.iconSource ?? ImageSource.searhIcon} style={styles.dropdownItemIconImg} />
                       </View>
                       <View style={styles.dropdownItemTextWrap}>
-                        <Text varient="medium" style={styles.dropdownItemTitle} numberOfLines={1}>
+                        <Text variant="medium" style={styles.dropdownItemTitle} numberOfLines={1}>
                           {item.title}
                         </Text>
                         {!!item.subtitle && (
@@ -161,7 +161,7 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
               <View style={styles.useCurrentLocationIconWrap}>
                 <Image source={ImageSource.gpsIcon} style={styles.useCurrentLocationIcon} />
               </View>
-              <Text varient="semi-bold" style={styles.useCurrentLocationText}>
+              <Text variant="semi-bold" style={styles.useCurrentLocationText}>
                 Use current location
               </Text>
             </TouchableOpacity>
@@ -169,7 +169,7 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
 
           {/* <View style={styles.divider} /> */}
 
-          <Text varient="semi-bold" style={styles.sectionTitle}>
+          <Text variant="semi-bold" style={styles.sectionTitle}>
             Saved Addresses
           </Text>
           {savedAddresses.map((item, idx) => (
@@ -179,7 +179,7 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
                   <Image source={item.iconSource ?? ImageSource.Home} style={styles.listIcon} />
                 </View>
                 <View style={styles.listTextWrap}>
-                  <Text varient="medium" style={styles.listTitle}>
+                  <Text variant="medium" style={styles.listTitle}>
                     {item.title}
                   </Text>
                   {!!item.subtitle && <Text style={styles.listSubtitle}>{item.subtitle}</Text>}
@@ -198,7 +198,7 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
                   <Image source={item.iconSource ?? ImageSource.clock} style={styles.listIcon} />
                 </View>
                 <View style={styles.listTextWrap}>
-                  <Text varient="semi-bold" style={styles.listTitle}>
+                  <Text variant="semi-bold" style={styles.listTitle}>
                     {item.title}
                   </Text>
                   {!!item.subtitle && <Text style={styles.listSubtitle}>{item.subtitle}</Text>}

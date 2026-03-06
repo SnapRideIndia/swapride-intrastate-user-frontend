@@ -37,7 +37,7 @@ export const Point: React.FC<PointProps> = ({
       <View style={styles.contentColumn}>
         {/* Header: Time and Direction */}
         <View style={styles.headerRow}>
-          <Text varient="bold" style={styles.timeText}>
+          <Text variant="bold" style={styles.timeText}>
             {time}
           </Text>
           <TouchableOpacity style={styles.directionButton} onPress={onDirectionPress}>
@@ -62,19 +62,19 @@ export const Point: React.FC<PointProps> = ({
                 }}
               />
             </View>
-            <Text varient="semi-bold" style={styles.directionText}>
+            <Text variant="semi-bold" style={styles.directionText}>
               Direction
             </Text>
           </TouchableOpacity>
         </View>
 
         {/* Title */}
-        <Text varient="bold" style={styles.title}>
+        <Text variant="bold" style={styles.title}>
           {title}
         </Text>
 
         {/* Description */}
-        <Text varient="medium" style={styles.description}>
+        <Text variant="medium" style={styles.description}>
           {description}
         </Text>
 

@@ -21,7 +21,7 @@ export const DriverDetail: React.FC<DriverDetailProps> = ({ name, plate, experie
 
   return (
     <View style={styles.container}>
-      <Text varient="bold" style={styles.caption}>
+      <Text variant="bold" style={styles.caption}>
         Your swapride caption
       </Text>
 
@@ -31,11 +31,11 @@ export const DriverDetail: React.FC<DriverDetailProps> = ({ name, plate, experie
         </View>
         <View style={styles.infoContainer}>
           <View style={styles.namePlateRow}>
-            <Text varient="bold" style={styles.nameText}>
+            <Text variant="bold" style={styles.nameText}>
               {name}
             </Text>
             <View style={styles.dotSeparator} />
-            <Text varient="semi-bold" style={styles.plateText}>
+            <Text variant="semi-bold" style={styles.plateText}>
               {plate}
             </Text>
           </View>
@@ -43,19 +43,19 @@ export const DriverDetail: React.FC<DriverDetailProps> = ({ name, plate, experie
           <View style={styles.badgesRow}>
             <View style={styles.badge}>
               <Image source={ImageSource.steering} style={styles.badgeIcon} />
-              <Text varient="regular" style={styles.badgeText}>
+              <Text variant="regular" style={styles.badgeText}>
                 {experience}
               </Text>
             </View>
             <View style={styles.badge}>
               <Image source={ImageSource.languages} style={styles.badgeIcon} />
-              <Text varient="regular" style={styles.badgeText}>
+              <Text variant="regular" style={styles.badgeText}>
                 {languages}
               </Text>
             </View>
             <View style={styles.badge}>
               <Image source={ImageSource.mapPin} style={styles.badgeIcon} />
-              <Text varient="regular" style={styles.badgeText}>
+              <Text variant="regular" style={styles.badgeText}>
                 {location}
               </Text>
             </View>
@@ -65,10 +65,10 @@ export const DriverDetail: React.FC<DriverDetailProps> = ({ name, plate, experie
 
       <View style={styles.aboutSection}>
         <View style={styles.aboutContent}>
-          <Text varient="bold" style={styles.aboutTitle}>
+          <Text variant="bold" style={styles.aboutTitle}>
             About him
           </Text>
-          <Text varient="regular" style={styles.aboutDescription}>
+          <Text variant="regular" style={styles.aboutDescription}>
             {aboutDescription}
           </Text>
         </View>

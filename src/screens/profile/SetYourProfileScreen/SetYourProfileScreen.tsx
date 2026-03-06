@@ -185,10 +185,10 @@ const SetYourProfileScreen = () => {
         <View style={styles.inputContainer}>
           {true && (
             <View style={{ gap: 10 }}>
-              <Text varient="semi-bold" style={styles.sectionTitle}>
+              <Text variant="semi-bold" style={styles.sectionTitle}>
                 Basic Details
               </Text>
-              <Text varient="medium" style={[styles.sectionSubtitle, { width: 293 }]}>
+              <Text variant="medium" style={[styles.sectionSubtitle, { width: 293 }]}>
                 This will help us find the best stops and timings for your commute
               </Text>
             </View>
@@ -257,10 +257,10 @@ const SetYourProfileScreen = () => {
         {!isFromOtp && (
           <View style={styles.inputContainer}>
             <View style={{ gap: 10 }}>
-              <Text varient="semi-bold" style={styles.sectionTitle}>
+              <Text variant="semi-bold" style={styles.sectionTitle}>
                 Travel Preferences
               </Text>
-              <Text varient="medium" style={styles.sectionSubtitle}>
+              <Text variant="medium" style={styles.sectionSubtitle}>
                 This will help us find the best stops and timings for your commute
               </Text>
             </View>

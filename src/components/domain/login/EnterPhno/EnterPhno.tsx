@@ -78,7 +78,7 @@ const EnterPhno = () => {
           </Text>
         </View>
         <View style={styles.spacer} />
-        <Text varient="bold" style={styles.linkText} onPress={handlePressPhno}>
+        <Text variant="bold" style={styles.linkText} onPress={handlePressPhno}>
           Login using Password
         </Text>
       </View>

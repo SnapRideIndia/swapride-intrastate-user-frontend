@@ -25,7 +25,7 @@ const FullRouteHeader = ({ title, onClose }: Props) => {
   return (
     <SafeAreaView edges={['top']} style={styles.container}>
       <View style={styles.inner}>
-        <Text varient="medium" style={styles.title}>
+        <Text variant="medium" style={styles.title}>
           {title}
         </Text>
         <TouchableOpacity onPress={handleClose} hitSlop={10} activeOpacity={0.7}>

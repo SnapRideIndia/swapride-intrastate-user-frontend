@@ -50,7 +50,7 @@ const HomeScreen = () => {
           <OptionCard imgUri={ImageSource.shuttel} title="Shuttle" onPress={() => handlePressOptionCard('shuttel')} />
         </View>
         <View style={styles.lowerSection}>
-          <Text style={styles.optionCardContainerTitle} varient="semi-bold">
+          <Text style={styles.optionCardContainerTitle} variant="semi-bold">
             Your Active Wallet
           </Text>
           <View style={styles.optionCardContainer}>

@@ -72,7 +72,7 @@ const TopDateTabBar: React.FC<Props> = ({ tabs, activeIndex, onTabPress }) => {
               style={styles.tabItem}
             >
               <Text
-                varient={isActive ? 'semi-bold' : 'regular'}
+                variant={isActive ? 'semi-bold' : 'regular'}
                 style={[styles.tabTitle, isActive && styles.tabTitleActive]}
                 numberOfLines={1}
               >

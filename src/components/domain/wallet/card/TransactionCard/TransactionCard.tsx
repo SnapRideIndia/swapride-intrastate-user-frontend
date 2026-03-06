@@ -19,14 +19,14 @@ const TransactionCard = ({ type, amount, date }: ITransactionCardProps) => {
   return (
     <View style={styles.container}>
       <View style={styles.upperContainer}>
-        <Text varient="medium" style={styles.typeText}>
+        <Text variant="medium" style={styles.typeText}>
           {type}
         </Text>
-        <Text varient="bold" style={styles.amountText}>
+        <Text variant="bold" style={styles.amountText}>
           {transactionType === 'credit' ? '+ ' : '- '}₹{amount}
         </Text>
       </View>
-      <Text varient="regular" style={styles.dateText}>
+      <Text variant="regular" style={styles.dateText}>
         {formatTransactionDate(date)}
       </Text>
     </View>

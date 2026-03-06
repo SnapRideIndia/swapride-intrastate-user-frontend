@@ -8,6 +8,7 @@ export const lightColors: ColorsType = {
   background_lightBlue: '#eceffa',
   background_black: '#000000',
   background_gray: '#E0E0E0',
+  background_success_light: '#dcfce7',
 
   // common
   primary: '#072A6A',
@@ -20,6 +21,7 @@ export const lightColors: ColorsType = {
   contentSecondary: '#312602',
   contenttertiary: '#C9C9C9',
   contentGreen: '#06B217',
+  contentSuccess: '#22C55E',
   contentRed: '#BE1E2D',
   contentDisabled: '#D5d5d5',
   contentBlue: '#0A9EE3',
@@ -82,6 +84,7 @@ export const darkColors: ColorsType = {
   background_lightBlue: '#eceffa',
   background_black: '#0000',
   background_gray: '#E0E0E0',
+  background_success_light: '#dcfce7',
 
   // common
   primary: '#072A6A',
@@ -93,6 +96,7 @@ export const darkColors: ColorsType = {
   contentSecondary: '#312602',
   contenttertiary: '#C9C9C9',
   contentGreen: '#06B217',
+  contentSuccess: '#22C55E',
   contentRed: '#BE1E2D',
   contentDisabled: '#D5d5d5',
   contentBlue: '#0A9EE3',

@@ -18,6 +18,14 @@ export const useStyles = (colors: ColorsType) =>
       alignItems: 'center',
       borderBottomWidth: 1,
     },
+    roundedContainer: {
+      borderWidth: 1,
+      borderColor: colors.border_3,
+      borderRadius: 12,
+      borderBottomWidth: 1,
+      paddingHorizontal: 16,
+      marginTop: 0,
+    },
     phNoStyle: {
       flexDirection: 'row',
       gap: 5,

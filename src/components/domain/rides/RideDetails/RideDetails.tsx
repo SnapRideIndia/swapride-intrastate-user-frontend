@@ -27,12 +27,12 @@ const RideDetails: React.FC<RideDetailsProps> = ({ pickupData, dropoffData, onVi
   return (
     <View style={styles.container}>
       <View style={[styles.contentWrapper, styles.flexRow]}>
-        <Text varient="bold" style={[styles.primaryFont, styles.title]}>
+        <Text variant="bold" style={[styles.primaryFont, styles.title]}>
           Ride Details
         </Text>
 
         <View style={styles.shareContainer}>
-          <Text varient="bold" style={[styles.primaryFont, styles.shareText]}>
+          <Text variant="bold" style={[styles.primaryFont, styles.shareText]}>
             Share
           </Text>
           <Image source={ImageSource.shareBlue} style={styles.shareIcon} />
@@ -44,7 +44,7 @@ const RideDetails: React.FC<RideDetailsProps> = ({ pickupData, dropoffData, onVi
         <View style={styles.tabsWrapper}>
           <TouchableOpacity onPress={() => setActiveTab('pickup')} style={styles.tabItem}>
             <Text
-              varient={activeTab === 'pickup' ? 'bold' : 'medium'}
+              variant={activeTab === 'pickup' ? 'bold' : 'medium'}
               style={[styles.tabText, activeTab === 'pickup' && styles.activeTabText]}
             >
               Pickup
@@ -54,7 +54,7 @@ const RideDetails: React.FC<RideDetailsProps> = ({ pickupData, dropoffData, onVi
 
           <TouchableOpacity onPress={() => setActiveTab('dropoff')} style={styles.tabItem}>
             <Text
-              varient={activeTab === 'dropoff' ? 'bold' : 'medium'}
+              variant={activeTab === 'dropoff' ? 'bold' : 'medium'}
               style={[styles.tabText, activeTab === 'dropoff' && styles.activeTabText]}
             >
               Dropoff
@@ -64,7 +64,7 @@ const RideDetails: React.FC<RideDetailsProps> = ({ pickupData, dropoffData, onVi
         </View>
 
         <TouchableOpacity onPress={onViewAllStops} style={styles.viewAllStopsContainer}>
-          <Text varient="bold" style={[styles.primaryFont, styles.viewAllStopsText]}>
+          <Text variant="bold" style={[styles.primaryFont, styles.viewAllStopsText]}>
             View all stops
           </Text>
           <Image source={ImageSource.chevron} style={styles.chevronIcon} />

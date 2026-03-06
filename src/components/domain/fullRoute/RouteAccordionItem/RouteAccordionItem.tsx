@@ -47,26 +47,26 @@ const RouteAccordionItem = ({ step, isOpen, isFirst, isLast, onToggle }: Props) 
         <TouchableOpacity activeOpacity={0.8} onPress={hasBody ? onToggle : undefined} style={styles.headerRow}>
           <View style={styles.headerTextCol}>
             {step.label ? (
-              <Text varient="semi-bold" style={styles.label}>
+              <Text variant="semi-bold" style={styles.label}>
                 {step.label}
               </Text>
             ) : null}
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 21 }}>
-              <Text varient="medium" style={styles.title} numberOfLines={1}>
+              <Text variant="medium" style={styles.title} numberOfLines={1}>
                 {step.title}
               </Text>
 
               {step.showDirectionsCta && isOpen ? (
                 <TouchableOpacity activeOpacity={0.85} style={styles.directionsBtn}>
                   <Image source={ImageSource.direction} style={styles.directionsIcon} />
-                  <Text varient="medium" style={styles.directionsText}>
+                  <Text variant="medium" style={styles.directionsText}>
                     Directions
                   </Text>
                 </TouchableOpacity>
               ) : null}
             </View>
             {step.subtitle ? (
-              <Text varient="medium" style={styles.subtitle} numberOfLines={1}>
+              <Text variant="medium" style={styles.subtitle} numberOfLines={1}>
                 {step.subtitle}
               </Text>
             ) : null}
@@ -80,7 +80,7 @@ const RouteAccordionItem = ({ step, isOpen, isFirst, isLast, onToggle }: Props) 
         {isOpen && hasBody ? (
           <Animated.View entering={FadeIn.duration(120)} exiting={FadeOut.duration(120)} style={styles.body}>
             {step.description ? (
-              <Text varient="medium" style={styles.description}>
+              <Text variant="medium" style={styles.description}>
                 {step.description}
               </Text>
             ) : null}

@@ -78,13 +78,13 @@ const Register = () => {
         />
         <View>
           <TextInput title={'Set Password'} isPhno={false} onChangeText={text => handleChange('password', text)} />
-          <Text style={styles.forgotPassword} varient="bold">
+          <Text style={styles.forgotPassword} variant="bold">
             Forgot Password?
           </Text>
         </View>
         <View style={styles.spacer} />
 
-        <Text style={styles.loginPhno} varient="bold">
+        <Text style={styles.loginPhno} variant="bold">
           Login using phone number
         </Text>
       </View>

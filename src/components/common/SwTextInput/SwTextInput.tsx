@@ -5,24 +5,27 @@ import { useStyles } from './SwTextInput.styles';
 import { SwText as Text } from '../SwText/SwText';
 
 interface IInputProps extends TextInputProps {
-  title: string;
+  title?: string;
   isPhno?: boolean;
   renderRightIcon?: () => ReactNode;
   renderTitleIcon?: () => ReactNode;
+  variant?: 'default' | 'rounded';
 }
 
-export const SwTextInput = (props: IInputProps) => {
+export const SwTextInput = ({ variant = 'default', ...props }: IInputProps) => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
   return (
     <View style={styles.inputOuterContainer}>
-      <View style={styles.iconWithTitle}>
-        {props.renderTitleIcon?.()}
-        <Text varient="semi-bold" style={styles.title}>
-          {props.title}
-        </Text>
-      </View>
-      <View style={[styles.inputInnerContainer, props.isPhno && styles.phNoStyle]}>
+      {props.title ? (
+        <View style={styles.iconWithTitle}>
+          {props.renderTitleIcon?.()}
+          <Text variant="semi-bold" style={styles.title}>
+            {props.title}
+          </Text>
+        </View>
+      ) : null}
+      <View style={[styles.inputInnerContainer, variant === 'rounded' && styles.roundedContainer, props.isPhno && styles.phNoStyle]}>
         {props.isPhno && <Text>+91 | </Text>}
         <TextInput style={styles.inputStyle} {...props} />
         {props.renderRightIcon?.()}

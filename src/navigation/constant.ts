@@ -18,4 +18,8 @@ export const ScreenNames = {
   FULL_ROUTE_SCREEN: 'FullRouteScreen',
   NOTIFICATION_SCREEN: 'NotificationScreen',
   SET_COMMUTE: 'SetCommuteScreen',
+  CONFIRM_BOOKING_DETAILS: 'ConfirmBookingDetailsScreen',
+  BOOKING_OPTIONS: 'BookingOptionsScreen',
+  PAYMENT_OPTIONS: 'PaymentOptionsScreen',
+  BOOKING_SUCCESS: 'BookingSuccessScreen',
 } as const;
