@@ -22,7 +22,7 @@ export const useStyles = (colors: ColorsType) =>
     title: {
       fontSize: 20,
       color: colors.contentPrimary,
-      lineHeight: 20
+      lineHeight: 20,
     },
     closeButton: {
       padding: 6,
@@ -39,7 +39,7 @@ export const useStyles = (colors: ColorsType) =>
     searchContainer: {
       height: 45,
       borderWidth: 0.4,
-      borderColor: "#00000033",
+      borderColor: '#00000033',
       borderRadius: 15,
       paddingHorizontal: 12,
       // paddingVertical: 6,
@@ -47,7 +47,7 @@ export const useStyles = (colors: ColorsType) =>
       alignItems: 'center',
       gap: 8,
       backgroundColor: colors.background_primary,
-      elevation:2
+      elevation: 2,
     },
     searchIcon: {
       width: 24,
@@ -73,7 +73,7 @@ export const useStyles = (colors: ColorsType) =>
       borderRadius: 999,
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: "#ECEFFA",
+      backgroundColor: '#ECEFFA',
     },
     useCurrentLocationIcon: {
       width: 22,
@@ -82,7 +82,7 @@ export const useStyles = (colors: ColorsType) =>
     },
     useCurrentLocationText: {
       fontSize: 14,
-      color: "#1751BC",
+      color: '#1751BC',
     },
     divider: {
       height: StyleSheet.hairlineWidth,
@@ -91,7 +91,7 @@ export const useStyles = (colors: ColorsType) =>
     },
     sectionTitle: {
       marginTop: 23,
-      marginBottom:12,
+      marginBottom: 12,
       fontSize: 13,
       color: colors.contentPrimary,
       textTransform: 'lowercase',
@@ -106,14 +106,14 @@ export const useStyles = (colors: ColorsType) =>
       width: 45,
       height: 45,
       borderRadius: 999,
-      backgroundColor: "#ECEFFA",
+      backgroundColor: '#ECEFFA',
       alignItems: 'center',
       justifyContent: 'center',
     },
     listIcon: {
       width: 18,
       height: 18,
-      tintColor: "#1751BC",
+      tintColor: '#1751BC',
     },
     listTextWrap: {
       flex: 1,
@@ -122,7 +122,7 @@ export const useStyles = (colors: ColorsType) =>
     listTitle: {
       fontSize: 14,
       color: colors.contentPrimary,
-      lineHeight: 24
+      lineHeight: 24,
     },
     listSubtitle: {
       fontSize: 12,
@@ -191,4 +191,3 @@ export const useStyles = (colors: ColorsType) =>
       marginTop: 2,
     },
   });
-

@@ -20,12 +20,7 @@ const BalanceCard = ({ balance, onAddMoney }: IBalanceCardProps) => {
       <Text varient="semi-bold" style={styles.balanceText}>
         ₹ {balance}
       </Text>
-      <PrimaryButton
-        btnStyle={styles.buttonStyles}
-        textStyle={styles.buttonTextStyles}
-        title="Add Money"
-        onPress={onAddMoney}
-      />
+      <PrimaryButton btnStyle={styles.buttonStyles} textStyle={styles.buttonTextStyles} title="Add Money" onPress={onAddMoney} />
     </View>
   );
 };

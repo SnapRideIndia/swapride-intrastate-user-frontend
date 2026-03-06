@@ -161,4 +161,3 @@ export const useStyles = (colors: ColorsType, kind: RouteStepKind) =>
       tintColor: colors.primary,
     },
   });
-

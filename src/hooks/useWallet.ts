@@ -1,9 +1,4 @@
-import {
-  useInfiniteQuery,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import WalletService from '../services/WalletService';
 import RazorpayService from '../services/RazorpayService';
 
@@ -17,8 +12,7 @@ export const useBalance = () => {
 export const useTransactions = (filter: string = 'ALL') => {
   return useInfiniteQuery({
     queryKey: ['wallet-transactions', filter],
-    queryFn: ({ pageParam = 0 }) =>
-      WalletService.getTransactions(filter, pageParam as number),
+    queryFn: ({ pageParam = 0 }) => WalletService.getTransactions(filter, pageParam as number),
     initialPageParam: 0,
     getNextPageParam: lastPage => {
       if (lastPage.pagination.hasMore) {
@@ -34,10 +28,7 @@ interface UseTopUpOptions {
   onError?: (error: any) => void;
 }
 
-export const useInitiateTopUp = ({
-  onSuccess,
-  onError,
-}: UseTopUpOptions = {}) => {
+export const useInitiateTopUp = ({ onSuccess, onError }: UseTopUpOptions = {}) => {
   const queryClient = useQueryClient();
   const profileData = queryClient.getQueryData<any>(['currentProfile']);
 
@@ -70,12 +61,7 @@ export const useInitiateTopUp = ({
         onSuccess?.();
       } catch (err: any) {
         const cancelled = RazorpayService.isCancellation(err);
-        console.log(
-          cancelled
-            ? 'RazorpayService: user cancelled payment'
-            : 'RazorpayService: payment failed',
-          err,
-        );
+        console.log(cancelled ? 'RazorpayService: user cancelled payment' : 'RazorpayService: payment failed', err);
         onError?.(err);
       }
     },

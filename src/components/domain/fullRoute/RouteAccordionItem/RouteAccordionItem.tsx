@@ -1,10 +1,6 @@
 import React, { useMemo } from 'react';
 import { Image, ScrollView, TouchableOpacity, View } from 'react-native';
-import Animated, {
-  FadeIn,
-  FadeOut,
-  LinearTransition,
-} from 'react-native-reanimated';
+import Animated, { FadeIn, FadeOut, LinearTransition } from 'react-native-reanimated';
 import { useTheme } from '../../../../theme/ThemeProvider';
 import { SwText as Text } from '../../../common/SwText/SwText';
 import { ImageSource } from '../../../../constants/images';
@@ -37,10 +33,7 @@ const RouteAccordionItem = ({ step, isOpen, isFirst, isLast, onToggle }: Props) 
 
   const hasBody = Boolean(step.description || step.previewCardsCount);
 
-  const chevronStyle = useMemo(
-    () => [styles.chevron, isOpen && styles.chevronOpen],
-    [isOpen, styles.chevron, styles.chevronOpen]
-  );
+  const chevronStyle = useMemo(() => [styles.chevron, isOpen && styles.chevronOpen], [isOpen, styles.chevron, styles.chevronOpen]);
 
   return (
     <Animated.View style={styles.container} layout={LinearTransition.duration(180)}>
@@ -51,18 +44,14 @@ const RouteAccordionItem = ({ step, isOpen, isFirst, isLast, onToggle }: Props) 
       </View>
 
       <View style={styles.content}>
-        <TouchableOpacity
-          activeOpacity={0.8}
-          onPress={hasBody ? onToggle : undefined}
-          style={styles.headerRow}
-        >
+        <TouchableOpacity activeOpacity={0.8} onPress={hasBody ? onToggle : undefined} style={styles.headerRow}>
           <View style={styles.headerTextCol}>
             {step.label ? (
               <Text varient="semi-bold" style={styles.label}>
                 {step.label}
               </Text>
             ) : null}
-            <View style={{ flexDirection: "row", alignItems: "center", gap: 21 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 21 }}>
               <Text varient="medium" style={styles.title} numberOfLines={1}>
                 {step.title}
               </Text>
@@ -84,18 +73,12 @@ const RouteAccordionItem = ({ step, isOpen, isFirst, isLast, onToggle }: Props) 
           </View>
 
           <View style={styles.headerRightCol}>
-
-
             <Image source={ImageSource.downArrow} style={chevronStyle as any} />
           </View>
         </TouchableOpacity>
 
         {isOpen && hasBody ? (
-          <Animated.View
-            entering={FadeIn.duration(120)}
-            exiting={FadeOut.duration(120)}
-            style={styles.body}
-          >
+          <Animated.View entering={FadeIn.duration(120)} exiting={FadeOut.duration(120)} style={styles.body}>
             {step.description ? (
               <Text varient="medium" style={styles.description}>
                 {step.description}
@@ -103,7 +86,15 @@ const RouteAccordionItem = ({ step, isOpen, isFirst, isLast, onToggle }: Props) 
             ) : null}
 
             {step.previewCardsCount ? (
-              <ScrollView contentContainerStyle={{flexGrow: 1, flexDirection: "row", gap: 20}} style={styles.previewRow} showsHorizontalScrollIndicator={false}>
+              <ScrollView
+                contentContainerStyle={{
+                  flexGrow: 1,
+                  flexDirection: 'row',
+                  gap: 20,
+                }}
+                style={styles.previewRow}
+                showsHorizontalScrollIndicator={false}
+              >
                 {Array.from({ length: step.previewCardsCount }).map((_, idx) => (
                   <View key={`${step.id}-preview-${idx}`} style={styles.previewCard} />
                 ))}
@@ -117,4 +108,3 @@ const RouteAccordionItem = ({ step, isOpen, isFirst, isLast, onToggle }: Props) 
 };
 
 export default RouteAccordionItem;
-

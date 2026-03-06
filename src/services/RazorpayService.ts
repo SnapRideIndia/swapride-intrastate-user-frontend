@@ -33,9 +33,7 @@ class RazorpayService {
    * Resolves with RazorpaySuccessResponse on payment success.
    * Rejects with RazorpayError on failure or user cancellation.
    */
-  openCheckout = async (
-    options: RazorpayPaymentOptions,
-  ): Promise<RazorpaySuccessResponse> => {
+  openCheckout = async (options: RazorpayPaymentOptions): Promise<RazorpaySuccessResponse> => {
     const checkoutOptions = {
       key: options.keyId,
       amount: options.amount * 100, // INR → paise

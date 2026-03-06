@@ -1,11 +1,6 @@
 import React, { useCallback, useMemo, forwardRef } from 'react';
 import { View, Image, TouchableOpacity } from 'react-native';
-import {
-  BottomSheetBackdrop,
-  BottomSheetView,
-  BottomSheetBackdropProps,
-  BottomSheetModal,
-} from '@gorhom/bottom-sheet';
+import { BottomSheetBackdrop, BottomSheetView, BottomSheetBackdropProps, BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useTheme } from '../../../theme/ThemeProvider';
 import { useStyles } from './BottomSheet.styles';
 import { SwText as Text } from '../SwText/SwText';
@@ -27,20 +22,11 @@ export const SwBottomSheet = forwardRef<BottomSheetModal, SwBottomSheetProps>(
     const styles = useStyles(colors);
     const insets = useSafeAreaInsets();
 
-    const resolvedSnapPoints = useMemo(
-      () => snapPoints || ['25%', '50%'],
-      [snapPoints],
-    );
+    const resolvedSnapPoints = useMemo(() => snapPoints || ['25%', '50%'], [snapPoints]);
 
     const renderBackdrop = useCallback(
       (props: BottomSheetBackdropProps) => (
-        <BottomSheetBackdrop
-          {...props}
-          disappearsOnIndex={-1}
-          appearsOnIndex={0}
-          opacity={0.5}
-          pressBehavior="close"
-        />
+        <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={0} opacity={0.5} pressBehavior="close" />
       ),
       [],
     );
@@ -72,10 +58,7 @@ export const SwBottomSheet = forwardRef<BottomSheetModal, SwBottomSheetProps>(
                 <Text varient="bold" style={styles.title}>
                   {title}
                 </Text>
-                <TouchableOpacity
-                  onPress={handleClose}
-                  style={styles.closeButton}
-                >
+                <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
                   <Image source={ImageSource.cross} style={styles.closeIcon} />
                 </TouchableOpacity>
               </View>

@@ -3,37 +3,37 @@ import { ColorsType } from '../../../../constants/ui/colors/colors.types';
 
 export const useStyles = (colors: ColorsType) =>
   StyleSheet.create({
-    container:{
-        paddingHorizontal: 27,
-        paddingTop: 20,
-        paddingBottom: 20,
-        borderBottomWidth: 4,
-        borderColor: colors.border_3,
-        backgroundColor: colors.background_primary,
-        flexDirection: "row",
-        alignItems: "center"
+    container: {
+      paddingHorizontal: 27,
+      paddingTop: 20,
+      paddingBottom: 20,
+      borderBottomWidth: 4,
+      borderColor: colors.border_3,
+      backgroundColor: colors.background_primary,
+      flexDirection: 'row',
+      alignItems: 'center',
     },
-    headerInnerContainer:{
-        flexDirection: "row",
-        gap: 23,
-        alignItems: "center"
+    headerInnerContainer: {
+      flexDirection: 'row',
+      gap: 23,
+      alignItems: 'center',
     },
-    backArrow:{
-        height: 15.75,
-        width: 18.75
+    backArrow: {
+      height: 15.75,
+      width: 18.75,
     },
-    title:{
-        fontSize: 18,
-        color: colors.contentPrimary
+    title: {
+      fontSize: 18,
+      color: colors.contentPrimary,
     },
-      iconContainer:{
-        flex:1,
-        flexDirection: "row",
-        gap: 20,
-        justifyContent:"flex-end"
-      },
-      editIcon:{
-        width: 15,
-        height: 15
-      }
+    iconContainer: {
+      flex: 1,
+      flexDirection: 'row',
+      gap: 20,
+      justifyContent: 'flex-end',
+    },
+    editIcon: {
+      width: 15,
+      height: 15,
+    },
   });

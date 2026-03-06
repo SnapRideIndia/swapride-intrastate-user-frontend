@@ -40,5 +40,5 @@ export const useStyles = (colors: ColorsType) =>
     },
     spacer: {
       flex: 1,
-    }
+    },
   });

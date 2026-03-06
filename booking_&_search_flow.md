@@ -367,7 +367,12 @@ Auth: Bearer <accessToken>
     "subTotal": 50,
     "discountAmount": 5,
     "totalAmount": 45,
-    "pickup": { "name": "Hitech City", "address": "...", "arrivalTime": "...", "distanceText": "..." },
+    "pickup": {
+      "name": "Hitech City",
+      "address": "...",
+      "arrivalTime": "...",
+      "distanceText": "..."
+    },
     "dropoff": { "name": "Paradise", "address": "...", "arrivalTime": "..." },
     "assignedSeats": [{ "seatNumber": "A1" }]
   },
@@ -378,7 +383,11 @@ Auth: Bearer <accessToken>
     "discountAmount": 5,
     "totalAmount": 45,
     "pickup": { "name": "Paradise", "address": "...", "arrivalTime": "..." },
-    "dropoff": { "name": "Hitech City", "address": "...", "arrivalTime": "..." },
+    "dropoff": {
+      "name": "Hitech City",
+      "address": "...",
+      "arrivalTime": "..."
+    },
     "assignedSeats": [{ "seatNumber": "B2" }]
   }
 }
@@ -490,8 +499,16 @@ Auth: Bearer <accessToken>
   "discountAmount": 100,
   "totalAmount": 100,
   "coupon": { "id": "c-uuid", "code": "SWAP50" },
-  "outbound": { "bookingId": "outbound-uuid", "discountAmount": 50, "totalAmount": 50 },
-  "return": { "bookingId": "return-uuid", "discountAmount": 50, "totalAmount": 50 },
+  "outbound": {
+    "bookingId": "outbound-uuid",
+    "discountAmount": 50,
+    "totalAmount": 50
+  },
+  "return": {
+    "bookingId": "return-uuid",
+    "discountAmount": 50,
+    "totalAmount": 50
+  },
   "message": "Coupon applied to round-trip successfully"
 }
 ```
@@ -628,7 +645,11 @@ Auth: Bearer <accessToken>
 
 ```json
 {
-  "booking": { "id": "...", "status": "CONFIRMED", "boardingStatus": "NOT_BOARDED" },
+  "booking": {
+    "id": "...",
+    "status": "CONFIRMED",
+    "boardingStatus": "NOT_BOARDED"
+  },
   "driver": {
     "name": "John Doe",
     "phone": "+919876543210",

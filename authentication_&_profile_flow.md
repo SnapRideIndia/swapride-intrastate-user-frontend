@@ -59,11 +59,11 @@ const response = await verifyOtp({ mobileNumber, otp });
 if (response.accessToken) {
   // ✅ Existing user — Login complete
   saveTokens(response.accessToken, response.refreshToken);
-  navigate("/home");
+  navigate('/home');
 } else if (response.isNewUser && response.verificationId) {
   // 🆕 New user — redirect to registration
   saveVerificationId(response.verificationId); // temp storage
-  navigate("/register");
+  navigate('/register');
 }
 ```
 
@@ -167,8 +167,8 @@ Do **not** check token expiry manually before every call. Instead, use an HTTP I
 ```javascript
 // Response Interceptor
 apiClient.interceptors.response.use(
-  (response) => response,
-  async (error) => {
+  response => response,
+  async error => {
     const originalRequest = error.config;
 
     // If error is 401 and we haven't tried refreshing yet
@@ -177,14 +177,14 @@ apiClient.interceptors.response.use(
 
       try {
         // 1. Call Refresh API (use a separate client to avoid interceptor loop)
-        const response = await axios.post("/users/auth/refresh", {
-          refreshToken: localStorage.getItem("refreshToken"),
+        const response = await axios.post('/users/auth/refresh', {
+          refreshToken: localStorage.getItem('refreshToken'),
         });
 
         // 2. Save new tokens
         const { accessToken, refreshToken } = response.data;
-        localStorage.setItem("accessToken", accessToken);
-        localStorage.setItem("refreshToken", refreshToken);
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('refreshToken', refreshToken);
 
         // 3. Retry original request with new token
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
@@ -192,7 +192,7 @@ apiClient.interceptors.response.use(
       } catch (refreshError) {
         // 4. Refresh failed? Session expired. Logout.
         localStorage.clear();
-        window.location.href = "/login";
+        window.location.href = '/login';
         return Promise.reject(refreshError);
       }
     }
@@ -334,8 +334,20 @@ Auth: Bearer <accessToken>
 
 ```json
 {
-  "home": { "id": "...", "label": "Home", "address": "...", "latitude": 17.4, "longitude": 78.3 },
-  "office": { "id": "...", "label": "Office", "address": "...", "latitude": 17.4, "longitude": 78.3 },
+  "home": {
+    "id": "...",
+    "label": "Home",
+    "address": "...",
+    "latitude": 17.4,
+    "longitude": 78.3
+  },
+  "office": {
+    "id": "...",
+    "label": "Office",
+    "address": "...",
+    "latitude": 17.4,
+    "longitude": 78.3
+  },
   "officeTimings": "9:00 AM - 6:00 PM"
 }
 ```

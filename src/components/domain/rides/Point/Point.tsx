@@ -40,10 +40,7 @@ export const Point: React.FC<PointProps> = ({
           <Text varient="bold" style={styles.timeText}>
             {time}
           </Text>
-          <TouchableOpacity
-            style={styles.directionButton}
-            onPress={onDirectionPress}
-          >
+          <TouchableOpacity style={styles.directionButton} onPress={onDirectionPress}>
             <View
               style={{
                 width: 14,
@@ -82,11 +79,7 @@ export const Point: React.FC<PointProps> = ({
         </Text>
 
         {/* Images */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.imagesContainer}
-        >
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.imagesContainer}>
           {images.map((_, index) => (
             <View key={index} style={styles.placeholderImage} />
           ))}

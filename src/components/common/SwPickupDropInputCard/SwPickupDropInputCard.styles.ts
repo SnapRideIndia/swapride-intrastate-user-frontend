@@ -28,4 +28,3 @@ export const useStyles = (colors: ColorsType) =>
       height: 35,
     },
   });
-

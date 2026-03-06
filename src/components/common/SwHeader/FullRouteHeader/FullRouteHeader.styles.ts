@@ -24,4 +24,3 @@ export const useStyles = (colors: ColorsType) =>
       tintColor: colors.contentPrimary,
     },
   });
-

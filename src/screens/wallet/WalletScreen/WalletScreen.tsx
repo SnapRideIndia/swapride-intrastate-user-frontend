@@ -1,10 +1,4 @@
-import {
-  ActivityIndicator,
-  FlatList,
-  RefreshControl,
-  StyleSheet,
-  View,
-} from 'react-native';
+import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 import React, { useCallback, useRef } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../../theme/ThemeProvider';
@@ -15,11 +9,7 @@ import BalanceCard from '../../../components/domain/wallet/card/BalanceCard/Bala
 import TransactionCard from '../../../components/domain/wallet/card/TransactionCard/TransactionCard';
 import { BottomSheetModal as BottomSheetType } from '@gorhom/bottom-sheet';
 import { AddAmountSheet } from '../../../components/domain/wallet/sheets/AddAmountSheet/AddAmountSheet';
-import {
-  useBalance,
-  useInitiateTopUp,
-  useTransactions,
-} from '../../../hooks/useWallet';
+import { useBalance, useInitiateTopUp, useTransactions } from '../../../hooks/useWallet';
 import { Transaction } from '../../../services/WalletService';
 
 const WalletScreen = () => {
@@ -28,12 +18,7 @@ const WalletScreen = () => {
   const bottomSheetRef = useRef<BottomSheetType>(null);
 
   // Balance
-  const {
-    data: balanceData,
-    isLoading: balanceLoading,
-    isError: balanceError,
-    refetch: refetchBalance,
-  } = useBalance();
+  const { data: balanceData, isLoading: balanceLoading, isError: balanceError, refetch: refetchBalance } = useBalance();
 
   // Transactions (infinite)
   const {
@@ -84,12 +69,7 @@ const WalletScreen = () => {
   // Renders
   const renderTransaction = useCallback(
     ({ item }: { item: Transaction }) => (
-      <TransactionCard
-        key={item.id}
-        type={item.type === 'CREDIT' ? 'Credit' : 'Debit'}
-        amount={item.amount}
-        date={item.date}
-      />
+      <TransactionCard key={item.id} type={item.type === 'CREDIT' ? 'Credit' : 'Debit'} amount={item.amount} date={item.date} />
     ),
     [],
   );
@@ -101,10 +81,7 @@ const WalletScreen = () => {
           Failed to load balance. Pull down to retry.
         </Text>
       ) : (
-        <BalanceCard
-          balance={balanceData?.balance || '0.00'}
-          onAddMoney={handleOpenAddMoney}
-        />
+        <BalanceCard balance={balanceData?.balance || '0.00'} onAddMoney={handleOpenAddMoney} />
       )}
 
       <Text varient="semi-bold" style={styles.transactionTitle}>
@@ -153,19 +130,10 @@ const WalletScreen = () => {
         contentContainerStyle={styles.transactionContainer}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.4}
-        refreshControl={
-          <RefreshControl
-            refreshing={isRefreshing}
-            onRefresh={handleRefresh}
-            tintColor={colors.primary}
-          />
-        }
+        refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} tintColor={colors.primary} />}
       />
 
-      <AddAmountSheet
-        ref={bottomSheetRef}
-        onContinue={handleContinueAddMoney}
-      />
+      <AddAmountSheet ref={bottomSheetRef} onContinue={handleContinueAddMoney} />
     </SafeAreaView>
   );
 };

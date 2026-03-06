@@ -56,11 +56,7 @@ class WalletService {
     return res.data;
   };
 
-  getTransactions = async (
-    filter: string = 'ALL',
-    offset: number = 0,
-    limit: number = 20,
-  ): Promise<TransactionsResponse> => {
+  getTransactions = async (filter: string = 'ALL', offset: number = 0, limit: number = 20): Promise<TransactionsResponse> => {
     const url = `/financials/transactions?filter=${filter}&limit=${limit}&offset=${offset}`;
     const res = await fetchData<TransactionsResponse>(url);
 

@@ -1,5 +1,5 @@
-import { StyleSheet } from "react-native";
-import { ColorsType } from "../../../../../constants/ui/colors/colors.types";
+import { StyleSheet } from 'react-native';
+import { ColorsType } from '../../../../../constants/ui/colors/colors.types';
 
 type TransactionType = 'credit' | 'debit';
 

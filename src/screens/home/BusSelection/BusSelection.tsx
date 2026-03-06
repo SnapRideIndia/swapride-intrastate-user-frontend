@@ -1,14 +1,14 @@
-import { Image, ScrollView, View } from 'react-native'
-import React, { useEffect, useMemo, useState } from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { useTheme } from '../../../theme/ThemeProvider'
-import { useStyles } from './BusSelction.styles'
-import PrimaryHeader from '../../../components/common/SwHeader/PrimaryHeader/PrimaryHeader'
-import { useNavigation } from '@react-navigation/native'
-import TopDateTabBar from '../../../components/common/TopDateTabBar/TopDateTabBar'
-import { SwText as Text } from '../../../components/common/SwText/SwText'
-import { ImageSource } from '../../../constants/images'
-import BusSelectionCard from '../../../components/domain/busSelection/card/BusSelectionCard/BusSelectionCard'
+import { Image, ScrollView, View } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTheme } from '../../../theme/ThemeProvider';
+import { useStyles } from './BusSelction.styles';
+import PrimaryHeader from '../../../components/common/SwHeader/PrimaryHeader/PrimaryHeader';
+import { useNavigation } from '@react-navigation/native';
+import TopDateTabBar from '../../../components/common/TopDateTabBar/TopDateTabBar';
+import { SwText as Text } from '../../../components/common/SwText/SwText';
+import { ImageSource } from '../../../constants/images';
+import BusSelectionCard from '../../../components/domain/busSelection/card/BusSelectionCard/BusSelectionCard';
 
 const BusSelection = () => {
   const { colors } = useTheme();
@@ -31,20 +31,7 @@ const BusSelection = () => {
     }
   };
 
-  const monthShortNames = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ];
+  const monthShortNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
   const weekDayShortNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -56,17 +43,13 @@ const BusSelection = () => {
       date.setDate(today.getDate() + index);
 
       const isToday =
-        date.getDate() === today.getDate() &&
-        date.getMonth() === today.getMonth() &&
-        date.getFullYear() === today.getFullYear();
+        date.getDate() === today.getDate() && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear();
 
       const dayWithSuffix = formatDayWithSuffix(date.getDate());
       const month = monthShortNames[date.getMonth()];
       const weekDay = weekDayShortNames[date.getDay()];
 
-      const title = isToday
-        ? `Today, ${dayWithSuffix} ${month}`
-        : `${weekDay}, ${dayWithSuffix} ${month}`;
+      const title = isToday ? `Today, ${dayWithSuffix} ${month}` : `${weekDay}, ${dayWithSuffix} ${month}`;
 
       return {
         id: `${date.getTime()}`,
@@ -76,7 +59,7 @@ const BusSelection = () => {
   }, []);
 
   useEffect(() => {
-    const renderHeader = () => <PrimaryHeader title={'Buses'} onEdit={() => { }} />;
+    const renderHeader = () => <PrimaryHeader title={'Buses'} onEdit={() => {}} />;
     navigation.setOptions({
       headerShown: true,
       header: renderHeader,
@@ -85,22 +68,20 @@ const BusSelection = () => {
 
   return (
     <SafeAreaView edges={['bottom']} style={styles.container}>
-      <TopDateTabBar
-        tabs={tabs}
-        activeIndex={activeTabIndex}
-        onTabPress={setActiveTabIndex}
-      />
+      <TopDateTabBar tabs={tabs} activeIndex={activeTabIndex} onTabPress={setActiveTabIndex} />
       <View style={styles.bannerCard}>
-        <Text varient='semi-bold' style={styles.bannerText}>Showing nearest stops & bus timings on your route</Text>
+        <Text varient="semi-bold" style={styles.bannerText}>
+          Showing nearest stops & bus timings on your route
+        </Text>
         <Image source={ImageSource.shuttel} style={styles.shuttel} />
       </View>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.contentContainer}>
-        {
-          [1,2,3,4].map((item, _idx)=> <BusSelectionCard showLabel={true} />)
-        }
+        {[1, 2, 3, 4].map((item, _idx) => (
+          <BusSelectionCard showLabel={true} />
+        ))}
       </ScrollView>
     </SafeAreaView>
   );
-}
+};
 
 export default BusSelection;

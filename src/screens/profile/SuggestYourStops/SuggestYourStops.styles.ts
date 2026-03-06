@@ -34,6 +34,6 @@ export const useStyles = (colors: ColorsType) =>
       width: 18,
       height: 18,
       marginTop: 5,
-      tintColor: "#2B6D1C"
+      tintColor: '#2B6D1C',
     },
   });

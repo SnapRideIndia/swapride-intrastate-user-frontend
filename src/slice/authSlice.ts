@@ -22,7 +22,7 @@ const initialState: IAuth = {
   ref_token: '',
   phNo: '',
   verificationId: '',
-  isNewUser: false
+  isNewUser: false,
 };
 const authSlice = createSlice({
   name: 'auth',
@@ -40,22 +40,21 @@ const authSlice = createSlice({
     setPhno: (state, action) => {
       state.phNo = action.payload;
     },
-    setVerificationId: (state, action)=>{
-      state.verificationId = action.payload
+    setVerificationId: (state, action) => {
+      state.verificationId = action.payload;
     },
-    setLogout: (state)=>{
-      state.acc_token = "";
-      state.phNo = "";
-      state.ref_token = "";
+    setLogout: state => {
+      state.acc_token = '';
+      state.phNo = '';
+      state.ref_token = '';
       state.step = AuthStep.Step0;
-      state.verificationId="";
+      state.verificationId = '';
     },
-    setIsNewUser: (state, action)=>{
-      state.isNewUser = action.payload
-    }
+    setIsNewUser: (state, action) => {
+      state.isNewUser = action.payload;
+    },
   },
 });
 
-export const { setAccessToken, setRefreshToken, setAuthStep, setPhno, setVerificationId, setLogout, setIsNewUser } =
-  authSlice.actions;
+export const { setAccessToken, setRefreshToken, setAuthStep, setPhno, setVerificationId, setLogout, setIsNewUser } = authSlice.actions;
 export default authSlice.reducer;

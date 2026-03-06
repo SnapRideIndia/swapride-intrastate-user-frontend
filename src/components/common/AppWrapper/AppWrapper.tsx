@@ -14,11 +14,7 @@ const AppWrapper = () => {
     customHandler: (error, errorInfo) => {
       // You can integrate with crash reporting services here
       // For example: Crashlytics, Sentry, etc.
-      console.log(
-        'Error reported to custom handler:',
-        error.message,
-        errorInfo.componentStack,
-      );
+      console.log('Error reported to custom handler:', error.message, errorInfo.componentStack);
     },
   });
 

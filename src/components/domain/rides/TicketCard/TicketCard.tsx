@@ -15,15 +15,7 @@ export interface TicketCardProps {
   onActivate?: () => void;
 }
 
-export const TicketCard: React.FC<TicketCardProps> = ({
-  from,
-  to,
-  timeRange,
-  busPlate,
-  date,
-  isActivated,
-  onActivate,
-}) => {
+export const TicketCard: React.FC<TicketCardProps> = ({ from, to, timeRange, busPlate, date, isActivated, onActivate }) => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
 
@@ -32,18 +24,10 @@ export const TicketCard: React.FC<TicketCardProps> = ({
       {/* QR Section */}
       <View style={styles.qrSection}>
         <View style={styles.qrBackground}>
-          <Image
-            source={ImageSource.qrCodePlaceholder}
-            style={styles.qrImage}
-            resizeMode="contain"
-          />
+          <Image source={ImageSource.qrCodePlaceholder} style={styles.qrImage} resizeMode="contain" />
 
           {!isActivated && (
-            <TouchableOpacity
-              style={styles.qrOverlay}
-              activeOpacity={0.9}
-              onPress={onActivate}
-            >
+            <TouchableOpacity style={styles.qrOverlay} activeOpacity={0.9} onPress={onActivate}>
               <View style={styles.activateStrip}>
                 <Text varient="semi-bold" style={styles.activateText}>
                   Click to Activate the QR
@@ -59,21 +43,11 @@ export const TicketCard: React.FC<TicketCardProps> = ({
 
       {/* Route Info */}
       <View style={styles.routeSection}>
-        <Text
-          varient="bold"
-          style={[styles.locationText, { textAlign: 'left' }]}
-        >
+        <Text varient="bold" style={[styles.locationText, { textAlign: 'left' }]}>
           {from}
         </Text>
-        <Image
-          source={ImageSource.swapPoints}
-          style={styles.swapIcon}
-          resizeMode="contain"
-        />
-        <Text
-          varient="bold"
-          style={[styles.locationText, { textAlign: 'right' }]}
-        >
+        <Image source={ImageSource.swapPoints} style={styles.swapIcon} resizeMode="contain" />
+        <Text varient="bold" style={[styles.locationText, { textAlign: 'right' }]}>
           {to}
         </Text>
       </View>

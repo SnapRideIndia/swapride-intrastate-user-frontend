@@ -6,7 +6,7 @@ export const useStyles = (colors: ColorsType) =>
     inputContainer: {
       gap: 25,
       paddingHorizontal: 24,
-      paddingVertical: 30
+      paddingVertical: 30,
     },
     checkbox: {
       width: 18,
@@ -26,7 +26,7 @@ export const useStyles = (colors: ColorsType) =>
       color: colors.primary,
       textDecorationLine: 'underline',
     },
-      buttonContainer: {
+    buttonContainer: {
       paddingHorizontal: 16,
       paddingVertical: 16,
     },

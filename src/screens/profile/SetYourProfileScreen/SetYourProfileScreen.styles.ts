@@ -103,11 +103,12 @@ export const useStyles = (colors: ColorsType) =>
       fontSize: 20,
       color: colors.contentPrimary,
     },
-    sectionSubtitle:{
-      fontSize: 12, color: colors.contentPrimary
+    sectionSubtitle: {
+      fontSize: 12,
+      color: colors.contentPrimary,
     },
-    cameraIcon:{
-      width: 16.13, 
-      height: 14.63
-    }
+    cameraIcon: {
+      width: 16.13,
+      height: 14.63,
+    },
   });

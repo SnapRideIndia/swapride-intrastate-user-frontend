@@ -33,13 +33,7 @@ interface SeparatorProps {
  * A reusable separator component with customizable dimensions, orientation, and color.
  * Default orientation is horizontal with 1px thickness and full width.
  */
-export const Seperator: React.FC<SeparatorProps> = ({
-  orientation = 'horizontal',
-  height,
-  width,
-  color,
-  style,
-}) => {
+export const Seperator: React.FC<SeparatorProps> = ({ orientation = 'horizontal', height, width, color, style }) => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
 

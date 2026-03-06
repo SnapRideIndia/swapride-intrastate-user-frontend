@@ -1,0 +1,23 @@
+# Dependency directories
+node_modules/
+dist/
+build/
+
+# Testing
+coverage/
+
+# Misc
+.git/
+.DS_Store
+*.zip
+*.lock
+package-lock.json
+
+# Android
+android/
+
+# iOS
+ios/
+
+# Assets
+src/assets/

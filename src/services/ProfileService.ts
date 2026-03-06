@@ -27,9 +27,13 @@ class ProfileService {
 
   getTravelPreferences = async () => {
     const url = `${this.baseUrl}/me/travel-preferences`;
-    const res = await fetchData<{ home: string | null; office: string | null; officeTimings: string | null }>(url);
+    const res = await fetchData<{
+      home: { address: string } | null;
+      office: { address: string } | null;
+      officeTimings: string | null;
+    }>(url);
 
-    console.log("this is response of travel preference ===>", res)
+    console.log('this is response of travel preference ===>', res);
 
     if (!res.success) {
       handleErrorResponse(res);
@@ -90,10 +94,10 @@ class ProfileService {
     //   formData.append('bloodGroup', profileObj.bloodGroup);
     // }
 
-    console.log("This is formData payload ===>", formData);
+    console.log('This is formData payload ===>', formData);
 
     const res = await patchFormData(url, formData);
-    console.log("This is response of patch profile data ===>", res)
+    console.log('This is response of patch profile data ===>', res);
 
     if (!res.success) {
       handleErrorResponse(res);

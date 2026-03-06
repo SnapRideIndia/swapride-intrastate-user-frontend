@@ -163,10 +163,13 @@ export const useStyles = (colors: ColorsType) =>
       flexDirection: 'row',
       alignItems: 'center',
     },
-    btnContainer:{
-       flexDirection: "row", alignItems: "center", gap: 20, marginTop: 20 
+    btnContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 20,
+      marginTop: 20,
     },
-    btnWrapper:{
-      flex:1
-    }
+    btnWrapper: {
+      flex: 1,
+    },
   });

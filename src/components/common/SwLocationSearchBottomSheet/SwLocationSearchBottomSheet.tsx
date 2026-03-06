@@ -63,13 +63,7 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
 
     const renderBackdrop = useCallback(
       (props: BottomSheetBackdropProps) => (
-        <BottomSheetBackdrop
-          {...props}
-          disappearsOnIndex={-1}
-          appearsOnIndex={0}
-          opacity={0.5}
-          pressBehavior="close"
-        />
+        <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={0} opacity={0.5} pressBehavior="close" />
       ),
       [],
     );
@@ -122,7 +116,7 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
               <Image source={ImageSource.searhIcon} style={styles.searchIcon} />
               <BottomSheetTextInput
                 placeholder="Search your address"
-                placeholderTextColor={"#AAAAAA"}
+                placeholderTextColor={'#AAAAAA'}
                 value={query}
                 onChangeText={onChangeQuery}
                 style={styles.searchInput}
@@ -134,26 +128,16 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
 
             {!!query && searchResults.length > 0 && (
               <View style={styles.dropdownContainer}>
-                <ScrollView
-                  keyboardShouldPersistTaps="handled"
-                  showsVerticalScrollIndicator={true}
-                  nestedScrollEnabled
-                >
+                <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={true} nestedScrollEnabled>
                   {searchResults.map((item, idx) => (
                     <TouchableOpacity
                       key={item.id}
                       activeOpacity={0.85}
                       onPress={() => onPressItem?.(item)}
-                      style={[
-                        styles.dropdownItem,
-                        idx === searchResults.length - 1 && styles.dropdownItemLast,
-                      ]}
+                      style={[styles.dropdownItem, idx === searchResults.length - 1 && styles.dropdownItemLast]}
                     >
                       <View style={styles.dropdownItemIcon}>
-                        <Image
-                          source={item.iconSource ?? ImageSource.searhIcon}
-                          style={styles.dropdownItemIconImg}
-                        />
+                        <Image source={item.iconSource ?? ImageSource.searhIcon} style={styles.dropdownItemIconImg} />
                       </View>
                       <View style={styles.dropdownItemTextWrap}>
                         <Text varient="medium" style={styles.dropdownItemTitle} numberOfLines={1}>
@@ -173,33 +157,26 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
           </View>
 
           {showUseCurrentLocation && (
-            <TouchableOpacity
-              onPress={onPressUseCurrentLocation}
-              activeOpacity={0.85}
-              style={styles.useCurrentLocationRow}
-            >
+            <TouchableOpacity onPress={onPressUseCurrentLocation} activeOpacity={0.85} style={styles.useCurrentLocationRow}>
               <View style={styles.useCurrentLocationIconWrap}>
                 <Image source={ImageSource.gpsIcon} style={styles.useCurrentLocationIcon} />
               </View>
-              <Text varient='semi-bold' style={styles.useCurrentLocationText}>Use current location</Text>
+              <Text varient="semi-bold" style={styles.useCurrentLocationText}>
+                Use current location
+              </Text>
             </TouchableOpacity>
           )}
 
           {/* <View style={styles.divider} /> */}
 
-          <Text varient='semi-bold' style={styles.sectionTitle}>Saved Addresses</Text>
+          <Text varient="semi-bold" style={styles.sectionTitle}>
+            Saved Addresses
+          </Text>
           {savedAddresses.map((item, idx) => (
             <View key={item.id}>
-              <TouchableOpacity
-                activeOpacity={0.85}
-                onPress={() => onPressItem?.(item)}
-                style={styles.listRow}
-              >
+              <TouchableOpacity activeOpacity={0.85} onPress={() => onPressItem?.(item)} style={styles.listRow}>
                 <View style={styles.listIconWrap}>
-                  <Image
-                    source={item.iconSource ?? ImageSource.Home}
-                    style={styles.listIcon}
-                  />
+                  <Image source={item.iconSource ?? ImageSource.Home} style={styles.listIcon} />
                 </View>
                 <View style={styles.listTextWrap}>
                   <Text varient="medium" style={styles.listTitle}>
@@ -216,16 +193,9 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
           <Text style={styles.sectionTitle}>Recent Searches</Text>
           {recentSearches.map((item, idx) => (
             <View key={item.id}>
-              <TouchableOpacity
-                activeOpacity={0.85}
-                onPress={() => onPressItem?.(item)}
-                style={styles.listRow}
-              >
+              <TouchableOpacity activeOpacity={0.85} onPress={() => onPressItem?.(item)} style={styles.listRow}>
                 <View style={styles.listIconWrap}>
-                  <Image
-                    source={item.iconSource ?? ImageSource.clock}
-                    style={styles.listIcon}
-                  />
+                  <Image source={item.iconSource ?? ImageSource.clock} style={styles.listIcon} />
                 </View>
                 <View style={styles.listTextWrap}>
                   <Text varient="semi-bold" style={styles.listTitle}>
@@ -242,4 +212,3 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
     );
   },
 );
-

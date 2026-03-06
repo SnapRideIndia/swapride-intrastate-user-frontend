@@ -37,14 +37,14 @@ export const useStyles = (colors: ColorsType) =>
       paddingTop: 30,
       borderRadius: 20,
       backgroundColor: colors.background_primary,
-    //   marginTop: -15,
-    flex:1,
-    flexWrap: 'nowrap'
+      //   marginTop: -15,
+      flex: 1,
+      flexWrap: 'nowrap',
     },
     fromToContainer: {
       flexDirection: 'row',
       gap: 14,
-      flex:1,
+      flex: 1,
     },
     badge: {
       width: 63,
@@ -64,88 +64,88 @@ export const useStyles = (colors: ColorsType) =>
     },
     devider: {
       // height: 59,
-      flex:1,
+      flex: 1,
       borderRightWidth: 1,
       borderStyle: 'dashed',
     },
-    placeContainer:{
-        gap: 15,
-        flex:1,
+    placeContainer: {
+      gap: 15,
+      flex: 1,
     },
-    place:{
-        flex:1,
+    place: {
+      flex: 1,
     },
-    walkAndTimeContainer:{
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 5,
+    walkAndTimeContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 5,
     },
-    walkIcon:{
-        width: 7.04,
-        height: 12
+    walkIcon: {
+      width: 7.04,
+      height: 12,
     },
-    downArrow:{
-        width: 9,
-        height: 5,
-        marginTop: 5
+    downArrow: {
+      width: 9,
+      height: 5,
+      marginTop: 5,
     },
-    placeTitle:{
-        fontSize: 16,
-        color: colors.contentPrimary
+    placeTitle: {
+      fontSize: 16,
+      color: colors.contentPrimary,
     },
-    placeSubtitle:{
-        fontSize: 13,
-        color: colors.contentPrimary
-    },
-    contentContainer:{
-        flexGrow:1,
-        gap: 10
-    },
-    bustimings:{
-        marginBottom: 8,
-        marginTop: 16
-    },
-    timeSlotContainer:{
-        paddingHorizontal: 10,
-        paddingVertical: 5,
-        borderWidth:1,
-        borderColor: colors.primary,
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 10,
-        borderRadius: 10,
-    },
-    ratingAndButtoncontainer:{
-        flexDirection: "row",
-        gap: 32,
-        marginTop: 20,
-        alignItems: 'flex-start'
-    },
-    btnstyle:{
-       flex:1,
-        height: 27
-    },
-    textStyle:{
-        fontSize: 16
-    },
-    fareText:{
-        fontSize: 11,
-        textAlign: "center"
-    },
-    buttonAndFareContainer:{
-        gap: 5,
-        flex:1
-    },
-    viewAllTimings:{
-        fontSize: 16,
-        color: colors.primary
-    },
-    locationConnectionIcon:{
-      width: 16,
-      height: 16
-    },
-    viewFullRoute:{
+    placeSubtitle: {
       fontSize: 13,
-      color: colors.contentPrimary
-    }
+      color: colors.contentPrimary,
+    },
+    contentContainer: {
+      flexGrow: 1,
+      gap: 10,
+    },
+    bustimings: {
+      marginBottom: 8,
+      marginTop: 16,
+    },
+    timeSlotContainer: {
+      paddingHorizontal: 10,
+      paddingVertical: 5,
+      borderWidth: 1,
+      borderColor: colors.primary,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
+      borderRadius: 10,
+    },
+    ratingAndButtoncontainer: {
+      flexDirection: 'row',
+      gap: 32,
+      marginTop: 20,
+      alignItems: 'flex-start',
+    },
+    btnstyle: {
+      flex: 1,
+      height: 27,
+    },
+    textStyle: {
+      fontSize: 16,
+    },
+    fareText: {
+      fontSize: 11,
+      textAlign: 'center',
+    },
+    buttonAndFareContainer: {
+      gap: 5,
+      flex: 1,
+    },
+    viewAllTimings: {
+      fontSize: 16,
+      color: colors.primary,
+    },
+    locationConnectionIcon: {
+      width: 16,
+      height: 16,
+    },
+    viewFullRoute: {
+      fontSize: 13,
+      color: colors.contentPrimary,
+    },
   });

@@ -1,10 +1,4 @@
-import {
-  Image,
-  TouchableOpacity,
-  View,
-  Platform,
-  ScrollView,
-} from 'react-native';
+import { Image, TouchableOpacity, View, Platform, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import React, { useRef } from 'react';
 import PrimaryHeader from '../../../components/common/SwHeader/PrimaryHeader/PrimaryHeader';
@@ -15,9 +9,7 @@ import TrackRideMap from '../../../components/domain/rides/TrackRideMap/TrackRid
 import { SwText as Text } from '../../../components/common/SwText/SwText';
 import { ImageSource } from '../../../constants/images';
 import PrimaryButton from '../../../components/common/SwButton/PrimaryButton/PrimaryButton';
-import RideDetails, {
-  RideDetailsProps,
-} from '../../../components/domain/rides/RideDetails/RideDetails';
+import RideDetails, { RideDetailsProps } from '../../../components/domain/rides/RideDetails/RideDetails';
 import { DriverDetail } from '../../../components/domain/rides/DriverDetail/DriverDetail';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -66,22 +58,16 @@ const mockTrackRideData: TrackRideMockData = {
     experience: '9 years exp',
     languages: 'Hindi, English',
     location: 'Assam',
-    aboutDescription:
-      'Raja lives in Thane with his brother, who inspired him to take as a career. he has 3 years of experience.',
+    aboutDescription: 'Raja lives in Thane with his brother, who inspired him to take as a career. he has 3 years of experience.',
   },
 };
 
-const TrackRideScreen = ({
-  route,
-}: {
-  route: RouteProp<RootStackParamList, typeof ScreenNames.TRACK_RIDE_SCREEN>;
-}) => {
+const TrackRideScreen = ({ route }: { route: RouteProp<RootStackParamList, typeof ScreenNames.TRACK_RIDE_SCREEN> }) => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const { ticketId } = route.params || {};
   console.log(ticketId);
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const helpBottomSheetRef = useRef<BottomSheetType>(null);
   const stopsBottomSheetRef = useRef<BottomSheetType>(null);
@@ -102,56 +88,28 @@ const TrackRideScreen = ({
     <SafeAreaView edges={['bottom']} style={styles.container}>
       <PrimaryHeader title="Track Ride" />
 
-      <ScrollView
-        contentContainerStyle={styles.scrollContainer}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
         <TrackRideMap />
         <View style={styles.contentContainer}>
           {/* Bus, Seat Details */}
           <View style={styles.flexRow}>
-            <TouchableOpacity
-              onPress={handleRequestDetailTicket}
-              style={styles.justRow}
-            >
-              <Text
-                varient="bold"
-                style={[styles.fontColor, styles.fontFourteen]}
-              >
+            <TouchableOpacity onPress={handleRequestDetailTicket} style={styles.justRow}>
+              <Text varient="bold" style={[styles.fontColor, styles.fontFourteen]}>
                 Show ticket to driver
               </Text>
-              <Image
-                source={ImageSource.chevron}
-                style={[
-                  styles.chevronIcon,
-                  { tintColor: colors.contentPrimary },
-                ]}
-              />
+              <Image source={ImageSource.chevron} style={[styles.chevronIcon, { tintColor: colors.contentPrimary }]} />
             </TouchableOpacity>
 
             <View style={styles.flexRow}>
               <View style={styles.flexRow}>
-                <Image
-                  style={styles.imageSize}
-                  source={ImageSource.busYellow}
-                />
-                <Text
-                  varient="bold"
-                  style={[styles.fontFourteen, styles.fontColor]}
-                >
+                <Image style={styles.imageSize} source={ImageSource.busYellow} />
+                <Text varient="bold" style={[styles.fontFourteen, styles.fontColor]}>
                   {mockTrackRideData.busNo}
                 </Text>
               </View>
               <View style={styles.flexRow}>
-                <Image
-                  style={styles.imageSize}
-                  source={ImageSource.SeatYellow}
-                />
-                <Text
-                  varient="bold"
-                  style={[styles.fontFourteen, styles.fontColor]}
-                >
+                <Image style={styles.imageSize} source={ImageSource.SeatYellow} />
+                <Text varient="bold" style={[styles.fontFourteen, styles.fontColor]}>
                   {mockTrackRideData.seatNo}
                 </Text>
               </View>
@@ -161,9 +119,7 @@ const TrackRideScreen = ({
           {/* Pickup Time Content */}
           <View style={styles.pickupContainer}>
             <View style={styles.justRow}>
-              <Text style={[styles.fontColor, styles.fontEighteen]}>
-                Pickup at
-              </Text>
+              <Text style={[styles.fontColor, styles.fontEighteen]}>Pickup at</Text>
               <View style={styles.badge}>
                 <Text varient="bold" style={styles.fontFourteen}>
                   {mockTrackRideData.pickupTime}
@@ -180,19 +136,14 @@ const TrackRideScreen = ({
             title="Need Help"
             btnStyle={styles.buttonStyle}
             onPress={handleNeedHelp}
-            renderLeftIcon={() => (
-              <Image source={ImageSource.chatIcon} style={styles.chatIcon} />
-            )}
+            renderLeftIcon={() => <Image source={ImageSource.chatIcon} style={styles.chatIcon} />}
           />
         </View>
 
         <Seperator height={4} />
 
         {/* Ride Details */}
-        <RideDetails
-          {...mockTrackRideData.rideDetails}
-          onViewAllStops={handleViewAllStops}
-        />
+        <RideDetails {...mockTrackRideData.rideDetails} onViewAllStops={handleViewAllStops} />
         <Seperator height={4} />
 
         {/* Driver Detail */}

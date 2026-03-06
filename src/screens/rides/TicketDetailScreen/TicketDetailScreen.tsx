@@ -19,11 +19,7 @@ const mockTicketData = {
   date: '23.08.24',
 };
 
-const TicketDetailScreen = ({
-  route,
-}: {
-  route: RouteProp<RootStackParamList, typeof ScreenNames.TICKET_DETAIL_SCREEN>;
-}) => {
+const TicketDetailScreen = ({ route }: { route: RouteProp<RootStackParamList, typeof ScreenNames.TICKET_DETAIL_SCREEN> }) => {
   const { ticketId } = route.params || {};
   console.log('Ticket ID:', ticketId);
   const { colors } = useTheme();
@@ -38,23 +34,14 @@ const TicketDetailScreen = ({
   return (
     <SafeAreaView edges={['bottom']} style={styles.container}>
       <PrimaryHeader title="Your Ticket" />
-      <ScrollView
-        contentContainerStyle={styles.contentContainer}
-        showsVerticalScrollIndicator={false}
-      >
-        <TicketCard
-          {...mockTicketData}
-          isActivated={isActivated}
-          onActivate={handleActivateQR}
-        />
+      <ScrollView contentContainerStyle={styles.contentContainer} showsVerticalScrollIndicator={false}>
+        <TicketCard {...mockTicketData} isActivated={isActivated} onActivate={handleActivateQR} />
 
         <PrimaryButton
           title="Scan Bus QR"
           onPress={() => console.log('Scan Bus QR')}
           btnStyle={styles.scanButton}
-          renderRightIcon={() => (
-            <Image source={ImageSource.scan} style={styles.scanIcon} />
-          )}
+          renderRightIcon={() => <Image source={ImageSource.scan} style={styles.scanIcon} />}
         />
 
         <PrimaryButton

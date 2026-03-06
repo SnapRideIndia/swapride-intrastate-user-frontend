@@ -20,21 +20,9 @@ interface IHistoryCardProps {
 
 const LOCATION_MAX_LENGTH = 25;
 
-const truncateLocation = (text: string) =>
-  text.length > LOCATION_MAX_LENGTH
-    ? `${text.slice(0, LOCATION_MAX_LENGTH)}...`
-    : text;
+const truncateLocation = (text: string) => (text.length > LOCATION_MAX_LENGTH ? `${text.slice(0, LOCATION_MAX_LENGTH)}...` : text);
 
-const HistoryCard = ({
-  seatNumber,
-  date,
-  amount,
-  fromLocation,
-  toLocation,
-  fromTime,
-  toTime,
-  ticketId,
-}: IHistoryCardProps) => {
+const HistoryCard = ({ seatNumber, date, amount, fromLocation, toLocation, fromTime, toTime, ticketId }: IHistoryCardProps) => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const navigation = useNavigation();
@@ -52,10 +40,7 @@ const HistoryCard = ({
           <Text varient="medium" style={styles.fontFourteen}>
             Bus Ticket
           </Text>
-          <Text
-            varient="semi-bold"
-            style={[styles.fontTwelve, styles.seatText]}
-          >
+          <Text varient="semi-bold" style={[styles.fontTwelve, styles.seatText]}>
             {seatNumber}
           </Text>
         </View>
@@ -69,10 +54,7 @@ const HistoryCard = ({
       {/* Middle Container */}
       <View style={styles.middleRow}>
         <View style={styles.flexColumn}>
-          <Text
-            varient="bold"
-            style={[styles.fontSixteen, styles.locationText]}
-          >
+          <Text varient="bold" style={[styles.fontSixteen, styles.locationText]}>
             {truncateLocation(fromLocation)}
           </Text>
           <Text varient="medium" style={[styles.fontTwelve, styles.timeText]}>
@@ -83,10 +65,7 @@ const HistoryCard = ({
           <Image source={ImageSource.busOnTrack} style={styles.busOnTrack} />
         </View>
         <View style={styles.flexColumn}>
-          <Text
-            varient="bold"
-            style={[styles.fontSixteen, styles.locationText]}
-          >
+          <Text varient="bold" style={[styles.fontSixteen, styles.locationText]}>
             {truncateLocation(toLocation)}
           </Text>
           <Text varient="medium" style={[styles.fontTwelve, styles.timeText]}>
@@ -100,10 +79,7 @@ const HistoryCard = ({
         <Text varient="bold" style={[styles.fontSixteen, styles.amountText]}>
           ₹ {amount}
         </Text>
-        <TouchableOpacity
-          onPress={handleViewDetails}
-          style={styles.viewDetailsButton}
-        >
+        <TouchableOpacity onPress={handleViewDetails} style={styles.viewDetailsButton}>
           <Text varient="medium" style={styles.fontFourteen}>
             View Ride
           </Text>

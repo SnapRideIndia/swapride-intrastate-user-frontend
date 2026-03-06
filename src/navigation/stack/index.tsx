@@ -26,78 +26,63 @@ import SetCommuteScreen from '../../screens/home/SetCommuteScreen/SetCommuteScre
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const ScreenWrapper = ({ children }: { children: React.ReactNode }) => {
-    const { reportError } = useErrorReporting({
-        logToConsole: true,
-        showAlert: false,
-    });
+  const { reportError } = useErrorReporting({
+    logToConsole: true,
+    showAlert: false,
+  });
 
-    return <ErrorBoundary onError={reportError}>{children}</ErrorBoundary>;
+  return <ErrorBoundary onError={reportError}>{children}</ErrorBoundary>;
 };
 
 const AppNavigation = () => {
-    const { colors } = useTheme();
-    const dispatch = useDispatch();
+  const { colors } = useTheme();
+  const dispatch = useDispatch();
 
-    const styles = StyleSheet.create({
-        tabBarContainer: {
-            flex: 1,
-            backgroundColor: colors.background_primary,
-        },
-    });
+  const styles = StyleSheet.create({
+    tabBarContainer: {
+      flex: 1,
+      backgroundColor: colors.background_primary,
+    },
+  });
 
-    // CRITICAL: Read token synchronously from storage for initial route.
-    // initialRouteName only applies when Stack.Navigator first mounts - it does NOT
-    // react to later prop changes. Redux acc_token is empty on first render (before
-    // useEffect runs), so we must read from storage directly. MMKV getString is sync.
-    const tokenFromStorage = storage.getString(StorageKeys.ACCESS_TOKEN);
-    const initialRouteName = tokenFromStorage ? ScreenNames.DASHBOARD_SCREEN : ScreenNames.LOGIN_SCREEN;
+  // CRITICAL: Read token synchronously from storage for initial route.
+  // initialRouteName only applies when Stack.Navigator first mounts - it does NOT
+  // react to later prop changes. Redux acc_token is empty on first render (before
+  // useEffect runs), so we must read from storage directly. MMKV getString is sync.
+  const tokenFromStorage = storage.getString(StorageKeys.ACCESS_TOKEN);
+  const initialRouteName = tokenFromStorage ? ScreenNames.DASHBOARD_SCREEN : ScreenNames.LOGIN_SCREEN;
 
-    useEffect(() => {
-        // Keep Redux in sync with storage for the rest of the app
-        const token = storage.getString(StorageKeys.ACCESS_TOKEN);
-        const isNewUser = storage.getBoolean(StorageKeys.IS_NEW_USER);
-        dispatch(setIsNewUser(isNewUser));
-        dispatch(setAccessToken(token ?? ''));
-    }, [dispatch]);
+  useEffect(() => {
+    // Keep Redux in sync with storage for the rest of the app
+    const token = storage.getString(StorageKeys.ACCESS_TOKEN);
+    const isNewUser = storage.getBoolean(StorageKeys.IS_NEW_USER);
+    dispatch(setIsNewUser(isNewUser));
+    dispatch(setAccessToken(token ?? ''));
+  }, [dispatch]);
 
-    return (
-        <NavigationContainer>
-            <Stack.Navigator
-                screenOptions={{ headerShown: false }}
-                initialRouteName={initialRouteName}
-            >
-                <Stack.Screen name={ScreenNames.DASHBOARD_SCREEN}>
-                    {() => (
-                        <View style={styles.tabBarContainer}>
-                            <DrawerNavigator />
-                        </View>
-                    )}
-                </Stack.Screen>
-                <Stack.Screen name={ScreenNames.LOGIN_SCREEN} component={EnterPhNo} />
-                <Stack.Screen name={ScreenNames.VIEW_PROFILE} component={ViewProfile} />
-                <Stack.Screen
-                    name={ScreenNames.SUGGEST_YOUR_STOPS}
-                    component={SuggestYourStops}
-                />
-                <Stack.Screen
-                    name={ScreenNames.BUS_SELECTION_SCREEN as never}
-                    component={BusSelection}
-                />
-                <Stack.Screen
-                    name={ScreenNames.TRACK_RIDE_SCREEN}
-                    component={TrackRideScreen}
-                />
-                <Stack.Screen
-                    name={ScreenNames.TICKET_DETAIL_SCREEN}
-                    component={TicketDetailScreen}
-                />
-                <Stack.Screen name={ScreenNames.FULL_ROUTE_SCREEN as never} component={FullRouteScreen} />
-                <Stack.Screen name={ScreenNames.NOTIFICATION_SCREEN as never} component={NotificationScreen} />
-                <Stack.Screen name={ScreenNames.SET_PROFILE_SCREEN as never} component={SetYourProfileScreen} />
-                <Stack.Screen name={ScreenNames.SET_COMMUTE as never} component={SetCommuteScreen} />
-            </Stack.Navigator>
-        </NavigationContainer>
-    );
+  return (
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={initialRouteName}>
+        <Stack.Screen name={ScreenNames.DASHBOARD_SCREEN}>
+          {() => (
+            <View style={styles.tabBarContainer}>
+              <DrawerNavigator />
+            </View>
+          )}
+        </Stack.Screen>
+        <Stack.Screen name={ScreenNames.LOGIN_SCREEN} component={EnterPhNo} />
+        <Stack.Screen name={ScreenNames.VIEW_PROFILE} component={ViewProfile} />
+        <Stack.Screen name={ScreenNames.SUGGEST_YOUR_STOPS} component={SuggestYourStops} />
+        <Stack.Screen name={ScreenNames.BUS_SELECTION_SCREEN as never} component={BusSelection} />
+        <Stack.Screen name={ScreenNames.TRACK_RIDE_SCREEN} component={TrackRideScreen} />
+        <Stack.Screen name={ScreenNames.TICKET_DETAIL_SCREEN} component={TicketDetailScreen} />
+        <Stack.Screen name={ScreenNames.FULL_ROUTE_SCREEN as never} component={FullRouteScreen} />
+        <Stack.Screen name={ScreenNames.NOTIFICATION_SCREEN as never} component={NotificationScreen} />
+        <Stack.Screen name={ScreenNames.SET_PROFILE_SCREEN as never} component={SetYourProfileScreen} />
+        <Stack.Screen name={ScreenNames.SET_COMMUTE as never} component={SetCommuteScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
 };
 
 export default AppNavigation;

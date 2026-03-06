@@ -4,9 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../../../theme/ThemeProvider';
 import FullRouteHeader from '../../../components/common/SwHeader/FullRouteHeader/FullRouteHeader';
-import RouteAccordionItem, {
-  RouteAccordionStep,
-} from '../../../components/domain/fullRoute/RouteAccordionItem/RouteAccordionItem';
+import RouteAccordionItem, { RouteAccordionStep } from '../../../components/domain/fullRoute/RouteAccordionItem/RouteAccordionItem';
 import { useStyles } from './FullRouteScreen.styles';
 
 const FullRouteScreen = () => {
@@ -33,14 +31,13 @@ const FullRouteScreen = () => {
         label: 'Dropoff Stop',
         title: 'Peninsula Corporate Park',
         showDirectionsCta: true,
-        description:
-          'in front of Mini eStore, under the fly over',
+        description: 'in front of Mini eStore, under the fly over',
         previewCardsCount: 2,
       },
       { id: 's7', kind: 'normal', title: 'Wokoli' },
       { id: 's8', kind: 'normal', title: 'Wokoli' },
     ],
-    []
+    [],
   );
 
   const [openId, setOpenId] = useState<string>('s6');
@@ -55,10 +52,7 @@ const FullRouteScreen = () => {
 
   return (
     <SafeAreaView edges={['bottom']} style={styles.container}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.contentContainer}
-      >
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.contentContainer}>
         <View style={styles.list}>
           {steps.map((step, index) => (
             <RouteAccordionItem
@@ -67,7 +61,7 @@ const FullRouteScreen = () => {
               isOpen={openId === step.id}
               isFirst={index === 0}
               isLast={index === steps.length - 1}
-              onToggle={() => setOpenId((prev) => (prev === step.id ? '' : step.id))}
+              onToggle={() => setOpenId(prev => (prev === step.id ? '' : step.id))}
             />
           ))}
         </View>
@@ -77,4 +71,3 @@ const FullRouteScreen = () => {
 };
 
 export default FullRouteScreen;
-

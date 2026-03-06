@@ -35,10 +35,7 @@ const HistoryScreen = () => {
   return (
     <SafeAreaView edges={['bottom']} style={styles.container}>
       <PrimaryHeader title="History" />
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.contentContainerStyle}
-      >
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.contentContainerStyle}>
         {mockData.map((item, index) => (
           <HistoryCard key={index} {...item} />
         ))}
@@ -48,5 +45,3 @@ const HistoryScreen = () => {
 };
 
 export default HistoryScreen;
-
-

@@ -15,4 +15,3 @@ export const useStyles = (colors: ColorsType) =>
       paddingTop: 8,
     },
   });
-

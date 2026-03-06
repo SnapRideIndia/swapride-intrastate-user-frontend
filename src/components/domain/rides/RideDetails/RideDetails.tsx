@@ -19,11 +19,7 @@ export interface RideDetailsProps {
   onViewAllStops?: () => void;
 }
 
-const RideDetails: React.FC<RideDetailsProps> = ({
-  pickupData,
-  dropoffData,
-  onViewAllStops,
-}) => {
+const RideDetails: React.FC<RideDetailsProps> = ({ pickupData, dropoffData, onViewAllStops }) => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const [activeTab, setActiveTab] = useState<'pickup' | 'dropoff'>('pickup');
@@ -46,32 +42,20 @@ const RideDetails: React.FC<RideDetailsProps> = ({
       {/* Tab Bar */}
       <View style={styles.tabContainer}>
         <View style={styles.tabsWrapper}>
-          <TouchableOpacity
-            onPress={() => setActiveTab('pickup')}
-            style={styles.tabItem}
-          >
+          <TouchableOpacity onPress={() => setActiveTab('pickup')} style={styles.tabItem}>
             <Text
               varient={activeTab === 'pickup' ? 'bold' : 'medium'}
-              style={[
-                styles.tabText,
-                activeTab === 'pickup' && styles.activeTabText,
-              ]}
+              style={[styles.tabText, activeTab === 'pickup' && styles.activeTabText]}
             >
               Pickup
             </Text>
             {activeTab === 'pickup' && <View style={styles.activeIndicator} />}
           </TouchableOpacity>
 
-          <TouchableOpacity
-            onPress={() => setActiveTab('dropoff')}
-            style={styles.tabItem}
-          >
+          <TouchableOpacity onPress={() => setActiveTab('dropoff')} style={styles.tabItem}>
             <Text
               varient={activeTab === 'dropoff' ? 'bold' : 'medium'}
-              style={[
-                styles.tabText,
-                activeTab === 'dropoff' && styles.activeTabText,
-              ]}
+              style={[styles.tabText, activeTab === 'dropoff' && styles.activeTabText]}
             >
               Dropoff
             </Text>
@@ -79,14 +63,8 @@ const RideDetails: React.FC<RideDetailsProps> = ({
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity
-          onPress={onViewAllStops}
-          style={styles.viewAllStopsContainer}
-        >
-          <Text
-            varient="bold"
-            style={[styles.primaryFont, styles.viewAllStopsText]}
-          >
+        <TouchableOpacity onPress={onViewAllStops} style={styles.viewAllStopsContainer}>
+          <Text varient="bold" style={[styles.primaryFont, styles.viewAllStopsText]}>
             View all stops
           </Text>
           <Image source={ImageSource.chevron} style={styles.chevronIcon} />

@@ -15,15 +15,7 @@ interface DriverDetailProps {
   avatar?: any;
 }
 
-export const DriverDetail: React.FC<DriverDetailProps> = ({
-  name,
-  plate,
-  experience,
-  languages,
-  location,
-  aboutDescription,
-  avatar,
-}) => {
+export const DriverDetail: React.FC<DriverDetailProps> = ({ name, plate, experience, languages, location, aboutDescription, avatar }) => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
 
@@ -35,12 +27,7 @@ export const DriverDetail: React.FC<DriverDetailProps> = ({
 
       <View style={styles.profileRow}>
         <View style={styles.avatarPlaceholder}>
-          {avatar && (
-            <Image
-              source={avatar}
-              style={{ width: 60, height: 60, borderRadius: 30 }}
-            />
-          )}
+          {avatar && <Image source={avatar} style={{ width: 60, height: 60, borderRadius: 30 }} />}
         </View>
         <View style={styles.infoContainer}>
           <View style={styles.namePlateRow}>

@@ -37,4 +37,3 @@ const FullRouteHeader = ({ title, onClose }: Props) => {
 };
 
 export default FullRouteHeader;
-

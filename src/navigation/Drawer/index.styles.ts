@@ -60,10 +60,10 @@ export const useStyles = (colors: ColorsType) =>
       justifyContent: 'space-between',
       alignItems: 'center',
       backgroundColor: colors.primaryLight,
-      padding: 20
+      padding: 20,
     },
-    logoutTitle:{
+    logoutTitle: {
       fontSize: 16,
-      color: colors.primaryCtaText
-    }
+      color: colors.primaryCtaText,
+    },
   });

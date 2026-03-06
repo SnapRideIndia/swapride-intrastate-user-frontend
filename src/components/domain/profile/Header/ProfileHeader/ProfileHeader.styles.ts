@@ -3,43 +3,43 @@ import { ColorsType } from '../../../../../constants/ui/colors/colors.types';
 
 export const useStyles = (colors: ColorsType) =>
   StyleSheet.create({
-    container:{
-        paddingHorizontal: 26,
-        backgroundColor: "#072A6A",
-        paddingVertical: 35,
-        gap: 30
+    container: {
+      paddingHorizontal: 26,
+      backgroundColor: '#072A6A',
+      paddingVertical: 35,
+      gap: 30,
     },
-    innerContainer:{
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center"
+    innerContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
     },
-    leftArrow:{
-        width: 19,
-        height: 16,
-        tintColor: colors.primaryCtaText
+    leftArrow: {
+      width: 19,
+      height: 16,
+      tintColor: colors.primaryCtaText,
     },
-    detailsContainer:{
-        flexDirection: "row",
-        alignItems: "center",
+    detailsContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
     },
-    profileContainer:{
-        width: 91,
-        height: 91,
-        borderRadius: 91,
-        overflow: "hidden"
+    profileContainer: {
+      width: 91,
+      height: 91,
+      borderRadius: 91,
+      overflow: 'hidden',
     },
-    detailsSection:{
-        flex:1,
+    detailsSection: {
+      flex: 1,
     },
-    detailtext:{
-        color: colors.primaryCtaText,
-        fontSize: 16,
-        lineHeight: 24
+    detailtext: {
+      color: colors.primaryCtaText,
+      fontSize: 16,
+      lineHeight: 24,
     },
-    edit:{
-        width: 24,
-        height: 24,
-        tintColor: colors.primaryCtaText
-    }
+    edit: {
+      width: 24,
+      height: 24,
+      tintColor: colors.primaryCtaText,
+    },
   });
