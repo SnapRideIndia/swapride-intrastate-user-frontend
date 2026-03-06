@@ -1,8 +1,7 @@
 import { Image, ScrollView, TouchableOpacity, View } from 'react-native'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useTheme } from '../../../theme/ThemeProvider'
-import { useStyles } from './SetCommuteScreen.styles'
 import PrimaryHeader from '../../../components/common/SwHeader/PrimaryHeader/PrimaryHeader'
 import { useNavigation } from '@react-navigation/native'
 import { SwText as Text } from '../../../components/common/SwText/SwText'
@@ -22,12 +21,14 @@ import { usePlaceAutocomplete, useRecentSearch, useReverseGeocode, useSavedLocat
 import DatePicker from 'react-native-date-picker'
 import { format } from 'date-fns'
 import { ScreenNames } from '../../../navigation/constant'
-import { setCommuteData } from '../../../slice/commuteSlice'
+import { setCommuteData, setCommuteSearchContext } from '../../../slice/commuteSlice'
+import { useStyles } from './FindCommute.styles'
+import type { CommuteDateTab } from '../../../types/commuteDates.types'
 
-const SetCommuteScreen = () => {
-  const { colors } = useTheme();
-  const styles = useStyles(colors);
-  const navigation = useNavigation();
+const FindCommute = () => {
+    const { colors } = useTheme();
+    const styles = useStyles(colors);
+    const navigation = useNavigation();
 
     const dispatch = useDispatch<AppDispatch>();
     const currentCoords = useSelector((state: RootState) => state.profile.currentCoords);
@@ -49,12 +50,60 @@ const SetCommuteScreen = () => {
     const { getRecentSearchItems } = useRecentSearch();
     const { getSavedLocationItems } = useSavedLocations();
 
-    const [officeStartTime, setOfficeStartTime] = useState<Date | null>(null);
-    const [officeEndTime, setOfficeEndTime] = useState<Date | null>(null);
-    const [isTimePickerOpen, setIsTimePickerOpen] = useState(false);
-    const [activeTimeField, setActiveTimeField] = useState<'start' | 'end'>('start');
-    const [timePickerDate, setTimePickerDate] = useState<Date>(new Date());
-    const [tripDate] = useState<Date>(new Date());
+    const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+    const [calendarPickerDate, setCalendarPickerDate] = useState<Date>(new Date());
+
+    const toDateKey = useCallback((d: Date) => format(d, 'yyyy-MM-dd'), []);
+
+    const formatDayWithSuffix = useCallback((day: number) => {
+        if (day > 3 && day < 21) return `${day}th`;
+        switch (day % 10) {
+            case 1:
+                return `${day}st`;
+            case 2:
+                return `${day}nd`;
+            case 3:
+                return `${day}rd`;
+            default:
+                return `${day}th`;
+        }
+    }, []);
+
+    const weekDayShortNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const monthShortNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    const formatTabTitle = useCallback(
+        (d: Date, today: Date) => {
+            const isToday =
+                d.getDate() === today.getDate() &&
+                d.getMonth() === today.getMonth() &&
+                d.getFullYear() === today.getFullYear();
+
+            if (isToday) return 'Today';
+
+            const dayWithSuffix = formatDayWithSuffix(d.getDate());
+            const month = monthShortNames[d.getMonth()];
+            const weekDay = weekDayShortNames[d.getDay()];
+            return `${weekDay}, ${dayWithSuffix} ${month}`;
+        },
+        [formatDayWithSuffix],
+    );
+
+    const defaultDateTabs = useMemo<CommuteDateTab[]>(() => {
+        const today = new Date();
+        return [0, 1, 2].map((offset) => {
+            const d = new Date(today);
+            d.setDate(today.getDate() + offset);
+            return {
+                id: toDateKey(d),
+                date: toDateKey(d),
+                title: formatTabTitle(d, today),
+            };
+        });
+    }, [formatTabTitle, toDateKey]);
+
+    const [dateTabs, setDateTabs] = useState<CommuteDateTab[]>(defaultDateTabs);
+    const [activeDateIndex, setActiveDateIndexLocal] = useState(0);
 
     const onSuccessTrips = useCallback((data: any) => {
         console.log('searchTrips success >>>', data);
@@ -100,32 +149,46 @@ const SetCommuteScreen = () => {
         loadSavedAndRecent('pickup');
     }, [loadSavedAndRecent]);
 
-    const getTimeDisplayValue = useCallback((d: Date | null) => {
-        if (!d) return '00:00 AM';
-        try {
-            return format(d, 'hh:mm a');
-        } catch (e) {
-            return '00:00 AM';
-        }
+    const handlePressDateTab = useCallback((index: number) => {
+        setActiveDateIndexLocal(index);
     }, []);
 
-    const openTimePicker = useCallback(
-        (field: 'start' | 'end') => {
-            setActiveTimeField(field);
-            const initial = field === 'start' ? (officeStartTime ?? new Date()) : (officeEndTime ?? new Date());
-            setTimePickerDate(initial);
-            setIsTimePickerOpen(true);
-        },
-        [officeEndTime, officeStartTime],
-    );
+    const openCalendar = useCallback(() => {
+        const currentTab = dateTabs[activeDateIndex];
+        if (currentTab) {
+            setCalendarPickerDate(new Date(`${currentTab.date}T00:00:00`));
+        } else {
+            setCalendarPickerDate(new Date());
+        }
+        setIsDatePickerOpen(true);
+    }, [activeDateIndex, dateTabs]);
 
-    const handleConfirmTime = useCallback(
-        (date: Date) => {
-            if (activeTimeField === 'start') setOfficeStartTime(date);
-            else setOfficeEndTime(date);
-            setIsTimePickerOpen(false);
+    const handleCalendarConfirm = useCallback(
+        (d: Date) => {
+            const today = new Date();
+            const key = toDateKey(d);
+
+            const existingIdx = dateTabs.findIndex((t) => t.date === key);
+            if (existingIdx >= 0) {
+                setActiveDateIndexLocal(existingIdx);
+                setIsDatePickerOpen(false);
+                return;
+            }
+
+            const customTab: CommuteDateTab = {
+                id: key,
+                date: key,
+                title: formatTabTitle(d, today),
+                isCustom: true,
+            };
+
+            const base = defaultDateTabs;
+            const nextTabs = [...base, customTab].slice(0, 4);
+            setDateTabs(nextTabs);
+            setActiveDateIndexLocal(nextTabs.length - 1);
+            setIsDatePickerOpen(false);
         },
-        [activeTimeField],
+        [dateTabs, defaultDateTabs, formatTabTitle, toDateKey],
     );
 
     const handleSelectLocation = useCallback(
@@ -217,9 +280,7 @@ const SetCommuteScreen = () => {
         !!pickupItem?.latitude &&
         !!pickupItem?.longitude &&
         !!dropItem?.latitude &&
-        !!dropItem?.longitude ;
-        !!officeStartTime &&
-        !!officeEndTime;
+        !!dropItem?.longitude;
 
     const handleSubmit = useCallback(async () => {
         if (!canSubmit) return;
@@ -229,8 +290,12 @@ const SetCommuteScreen = () => {
         const dropoffLat = dropItem!.latitude!;
         const dropoffLng = dropItem!.longitude!;
 
-        let userLat = currentCoords?.latitude;
-        let userLng = currentCoords?.longitude;
+        // let userLat = currentCoords?.latitude;
+        // let userLng = currentCoords?.longitude;
+
+
+        let userLat = 17.385;
+        let userLng = 78.4867;
 
         if (typeof userLat !== 'number' || typeof userLng !== 'number') {
             const position = await getCurrentLocation();
@@ -243,12 +308,29 @@ const SetCommuteScreen = () => {
 
         if (typeof userLat !== 'number' || typeof userLng !== 'number') return;
 
+        const tripDate = dateTabs[activeDateIndex]?.date ?? toDateKey(new Date());
+
+        dispatch(
+            setCommuteSearchContext({
+                dateTabs,
+                activeDateIndex,
+                searchBaseParams: {
+                    pickupLat,
+                    pickupLng,
+                    dropoffLat,
+                    dropoffLng,
+                    userLat,
+                    userLng,
+                },
+            }),
+        );
+
         searchTrips({
             pickupLat,
             pickupLng,
             dropoffLat,
             dropoffLng,
-            tripDate: format(tripDate, 'yyyy-MM-dd'),
+            tripDate,
             userLat,
             userLng,
         });
@@ -257,70 +339,83 @@ const SetCommuteScreen = () => {
         currentCoords?.latitude,
         currentCoords?.longitude,
         dispatch,
+        activeDateIndex,
+        dateTabs,
         dropItem,
         getCurrentLocation,
         pickupItem,
         searchTrips,
-        tripDate,
+        toDateKey,
     ]);
 
-  useEffect(() => {
-    const renderHeader = () => <PrimaryHeader title="" />;
-    navigation.setOptions({
-      headerShown: true,
-      header: renderHeader,
-    });
-  }, [navigation]);
+    useEffect(() => {
+        const renderHeader = () => <PrimaryHeader title='' />;
+        navigation.setOptions({
+            headerShown: true,
+            header: renderHeader,
+        });
+    }, [navigation]);
 
-  return (
-    <SafeAreaView edges={['bottom']} style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.contentContainer}>
-        <Text varient="semi-bold" style={styles.title}>
-          Tell us about your commute !
-        </Text>
 
-        <View style={styles.card}>
-          <SwPickupDropInputCard
-            pickupInputProps={{
-              title: 'Preffered Pickup location',
-              placeholder: 'Enter pickup location',
-              value: pickupLocation,
-              onChangeText: setPickupLocation,
-              renderTitleIcon: () => <Image source={ImageSource.Home} style={styles.titleIcon} />,
-            }}
-            dropInputProps={{
-              title: 'Preffered Drop location',
-              placeholder: 'Enter drop location',
-              value: dropLocation,
-              onChangeText: setDropLocation,
-              renderTitleIcon: () => <Image source={ImageSource.office} style={styles.titleIcon} />,
-            }}
-            onPressPickup={() => openLocationSheet('pickup')}
-            onPressDrop={() => openLocationSheet('drop')}
-          />
+    return (
+        <SafeAreaView edges={["bottom"]} style={styles.container}>
+            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.contentContainer}>
 
-                    <View style={styles.timeInputContainer}>
-                        <View style={styles.inputTitle}>
-                            <Image source={ImageSource.clock} style={styles.clock} />
-                            <Text>Office Timing</Text>
-                        </View>
-                        <View style={styles.timeInputsWrapper}>
-                            <TouchableOpacity
-                                style={styles.timeInput}
-                                activeOpacity={0.8}
-                                onPress={() => openTimePicker('start')}
-                            >
-                                <Text>{getTimeDisplayValue(officeStartTime)}</Text>
-                            </TouchableOpacity>
-                            <Text>to</Text>
-                            <TouchableOpacity
-                                style={styles.timeInput}
-                                activeOpacity={0.8}
-                                onPress={() => openTimePicker('end')}
-                            >
-                                <Text>{getTimeDisplayValue(officeEndTime)}</Text>
-                            </TouchableOpacity>
-                        </View>
+                <Text varient='semi-bold' style={styles.title}>Tell us about your commute !</Text>
+
+                <View style={styles.card}>
+                    <SwPickupDropInputCard pickupInputProps={{
+                        title: 'Preffered Pickup location',
+                        placeholder: 'Enter pickup location',
+                        value: pickupLocation,
+                        onChangeText: setPickupLocation,
+                        renderTitleIcon: () => <Image source={ImageSource.Home} style={styles.titleIcon} />
+                    }}
+                        dropInputProps={{
+                            title: 'Preffered Drop location',
+                            placeholder: 'Enter drop location',
+                            value: dropLocation,
+                            onChangeText: setDropLocation,
+                            renderTitleIcon: () => <Image source={ImageSource.office} style={styles.titleIcon} />
+                        }} onPressPickup={() => openLocationSheet('pickup')}
+                        onPressDrop={() => openLocationSheet('drop')} />
+
+
+                    {/* the date section */}
+                    <View style={{flexDirection: "row", gap: 10}}>
+                        <ScrollView
+                            contentContainerStyle={{flexDirection: "row", alignItems: "center", gap: 8, flexGrow:1, paddingHorizontal: 10}}
+                            horizontal
+                            showsHorizontalScrollIndicator={false}
+                        >
+                            {dateTabs.slice(0, 4).map((t, idx) => {
+                                const isActive = idx === activeDateIndex;
+                                return (
+                                    <TouchableOpacity
+                                        key={t.id}
+                                        onPress={() => handlePressDateTab(idx)}
+                                        activeOpacity={0.8}
+                                        style={{
+                                            flexDirection: "row",
+                                            alignItems: "center",
+                                            gap: 5,
+                                            borderWidth: 1,
+                                            borderColor: isActive ? colors.primary : colors.border_4,
+                                            paddingHorizontal: 10,
+                                            height: 23,
+                                            justifyContent: "center",
+                                            borderRadius: 6,
+                                        }}
+                                    >
+                                        {isActive && <Image source={ImageSource.checkCircle} style={{width:11, height:11}} />}
+                                        <Text>{t.title}</Text>
+                                    </TouchableOpacity>
+                                );
+                            })}
+                        </ScrollView>
+                        <TouchableOpacity activeOpacity={0.8} onPress={openCalendar}>
+                            <Image source={ImageSource.calenderBlue} style={{width: 24, height: 24, tintColor: colors.contentPrimary}} />
+                        </TouchableOpacity>
                     </View>
 
                     <View style={styles.btnContainer}>
@@ -356,15 +451,17 @@ const SetCommuteScreen = () => {
 
             <DatePicker
                 modal
-                open={isTimePickerOpen}
-                date={timePickerDate}
-                mode="time"
-                onConfirm={handleConfirmTime}
-                onCancel={() => setIsTimePickerOpen(false)}
+                open={isDatePickerOpen}
+                date={calendarPickerDate}
+                mode="date"
+                minimumDate={new Date()}
+                maximumDate={new Date(new Date().setDate(new Date().getDate() + 60))}
+                onConfirm={handleCalendarConfirm}
+                onCancel={() => setIsDatePickerOpen(false)}
             />
 
         </SafeAreaView>
     )
 }
 
-export default SetCommuteScreen;
+export default FindCommute;

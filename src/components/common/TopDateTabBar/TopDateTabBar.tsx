@@ -7,6 +7,7 @@ import { useStyles } from './TopDateTabBar.styles';
 type TopDateTab = {
   id: string;
   title: string;
+  date?: string;
 };
 
 type Props = {

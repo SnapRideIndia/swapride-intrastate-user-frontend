@@ -15,7 +15,8 @@ export const ScreenNames = {
   BUS_SELECTION_SCREEN: 'BusSelectionScreen',
   TRACK_RIDE_SCREEN: 'TrackRideScreen',
   TICKET_DETAIL_SCREEN: 'TicketDetailScreen',
-  FULL_ROUTE_SCREEN: 'FullRouteScreen',
-  NOTIFICATION_SCREEN: 'NotificationScreen',
-  SET_COMMUTE: 'SetCommuteScreen',
+  FULL_ROUTE_SCREEN: "FullRouteScreen",
+  NOTIFICATION_SCREEN: "NotificationScreen",
+  SET_COMMUTE: "SetCommuteScreen",
+  FIND_COMMUTE: "FindCommute"
 } as const;

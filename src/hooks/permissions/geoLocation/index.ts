@@ -3,8 +3,8 @@ import { useDispatch } from 'react-redux';
 import { checkPermissionsHelper, getCurrentLocationHelper } from './helper';
 import { AppState } from 'react-native';
 import { AppDispatch } from '../../../store';
-import { setCurrentCoords } from '../../../features/profile/slice/profileSlice';
-import { ICoordinate } from '../../../features/profile/core/CoordinateTypes';
+import { setCurrentCoords } from '../../../slice/profileSlice';
+import { ICoords } from '../../../types/coords.types';
 
 const useGetLocation = () => {
   const [isLocationPermissionGranted, setIsLocationPermissionGranted] = useState<boolean | null>(null);
@@ -21,16 +21,15 @@ const useGetLocation = () => {
     return granted;
   };
 
-  const getCurrentLocation = async () => {
-    console.log('Getting current location...');
-    const currentLocation = await getCurrentLocationHelper();
-    if (currentLocation?.coords) {
-      // dispatch();
-      dispatch(setCurrentCoords(currentLocation.coords as ICoordinate));
-      return currentLocation;
+    const getCurrentLocation = async () => {
+        console.log('Getting current location...');
+        const currentLocation = await getCurrentLocationHelper();
+        if (currentLocation?.coords) {
+            dispatch(setCurrentCoords(currentLocation.coords as ICoords));
+            return currentLocation;
+        }
+        return null;
     }
-    return null;
-  };
 
   useEffect(() => {
     const subscription = AppState.addEventListener('change', async state => {

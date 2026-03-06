@@ -13,9 +13,12 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { SwPickupDropInputCard } from '../../../components/common/SwPickupDropInputCard/SwPickupDropInputCard';
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 import {
-  SwLocationSearchBottomSheet,
-  type SwLocationSearchItem,
-} from '../../../components/common/SwLocationSearchBottomSheet/SwLocationSearchBottomSheet';
+    SwLocationSearchBottomSheet,
+    type SwLocationSearchItem,
+} from '../../../components/common/SwLocationSearchBottomSheet/SwLocationSearchBottomSheet'
+import useGetLocation from '../../../hooks/permissions/geoLocation'
+import uuid from 'react-native-uuid'
+import { useReverseGeocode } from '../../../hooks/useSearch'
 
 const SuggestYourStops = () => {
   const [selectedSlot, setSelectedSlot] = useState({
@@ -32,9 +35,20 @@ const SuggestYourStops = () => {
   const styles = useStyles(colors);
   const navigation = useNavigation();
 
-  const locationSheetRef = useRef<BottomSheetModal>(null);
-  const [locationQuery, setLocationQuery] = useState('');
-  const [activeLocationField, setActiveLocationField] = useState<'pickup' | 'drop'>('pickup');
+    const locationSheetRef = useRef<BottomSheetModal>(null);
+    const [locationQuery, setLocationQuery] = useState('');
+    const [activeLocationField, setActiveLocationField] = useState<'pickup' | 'drop'>('pickup');
+    const sessionTokenRef = useRef<string | null>(null);
+    const [searchResults, setSearchResults] = useState<SwLocationSearchItem[]>([]);
+    const { getCurrentLocation } = useGetLocation();
+    const { getReverseGeocodeItems } = useReverseGeocode();
+
+    const getSessionToken = useCallback(() => {
+        if (!sessionTokenRef.current) {
+            sessionTokenRef.current = String(uuid.v4());
+        }
+        return sessionTokenRef.current;
+    }, []);
 
   const savedAddresses = useMemo<SwLocationSearchItem[]>(
     () => [
@@ -66,20 +80,40 @@ const SuggestYourStops = () => {
     [],
   );
 
-  const openLocationSheet = useCallback((field: 'pickup' | 'drop') => {
-    setActiveLocationField(field);
-    setLocationQuery('');
-    locationSheetRef.current?.present();
-  }, []);
+    const openLocationSheet = useCallback((field: 'pickup' | 'drop') => {
+        setActiveLocationField(field);
+        setLocationQuery('');
+        setSearchResults([]);
+        sessionTokenRef.current = null;
+        locationSheetRef.current?.present();
+    }, []);
 
-  const handleSelectLocation = useCallback(
-    (item: SwLocationSearchItem) => {
-      if (activeLocationField === 'pickup') setPickupLocation(item.title);
-      else setDropLocation(item.title);
-      locationSheetRef.current?.dismiss();
-    },
-    [activeLocationField],
-  );
+    const handleSelectLocation = useCallback(
+        (item: SwLocationSearchItem) => {
+            const valueToFill = item.subtitle || item.title;
+            if (activeLocationField === 'pickup') setPickupLocation(valueToFill);
+            else setDropLocation(valueToFill);
+            locationSheetRef.current?.dismiss();
+        },
+        [activeLocationField],
+    );
+
+    const handleUseCurrentLocation = useCallback(async () => {
+        const position = await getCurrentLocation();
+        if (!position?.coords) return;
+
+        const { latitude, longitude } = position.coords;
+        const token = getSessionToken();
+        const items = await getReverseGeocodeItems(latitude, longitude, token);
+
+        if (!items.length) {
+            setSearchResults([]);
+            return;
+        }
+
+        setSearchResults(items);
+        handleSelectLocation(items[0]);
+    }, [getCurrentLocation, getReverseGeocodeItems, getSessionToken, handleSelectLocation]);
 
   const handlePressSlot = (slot: 'morning' | 'evening') => {
     if (slot === 'morning') setSelectedSlot(prev => ({ ...prev, morning: true, evening: false }));
@@ -221,23 +255,26 @@ const SuggestYourStops = () => {
         {/* Selector */}
       </KeyboardAwareScrollView>
 
-      <SwLocationSearchBottomSheet
-        ref={locationSheetRef}
-        title={activeLocationField === 'pickup' ? 'Search Pickup Address' : 'Search Drop Address'}
-        query={locationQuery}
-        onChangeQuery={setLocationQuery}
-        showUseCurrentLocation
-        onPressUseCurrentLocation={() => {
-          // Hook into GPS later if needed
-        }}
-        savedAddresses={savedAddresses}
-        recentSearches={recentSearches}
-        onPressItem={handleSelectLocation}
-        onClose={() => setLocationQuery('')}
-      />
-      {/* </ScrollView> */}
-    </SafeAreaView>
-  );
-};
+            <SwLocationSearchBottomSheet
+                ref={locationSheetRef}
+                title={activeLocationField === 'pickup' ? 'Search Pickup Address' : 'Search Drop Address'}
+                query={locationQuery}
+                onChangeQuery={setLocationQuery}
+                searchResults={searchResults}
+                showUseCurrentLocation
+                onPressUseCurrentLocation={handleUseCurrentLocation}
+                savedAddresses={savedAddresses}
+                recentSearches={recentSearches}
+                onPressItem={handleSelectLocation}
+                onClose={() => {
+                    setLocationQuery('');
+                    setSearchResults([]);
+                    sessionTokenRef.current = null;
+                }}
+            />
+            {/* </ScrollView> */}
+        </SafeAreaView>
+    )
+}
 
 export default SuggestYourStops;

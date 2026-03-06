@@ -1,9 +1,10 @@
 import React, { forwardRef, useCallback, useMemo } from 'react';
 import type { ImageSourcePropType } from 'react-native';
-import { Image, ScrollView, TouchableOpacity, View } from 'react-native';
+import { Image, TouchableOpacity, View } from 'react-native';
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
+  BottomSheetFlatList,
   BottomSheetScrollView,
   BottomSheetTextInput,
   type BottomSheetBackdropProps,
@@ -19,6 +20,8 @@ export type SwLocationSearchItem = {
   title: string;
   subtitle?: string;
   iconSource?: ImageSourcePropType;
+  latitude?: number;
+  longitude?: number;
 };
 
 type Props = {
@@ -60,6 +63,7 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
     const insets = useSafeAreaInsets();
 
     const snapPoints = useMemo(() => ['90%'], []);
+    const isDropdownOpen = !!query && searchResults.length > 0;
 
     const renderBackdrop = useCallback(
       (props: BottomSheetBackdropProps) => (
@@ -82,8 +86,13 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
         ref={ref}
         index={0}
         snapPoints={snapPoints}
-        enableDynamicSizing
         enablePanDownToClose
+        // Keep keyboard open while results render.
+        keyboardBehavior="extend"
+        keyboardBlurBehavior="none"
+        android_keyboardInputMode="adjustResize"
+        // Avoid content pan gesture stealing input focus/scroll.
+        enableContentPanningGesture={false}
         onDismiss={handleDismiss}
         backdropComponent={renderBackdrop}
         backgroundStyle={styles.sheetBackground}
@@ -94,7 +103,8 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
             styles.content,
             // { paddingBottom: Math.max(insets.bottom, 20) },
           ]}
-          // keyboardShouldPersistTaps="handled"
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="none"
         >
           <View style={styles.header}>
             <Text varient="semi-bold" style={styles.title}>
@@ -128,13 +138,20 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
 
             {!!query && searchResults.length > 0 && (
               <View style={styles.dropdownContainer}>
-                <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={true} nestedScrollEnabled>
-                  {searchResults.map((item, idx) => (
+                <BottomSheetFlatList
+                  data={searchResults}
+                  keyExtractor={(item) => item.id}
+                  keyboardShouldPersistTaps="handled"
+                  showsVerticalScrollIndicator={false}
+                  keyboardDismissMode="none"
+                  renderItem={({ item, index }) => (
                     <TouchableOpacity
-                      key={item.id}
                       activeOpacity={0.85}
                       onPress={() => onPressItem?.(item)}
-                      style={[styles.dropdownItem, idx === searchResults.length - 1 && styles.dropdownItemLast]}
+                      style={[
+                        styles.dropdownItem,
+                        index === searchResults.length - 1 && styles.dropdownItemLast,
+                      ]}
                     >
                       <View style={styles.dropdownItemIcon}>
                         <Image source={item.iconSource ?? ImageSource.searhIcon} style={styles.dropdownItemIconImg} />
@@ -150,8 +167,8 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
                         )}
                       </View>
                     </TouchableOpacity>
-                  ))}
-                </ScrollView>
+                  )}
+                />
               </View>
             )}
           </View>
@@ -169,9 +186,10 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
 
           {/* <View style={styles.divider} /> */}
 
-          <Text varient="semi-bold" style={styles.sectionTitle}>
-            Saved Addresses
-          </Text>
+          <Text varient='semi-bold' style={styles.sectionTitle}>Saved Addresses</Text>
+          {savedAddresses.length === 0 && (
+            <Text style={styles.emptyStateText}>No saved addresses yet</Text>
+          )}
           {savedAddresses.map((item, idx) => (
             <View key={item.id}>
               <TouchableOpacity activeOpacity={0.85} onPress={() => onPressItem?.(item)} style={styles.listRow}>
@@ -191,6 +209,9 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
           <View style={styles.divider} />
 
           <Text style={styles.sectionTitle}>Recent Searches</Text>
+          {recentSearches.length === 0 && (
+            <Text style={styles.emptyStateText}>No recent searches yet</Text>
+          )}
           {recentSearches.map((item, idx) => (
             <View key={item.id}>
               <TouchableOpacity activeOpacity={0.85} onPress={() => onPressItem?.(item)} style={styles.listRow}>
