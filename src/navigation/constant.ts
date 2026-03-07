@@ -23,4 +23,6 @@ export const ScreenNames = {
   BOOKING_OPTIONS: 'BookingOptionsScreen',
   PAYMENT_OPTIONS: 'PaymentOptionsScreen',
   BOOKING_SUCCESS: 'BookingSuccessScreen',
+  SET_COMMUTE: "SetCommuteScreen", // first commute
+  FIND_COMMUTE: "FindCommute" // second time
 } as const;
