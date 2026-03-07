@@ -23,7 +23,7 @@ const ReturnRideCard = ({ onShowBuses }: ReturnRideCardProps) => {
       <Text style={styles.subtitle}>Free cancellation if your plans change later</Text>
 
       <View style={styles.inputContainer}>
-        <TextInput placeholder="Preferred Time" placeholderTextColor={colors.contentSecondary} style={styles.inputLabel} />
+        <TextInput placeholder="Preferred Time" placeholderTextColor={colors.contenttertiary} style={styles.inputLabel} />
         <View style={styles.toggleContainer}>
           <TouchableOpacity style={[styles.toggleButton, meridian === 'AM' && styles.toggleButtonActive]} onPress={() => setMeridian('AM')}>
             <Text variant="medium" style={[styles.toggleText, meridian === 'AM' && styles.toggleTextActive]}>
@@ -38,7 +38,7 @@ const ReturnRideCard = ({ onShowBuses }: ReturnRideCardProps) => {
         </View>
       </View>
 
-      <PrimaryButton title="Show return buses" onPress={onShowBuses} btnStyle={styles.showBusesBtn} titleStyle={styles.showBusesBtnTitle} />
+      <PrimaryButton title="Show return buses" onPress={onShowBuses} btnStyle={styles.showBusesBtn} textStyle={styles.showBusesBtnTitle} />
     </View>
   );
 };

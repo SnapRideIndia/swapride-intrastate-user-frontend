@@ -40,7 +40,7 @@ export const AddAmountSheet = forwardRef<BottomSheetModal, AddAmountSheetProps>(
           <TextInput
             style={{ flex: 1, color: colors.contentPrimary }}
             placeholder="Enter Amount to Recharge"
-            placeholderTextColor={colors.contentSecondary}
+            placeholderTextColor={colors.contenttertiary}
             keyboardType="numeric"
             value={amount}
             onChangeText={text => {

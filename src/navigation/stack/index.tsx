@@ -27,6 +27,7 @@ import ConfirmBookingDetails from '../../screens/Bookings/ConfirmBookingDetails/
 import BookingOptions from '../../screens/Bookings/BookingOptions/BookingOptions';
 import PaymentOptions from '../../screens/Bookings/PaymentOptions/PaymentOptions';
 import BookingSuccess from '../../screens/Bookings/BookingSuccess/BookingSuccess';
+import SeatSelection from '../../screens/Bookings/SeatSelection/SeatSelection';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -90,6 +91,7 @@ const AppNavigation = () => {
         <Stack.Screen name={ScreenNames.BOOKING_OPTIONS as never} component={BookingOptions} />
         <Stack.Screen name={ScreenNames.PAYMENT_OPTIONS as never} component={PaymentOptions} />
         <Stack.Screen name={ScreenNames.BOOKING_SUCCESS as never} component={BookingSuccess} />
+        <Stack.Screen name={ScreenNames.SEAT_SELECTION as never} component={SeatSelection} />
       </Stack.Navigator>
     </NavigationContainer>
   );

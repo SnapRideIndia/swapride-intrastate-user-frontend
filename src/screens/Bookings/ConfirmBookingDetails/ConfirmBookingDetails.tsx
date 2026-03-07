@@ -74,8 +74,8 @@ const ConfirmBookingDetails = ({ navigation }: any) => {
 
       <ScrollView style={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.cardsContainer}>
-          <TripSummaryCard {...mockBookingData.outbound} />
-          <TripSummaryCard {...mockBookingData.returnTrip} />
+          <TripSummaryCard {...mockBookingData.outbound} onChangeSeat={() => navigation.navigate(ScreenNames.SEAT_SELECTION as never)} />
+          <TripSummaryCard {...mockBookingData.returnTrip} onChangeSeat={() => navigation.navigate(ScreenNames.SEAT_SELECTION as never)} />
         </View>
 
         <View style={[styles.whiteSection, styles.whiteSectionWithGap]}>

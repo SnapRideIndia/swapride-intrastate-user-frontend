@@ -16,4 +16,5 @@ export type RootStackParamList = {
   [ScreenNames.BOOKING_OPTIONS]: undefined;
   [ScreenNames.PAYMENT_OPTIONS]: undefined;
   [ScreenNames.BOOKING_SUCCESS]: undefined;
+  [ScreenNames.SEAT_SELECTION]: undefined;
 };

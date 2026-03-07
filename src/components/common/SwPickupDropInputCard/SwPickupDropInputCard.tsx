@@ -51,7 +51,15 @@ export const SwPickupDropInputCard = ({
 
   return (
     <View style={[styles.container, containerStyle]}>
+      {/* Dashed Connector Line */}
+      <View style={styles.connectorLine}>
+        {[...Array(11)].map((_, i) => (
+          <View key={i} style={styles.dash} />
+        ))}
+      </View>
+
       <View style={styles.pickupWrapper}>
+        <View style={styles.pickupDot} />
         {onPressPickup ? (
           <TouchableOpacity activeOpacity={0.9} onPress={onPressPickup}>
             <View pointerEvents="none">
@@ -75,15 +83,18 @@ export const SwPickupDropInputCard = ({
         )}
       </View>
 
-      {onPressDrop ? (
-        <TouchableOpacity activeOpacity={0.9} onPress={onPressDrop}>
-          <View pointerEvents="none">
-            <SwTextInput {...dropInputProps} editable={false} />
-          </View>
-        </TouchableOpacity>
-      ) : (
-        <SwTextInput {...dropInputProps} />
-      )}
+      <View style={styles.dropWrapper}>
+        <View style={styles.dropoffDot} />
+        {onPressDrop ? (
+          <TouchableOpacity activeOpacity={0.9} onPress={onPressDrop}>
+            <View pointerEvents="none">
+              <SwTextInput {...dropInputProps} editable={false} />
+            </View>
+          </TouchableOpacity>
+        ) : (
+          <SwTextInput {...dropInputProps} />
+        )}
+      </View>
     </View>
   );
 };

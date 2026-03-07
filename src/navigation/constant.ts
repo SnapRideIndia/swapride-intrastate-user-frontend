@@ -15,14 +15,13 @@ export const ScreenNames = {
   BUS_SELECTION_SCREEN: 'BusSelectionScreen',
   TRACK_RIDE_SCREEN: 'TrackRideScreen',
   TICKET_DETAIL_SCREEN: 'TicketDetailScreen',
-  FULL_ROUTE_SCREEN: "FullRouteScreen",
-  NOTIFICATION_SCREEN: "NotificationScreen",
-  SET_COMMUTE: "SetCommuteScreen",
-  FIND_COMMUTE: "FindCommute",
+  FULL_ROUTE_SCREEN: 'FullRouteScreen',
+  NOTIFICATION_SCREEN: 'NotificationScreen',
   CONFIRM_BOOKING_DETAILS: 'ConfirmBookingDetailsScreen',
   BOOKING_OPTIONS: 'BookingOptionsScreen',
   PAYMENT_OPTIONS: 'PaymentOptionsScreen',
   BOOKING_SUCCESS: 'BookingSuccessScreen',
-  SET_COMMUTE: "SetCommuteScreen", // first commute
-  FIND_COMMUTE: "FindCommute" // second time
+  SET_COMMUTE: 'SetCommuteScreen', // first commute
+  FIND_COMMUTE: 'FindCommute', // second time
+  SEAT_SELECTION: 'SeatSelectionScreen',
 } as const;
