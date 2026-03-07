@@ -20,7 +20,7 @@ const PrimaryButton = ({ title, onPress, disabled, btnStyle, textStyle, renderLe
   return (
     <TouchableOpacity style={[styles.button, btnStyle]} onPress={onPress} disabled={disabled} activeOpacity={disabled ? 1 : 0.7}>
       {renderLeftIcon?.()}
-      <SwText style={[styles.title, textStyle]} varient="semi-bold">
+      <SwText style={[styles.title, textStyle]} variant="semi-bold">
         {title}
       </SwText>
       {renderRightIcon?.()}

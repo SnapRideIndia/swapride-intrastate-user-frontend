@@ -4,7 +4,7 @@ import { useTheme } from '../../../theme/ThemeProvider';
 import { useStyles } from './SwText.styles';
 
 interface IProps extends TextProps {
-  varient: 'regular' | 'bold' | 'semi-bold' | 'medium';
+  variant: 'regular' | 'bold' | 'semi-bold' | 'medium';
   children: React.ReactNode;
   style: StyleProp<TextStyle>;
   numberOfLines: number;
@@ -23,9 +23,9 @@ export const getFontFamilyByFW = (type: string) => {
   }
 };
 
-export const SwText = ({ varient = 'regular', children, style, numberOfLines, ...props }: Partial<IProps>) => {
+export const SwText = ({ variant = 'regular', children, style, numberOfLines, ...props }: Partial<IProps>) => {
   const { colors } = useTheme();
-  const styles = useStyles(colors, varient);
+  const styles = useStyles(colors, variant);
   return (
     <Text numberOfLines={numberOfLines} style={[styles.textStyle, style]} {...props}>
       {children}

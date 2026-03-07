@@ -52,7 +52,7 @@ export const AddAmountSheet = forwardRef<BottomSheetModal, AddAmountSheetProps>(
         </View>
 
         {!!error && (
-          <Text varient="regular" style={{ color: colors.contentRed, fontSize: 12, marginTop: 4 }}>
+          <Text variant="regular" style={{ color: colors.contentRed, fontSize: 12, marginTop: 4 }}>
             {error}
           </Text>
         )}
@@ -60,7 +60,7 @@ export const AddAmountSheet = forwardRef<BottomSheetModal, AddAmountSheetProps>(
         <View style={styles.quickAmountRow}>
           {['100', '500', '1000'].map(val => (
             <TouchableOpacity key={val} style={styles.quickAmountButton} onPress={() => handleQuickSelect(val)} disabled={isLoading}>
-              <Text varient="semi-bold" style={styles.quickAmountText}>
+              <Text variant="semi-bold" style={styles.quickAmountText}>
                 {val}
               </Text>
             </TouchableOpacity>

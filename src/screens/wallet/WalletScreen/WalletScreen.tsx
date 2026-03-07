@@ -77,19 +77,19 @@ const WalletScreen = () => {
   const renderHeader = () => (
     <View style={styles.contentContainer}>
       {balanceError ? (
-        <Text varient="regular" style={styles.errorText}>
+        <Text variant="regular" style={styles.errorText}>
           Failed to load balance. Pull down to retry.
         </Text>
       ) : (
         <BalanceCard balance={balanceData?.balance || '0.00'} onAddMoney={handleOpenAddMoney} />
       )}
 
-      <Text varient="semi-bold" style={styles.transactionTitle}>
+      <Text variant="semi-bold" style={styles.transactionTitle}>
         Transaction History
       </Text>
 
       {txError && (
-        <Text varient="regular" style={styles.errorText}>
+        <Text variant="regular" style={styles.errorText}>
           Failed to load transactions. Pull down to retry.
         </Text>
       )}
@@ -109,7 +109,7 @@ const WalletScreen = () => {
     if (txLoading) return null;
     return (
       <View style={styles.emptyContainer}>
-        <Text varient="regular" style={styles.emptyText}>
+        <Text variant="regular" style={styles.emptyText}>
           No transactions found.
         </Text>
       </View>

@@ -275,7 +275,7 @@ const SetCommuteScreen = () => {
   return (
     <SafeAreaView edges={['bottom']} style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.contentContainer}>
-        <Text varient="semi-bold" style={styles.title}>
+        <Text variant="semi-bold" style={styles.title}>
           Tell us about your commute !
         </Text>
 

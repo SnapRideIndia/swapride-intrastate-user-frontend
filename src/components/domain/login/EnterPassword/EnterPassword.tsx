@@ -56,7 +56,7 @@ const EnterPassword = () => {
 
         <View style={styles.spacer} />
 
-        <Text style={styles.loginPhno} varient="bold" onPress={handlePressPhno}>
+        <Text style={styles.loginPhno} variant="bold" onPress={handlePressPhno}>
           Login using phone number
         </Text>
       </View>

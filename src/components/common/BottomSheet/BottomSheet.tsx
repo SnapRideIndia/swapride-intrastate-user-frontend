@@ -55,7 +55,7 @@ export const SwBottomSheet = forwardRef<BottomSheetModal, SwBottomSheetProps>(
           {title && (
             <>
               <View style={styles.header}>
-                <Text varient="bold" style={styles.title}>
+                <Text variant="bold" style={styles.title}>
                   {title}
                 </Text>
                 <TouchableOpacity onPress={handleClose} style={styles.closeButton}>

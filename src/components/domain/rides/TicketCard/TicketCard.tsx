@@ -29,7 +29,7 @@ export const TicketCard: React.FC<TicketCardProps> = ({ from, to, timeRange, bus
           {!isActivated && (
             <TouchableOpacity style={styles.qrOverlay} activeOpacity={0.9} onPress={onActivate}>
               <View style={styles.activateStrip}>
-                <Text varient="semi-bold" style={styles.activateText}>
+                <Text variant="semi-bold" style={styles.activateText}>
                   Click to Activate the QR
                 </Text>
               </View>
@@ -43,18 +43,18 @@ export const TicketCard: React.FC<TicketCardProps> = ({ from, to, timeRange, bus
 
       {/* Route Info */}
       <View style={styles.routeSection}>
-        <Text varient="bold" style={[styles.locationText, { textAlign: 'left' }]}>
+        <Text variant="bold" style={[styles.locationText, { textAlign: 'left' }]}>
           {from}
         </Text>
         <Image source={ImageSource.swapPoints} style={styles.swapIcon} resizeMode="contain" />
-        <Text varient="bold" style={[styles.locationText, { textAlign: 'right' }]}>
+        <Text variant="bold" style={[styles.locationText, { textAlign: 'right' }]}>
           {to}
         </Text>
       </View>
 
       {/* Time Strip */}
       <View style={styles.timeStrip}>
-        <Text varient="bold" style={styles.timeText}>
+        <Text variant="bold" style={styles.timeText}>
           {timeRange}
         </Text>
       </View>
@@ -62,13 +62,13 @@ export const TicketCard: React.FC<TicketCardProps> = ({ from, to, timeRange, bus
       {/* Details Row */}
       <View style={styles.detailsRow}>
         <View style={styles.detailBox}>
-          <Text varient="bold" style={styles.detailText}>
+          <Text variant="bold" style={styles.detailText}>
             {busPlate}
           </Text>
         </View>
         <View style={[styles.detailBox, styles.dateBox]}>
-          <Text varient="medium" style={styles.detailText}>
-            Date: <Text varient="bold">{date}</Text>
+          <Text variant="medium" style={styles.detailText}>
+            Date: <Text variant="bold">{date}</Text>
           </Text>
         </View>
       </View>

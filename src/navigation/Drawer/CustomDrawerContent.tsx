@@ -118,10 +118,10 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
                 <Image source={{ uri: profileData?.profileUrl }} style={{ width: '100%', height: '100%', borderRadius: 50 }} />
               </View>
               <View style={{ gap: 5 }}>
-                <Text varient="medium" style={styles.name}>
+                <Text variant="medium" style={styles.name}>
                   {profileData?.fullName}
                 </Text>
-                <Text varient="semi-bold" style={styles.number}>
+                <Text variant="semi-bold" style={styles.number}>
                   {profileData?.mobileNumber}
                 </Text>
               </View>
@@ -135,7 +135,7 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
           {drawerItems.map(item => (
             <TouchableOpacity key={item.id} style={styles.drawerItem} onPress={() => handlePressItem(item.navigateTo)}>
               <Image source={item.iconUri} style={styles.icon} />
-              <Text varient="medium" style={styles.drawerItemTitle}>
+              <Text variant="medium" style={styles.drawerItemTitle}>
                 {item.title}
               </Text>
             </TouchableOpacity>
@@ -147,7 +147,7 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
 
       <SafeAreaView edges={['bottom']} style={styles.logoutBtnSafeArea}>
         <TouchableOpacity style={styles.logoutBtn} onPress={handlePressLogout}>
-          <Text varient="semi-bold" style={styles.logoutTitle}>
+          <Text variant="semi-bold" style={styles.logoutTitle}>
             Logout
           </Text>
           <Image source={ImageSource.logoutOutline} style={styles.icon} />

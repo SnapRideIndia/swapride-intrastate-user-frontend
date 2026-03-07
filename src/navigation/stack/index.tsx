@@ -23,6 +23,10 @@ import { RootStackParamList } from '../types';
 import SetYourProfileScreen from '../../screens/profile/SetYourProfileScreen/SetYourProfileScreen';
 import SetCommuteScreen from '../../screens/home/SetCommuteScreen/SetCommuteScreen';
 import FindCommute from '../../screens/home/FindCommute/FindCommute';
+import ConfirmBookingDetails from '../../screens/Bookings/ConfirmBookingDetails/ConfirmBookingDetails';
+import BookingOptions from '../../screens/Bookings/BookingOptions/BookingOptions';
+import PaymentOptions from '../../screens/Bookings/PaymentOptions/PaymentOptions';
+import BookingSuccess from '../../screens/Bookings/BookingSuccess/BookingSuccess';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -61,45 +65,34 @@ const AppNavigation = () => {
     dispatch(setAccessToken(token ?? ''));
   }, [dispatch]);
 
-    return (
-        <NavigationContainer>
-            <Stack.Navigator
-                screenOptions={{ headerShown: false }}
-                initialRouteName={initialRouteName}
-            >
-                <Stack.Screen name={ScreenNames.DASHBOARD_SCREEN}>
-                    {() => (
-                        <View style={styles.tabBarContainer}>
-                            <DrawerNavigator />
-                        </View>
-                    )}
-                </Stack.Screen>
-                <Stack.Screen name={ScreenNames.LOGIN_SCREEN} component={EnterPhNo} />
-                <Stack.Screen name={ScreenNames.VIEW_PROFILE} component={ViewProfile} />
-                <Stack.Screen
-                    name={ScreenNames.SUGGEST_YOUR_STOPS}
-                    component={SuggestYourStops}
-                />
-                <Stack.Screen
-                    name={ScreenNames.BUS_SELECTION_SCREEN as never}
-                    component={BusSelection}
-                />
-                <Stack.Screen
-                    name={ScreenNames.TRACK_RIDE_SCREEN}
-                    component={TrackRideScreen}
-                />
-                <Stack.Screen
-                    name={ScreenNames.TICKET_DETAIL_SCREEN}
-                    component={TicketDetailScreen}
-                />
-                <Stack.Screen name={ScreenNames.FULL_ROUTE_SCREEN as never} component={FullRouteScreen} />
-                <Stack.Screen name={ScreenNames.NOTIFICATION_SCREEN as never} component={NotificationScreen} />
-                <Stack.Screen name={ScreenNames.SET_PROFILE_SCREEN as never} component={SetYourProfileScreen} />
-                <Stack.Screen name={ScreenNames.SET_COMMUTE as never} component={SetCommuteScreen} />
-                <Stack.Screen name={ScreenNames.FIND_COMMUTE as never} component={FindCommute} />
-            </Stack.Navigator>
-        </NavigationContainer>
-    );
+  return (
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={initialRouteName}>
+        <Stack.Screen name={ScreenNames.DASHBOARD_SCREEN}>
+          {() => (
+            <View style={styles.tabBarContainer}>
+              <DrawerNavigator />
+            </View>
+          )}
+        </Stack.Screen>
+        <Stack.Screen name={ScreenNames.LOGIN_SCREEN} component={EnterPhNo} />
+        <Stack.Screen name={ScreenNames.VIEW_PROFILE} component={ViewProfile} />
+        <Stack.Screen name={ScreenNames.SUGGEST_YOUR_STOPS} component={SuggestYourStops} />
+        <Stack.Screen name={ScreenNames.BUS_SELECTION_SCREEN as never} component={BusSelection} />
+        <Stack.Screen name={ScreenNames.TRACK_RIDE_SCREEN} component={TrackRideScreen} />
+        <Stack.Screen name={ScreenNames.TICKET_DETAIL_SCREEN} component={TicketDetailScreen} />
+        <Stack.Screen name={ScreenNames.FULL_ROUTE_SCREEN as never} component={FullRouteScreen} />
+        <Stack.Screen name={ScreenNames.NOTIFICATION_SCREEN as never} component={NotificationScreen} />
+        <Stack.Screen name={ScreenNames.SET_PROFILE_SCREEN as never} component={SetYourProfileScreen} />
+        <Stack.Screen name={ScreenNames.SET_COMMUTE as never} component={SetCommuteScreen} />
+        <Stack.Screen name={ScreenNames.FIND_COMMUTE as never} component={FindCommute} />
+        <Stack.Screen name={ScreenNames.CONFIRM_BOOKING_DETAILS as never} component={ConfirmBookingDetails} />
+        <Stack.Screen name={ScreenNames.BOOKING_OPTIONS as never} component={BookingOptions} />
+        <Stack.Screen name={ScreenNames.PAYMENT_OPTIONS as never} component={PaymentOptions} />
+        <Stack.Screen name={ScreenNames.BOOKING_SUCCESS as never} component={BookingSuccess} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
 };
 
 export default AppNavigation;

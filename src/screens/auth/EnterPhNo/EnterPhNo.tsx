@@ -30,10 +30,10 @@ const EnterPhNo = () => {
         <View>
           <Image source={ImageSource.banner} style={styles.banner} />
           <View style={styles.bannerTextContainer}>
-            <Text style={styles.bannerTitle} varient="bold">
+            <Text style={styles.bannerTitle} variant="bold">
               Welcome to Swapride!
             </Text>
-            <Text style={styles.bannerSubTitle} varient="regular">
+            <Text style={styles.bannerSubTitle} variant="regular">
               Daily office travel, made simple — book your ride in just a few taps.
             </Text>
           </View>

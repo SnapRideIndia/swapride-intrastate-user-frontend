@@ -37,15 +37,15 @@ const HistoryCard = ({ seatNumber, date, amount, fromLocation, toLocation, fromT
       <View style={styles.flexRow}>
         <View style={styles.flexRow}>
           <View style={styles.indicator}></View>
-          <Text varient="medium" style={styles.fontFourteen}>
+          <Text variant="medium" style={styles.fontFourteen}>
             Bus Ticket
           </Text>
-          <Text varient="semi-bold" style={[styles.fontTwelve, styles.seatText]}>
+          <Text variant="semi-bold" style={[styles.fontTwelve, styles.seatText]}>
             {seatNumber}
           </Text>
         </View>
         <View style={styles.dateContainer}>
-          <Text varient="medium" style={[styles.fontTwelve, styles.dateText]}>
+          <Text variant="medium" style={[styles.fontTwelve, styles.dateText]}>
             {date}
           </Text>
         </View>
@@ -54,10 +54,10 @@ const HistoryCard = ({ seatNumber, date, amount, fromLocation, toLocation, fromT
       {/* Middle Container */}
       <View style={styles.middleRow}>
         <View style={styles.flexColumn}>
-          <Text varient="bold" style={[styles.fontSixteen, styles.locationText]}>
+          <Text variant="bold" style={[styles.fontSixteen, styles.locationText]}>
             {truncateLocation(fromLocation)}
           </Text>
-          <Text varient="medium" style={[styles.fontTwelve, styles.timeText]}>
+          <Text variant="medium" style={[styles.fontTwelve, styles.timeText]}>
             {fromTime}
           </Text>
         </View>
@@ -65,10 +65,10 @@ const HistoryCard = ({ seatNumber, date, amount, fromLocation, toLocation, fromT
           <Image source={ImageSource.busOnTrack} style={styles.busOnTrack} />
         </View>
         <View style={styles.flexColumn}>
-          <Text varient="bold" style={[styles.fontSixteen, styles.locationText]}>
+          <Text variant="bold" style={[styles.fontSixteen, styles.locationText]}>
             {truncateLocation(toLocation)}
           </Text>
-          <Text varient="medium" style={[styles.fontTwelve, styles.timeText]}>
+          <Text variant="medium" style={[styles.fontTwelve, styles.timeText]}>
             {toTime}
           </Text>
         </View>
@@ -76,11 +76,11 @@ const HistoryCard = ({ seatNumber, date, amount, fromLocation, toLocation, fromT
 
       {/* Lower Container */}
       <View style={styles.flexRow}>
-        <Text varient="bold" style={[styles.fontSixteen, styles.amountText]}>
+        <Text variant="bold" style={[styles.fontSixteen, styles.amountText]}>
           ₹ {amount}
         </Text>
         <TouchableOpacity onPress={handleViewDetails} style={styles.viewDetailsButton}>
-          <Text varient="medium" style={styles.fontFourteen}>
+          <Text variant="medium" style={styles.fontFourteen}>
             View Ride
           </Text>
         </TouchableOpacity>

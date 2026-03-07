@@ -33,7 +33,7 @@ const TabNavigator = () => {
         component={HomeScreen}
         options={{
           tabBarLabel: ({ focused }) => (
-            <Text varient="medium" style={[styles.label, focused && styles.activeLabel]}>
+            <Text variant="medium" style={[styles.label, focused && styles.activeLabel]}>
               Home
             </Text>
           ),
@@ -48,7 +48,7 @@ const TabNavigator = () => {
         component={WalletScreen}
         options={{
           tabBarLabel: ({ focused }) => (
-            <Text varient="medium" style={[styles.label, focused && styles.activeLabel]}>
+            <Text variant="medium" style={[styles.label, focused && styles.activeLabel]}>
               Wallet
             </Text>
           ),
@@ -63,7 +63,7 @@ const TabNavigator = () => {
         component={HistoryScreen}
         options={{
           tabBarLabel: ({ focused }) => (
-            <Text varient="medium" style={[styles.label, focused && styles.activeLabel]}>
+            <Text variant="medium" style={[styles.label, focused && styles.activeLabel]}>
               History
             </Text>
           ),

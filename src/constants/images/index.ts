@@ -72,4 +72,10 @@ export const ImageSource = {
   swapPoints: require('.././../assets/images/swap_points.png'),
   uncheckbox: require('.././../assets/images/uncheckbox.png'),
   camera: require('.././../assets/images/camera.png'),
-};
+
+
+  // Bookings
+offer: require('.././../assets/images/offer.png'),
+razorpay: require('.././../assets/images/razorpay.png'),
+
+}

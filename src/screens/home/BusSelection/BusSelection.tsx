@@ -102,7 +102,7 @@ const BusSelection = () => {
         onTabPress={handleTabPress}
       />
       <View style={styles.bannerCard}>
-        <Text varient="semi-bold" style={styles.bannerText}>
+        <Text variant="semi-bold" style={styles.bannerText}>
           Showing nearest stops & bus timings on your route
         </Text>
         <Image source={ImageSource.shuttel} style={styles.shuttel} />

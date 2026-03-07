@@ -14,10 +14,10 @@ const BalanceCard = ({ balance, onAddMoney }: IBalanceCardProps) => {
   const styles = useStyles(colors);
   return (
     <View style={styles.container}>
-      <Text varient="semi-bold" style={styles.cardTitle}>
+      <Text variant="semi-bold" style={styles.cardTitle}>
         Current Balance
       </Text>
-      <Text varient="semi-bold" style={styles.balanceText}>
+      <Text variant="semi-bold" style={styles.balanceText}>
         ₹ {balance}
       </Text>
       <PrimaryButton btnStyle={styles.buttonStyles} textStyle={styles.buttonTextStyles} title="Add Money" onPress={onAddMoney} />

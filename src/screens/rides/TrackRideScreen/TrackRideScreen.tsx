@@ -94,7 +94,7 @@ const TrackRideScreen = ({ route }: { route: RouteProp<RootStackParamList, typeo
           {/* Bus, Seat Details */}
           <View style={styles.flexRow}>
             <TouchableOpacity onPress={handleRequestDetailTicket} style={styles.justRow}>
-              <Text varient="bold" style={[styles.fontColor, styles.fontFourteen]}>
+              <Text variant="bold" style={[styles.fontColor, styles.fontFourteen]}>
                 Show ticket to driver
               </Text>
               <Image source={ImageSource.chevron} style={[styles.chevronIcon, { tintColor: colors.contentPrimary }]} />
@@ -103,13 +103,13 @@ const TrackRideScreen = ({ route }: { route: RouteProp<RootStackParamList, typeo
             <View style={styles.flexRow}>
               <View style={styles.flexRow}>
                 <Image style={styles.imageSize} source={ImageSource.busYellow} />
-                <Text varient="bold" style={[styles.fontFourteen, styles.fontColor]}>
+                <Text variant="bold" style={[styles.fontFourteen, styles.fontColor]}>
                   {mockTrackRideData.busNo}
                 </Text>
               </View>
               <View style={styles.flexRow}>
                 <Image style={styles.imageSize} source={ImageSource.SeatYellow} />
-                <Text varient="bold" style={[styles.fontFourteen, styles.fontColor]}>
+                <Text variant="bold" style={[styles.fontFourteen, styles.fontColor]}>
                   {mockTrackRideData.seatNo}
                 </Text>
               </View>
@@ -121,13 +121,13 @@ const TrackRideScreen = ({ route }: { route: RouteProp<RootStackParamList, typeo
             <View style={styles.justRow}>
               <Text style={[styles.fontColor, styles.fontEighteen]}>Pickup at</Text>
               <View style={styles.badge}>
-                <Text varient="bold" style={styles.fontFourteen}>
+                <Text variant="bold" style={styles.fontFourteen}>
                   {mockTrackRideData.pickupTime}
                 </Text>
               </View>
             </View>
 
-            <Text varient="bold" style={[styles.fontColor, styles.fontSixteen]}>
+            <Text variant="bold" style={[styles.fontColor, styles.fontSixteen]}>
               {mockTrackRideData.statusMessage}
             </Text>
           </View>
@@ -156,10 +156,10 @@ const TrackRideScreen = ({ route }: { route: RouteProp<RootStackParamList, typeo
             <Image source={ImageSource.call} style={styles.helpIcon} />
           </View>
           <View style={styles.helpTextContainer}>
-            <Text varient="bold" style={styles.helpTitle}>
+            <Text variant="bold" style={styles.helpTitle}>
               Call customer support - 9063776655
             </Text>
-            <Text varient="regular" style={styles.helpSubtext}>
+            <Text variant="regular" style={styles.helpSubtext}>
               Facing an issue? Speak to someone at Swapride
             </Text>
           </View>
@@ -168,7 +168,7 @@ const TrackRideScreen = ({ route }: { route: RouteProp<RootStackParamList, typeo
 
       <BottomSheet ref={stopsBottomSheetRef} title="All Stops">
         <View style={{ padding: 20 }}>
-          <Text varient="medium">Stops content will be added here later.</Text>
+          <Text variant="medium">Stops content will be added here later.</Text>
         </View>
       </BottomSheet>
     </SafeAreaView>

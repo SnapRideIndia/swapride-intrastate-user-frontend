@@ -30,7 +30,7 @@ const PrimaryHeader = ({ title, onBackBtnPress, onEdit }: IHeaderProps) => {
         <TouchableOpacity onPress={onBackBtnPress ?? handleBackPress}>
           <Image source={ImageSource.leftArrow} style={styles.backArrow} />
         </TouchableOpacity>
-        <Text varient="medium" style={styles.title}>
+        <Text variant="medium" style={styles.title}>
           {title}
         </Text>
       </View>

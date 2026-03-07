@@ -61,7 +61,7 @@ const ViewProfile = () => {
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.contentContainerStyle}>
         {/* first block */}
         <View style={styles.cardblock}>
-          <Text varient="semi-bold" style={styles.cardTitle}>
+          <Text variant="semi-bold" style={styles.cardTitle}>
             Travel Preferences
           </Text>
 
@@ -85,10 +85,10 @@ const ViewProfile = () => {
         </View>
         {/* second blcok */}
         <View style={styles.cardblock}>
-          <Text varient="semi-bold" style={[styles.cardTitle, { marginBottom: 0 }]}>
+          <Text variant="semi-bold" style={[styles.cardTitle, { marginBottom: 0 }]}>
             Communication Preferences
           </Text>
-          <Text varient="semi-bold" style={[styles.cardSubtitle, { marginBottom: 23 }]}>
+          <Text variant="semi-bold" style={[styles.cardSubtitle, { marginBottom: 23 }]}>
             This will help us inform you better
           </Text>
 
@@ -129,7 +129,7 @@ const ViewProfile = () => {
           }}
         >
           <View style={styles.header}>
-            <Text varient="semi-bold" style={styles.headerTitle}>
+            <Text variant="semi-bold" style={styles.headerTitle}>
               Are you sure you want to delete your account?
             </Text>
             <TouchableOpacity onPress={closeDeleteAccountSheet}>
@@ -137,13 +137,13 @@ const ViewProfile = () => {
             </TouchableOpacity>
           </View>
 
-          <Text varient="medium" style={styles.deleteDesc}>
+          <Text variant="medium" style={styles.deleteDesc}>
             Your personal data,bookings, and transaction history will be deleted and cannot be recovered if you do not log in to the app
             within 14 days.
           </Text>
 
           <View style={styles.inputContainer}>
-            <Text varient="semi-bold" style={styles.inputTitle}>
+            <Text variant="semi-bold" style={styles.inputTitle}>
               Enter your registered mobile number to proceed
             </Text>
             <View style={styles.inputInnerContainer}>

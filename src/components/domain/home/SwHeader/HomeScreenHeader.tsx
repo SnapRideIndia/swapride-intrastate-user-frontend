@@ -35,15 +35,15 @@ const HomeScreenHeader = () => {
         </TouchableOpacity>
       </View>
       <View style={[styles.innerContainer, { marginTop: 18, marginBottom: 14 }]}>
-        <Text varient="medium" style={styles.greeting}>
+        <Text variant="medium" style={styles.greeting}>
           Good morning Ritwik,
         </Text>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Image source={ImageSource.weather} style={styles.weatherIcon} />
-          <Text varient="semi-bold" style={styles.tempText}>
+          <Text variant="semi-bold" style={styles.tempText}>
             32c
           </Text>
-          <Text varient="medium" style={styles.locationText}>
+          <Text variant="medium" style={styles.locationText}>
             Hyderabad
           </Text>
         </View>
