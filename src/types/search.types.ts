@@ -17,4 +17,3 @@ export type RecentSearchDto = {
   longitude: number;
   timestamp: string;
 };
-

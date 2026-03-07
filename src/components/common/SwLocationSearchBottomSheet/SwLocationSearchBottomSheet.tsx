@@ -208,8 +208,6 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
                 </View>
               ))}
 
-              <View style={styles.divider} />
-
               <Text style={styles.sectionTitle}>Recent Searches</Text>
               {recentSearches.length === 0 && <Text style={styles.emptyStateText}>No recent searches yet</Text>}
               {recentSearches.map((item, idx) => (
@@ -225,7 +223,6 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
                       {!!item.subtitle && <Text style={styles.listSubtitle}>{item.subtitle}</Text>}
                     </View>
                   </TouchableOpacity>
-                  {idx !== recentSearches.length - 1 && <View style={styles.rowSeparator} />}
                 </View>
               ))}
             </>

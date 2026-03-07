@@ -51,7 +51,6 @@ export const SwPickupDropInputCard = ({
 
   return (
     <View style={[styles.container, containerStyle]}>
-      {/* Dashed Connector Line */}
       <View style={styles.connectorLine}>
         {[...Array(11)].map((_, i) => (
           <View key={i} style={styles.dash} />

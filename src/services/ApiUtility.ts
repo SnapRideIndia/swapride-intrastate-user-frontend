@@ -46,12 +46,12 @@ const createAxiosInstance = (contentType: string): AxiosInstance => {
 
 // Instance used only for refresh call (no Authorization header)
 const noAuthApi = axios.create({
-    baseURL: BASE_URL,
-    timeout: TIMEOUT,
-    headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-    },
+  baseURL: BASE_URL,
+  timeout: TIMEOUT,
+  headers: {
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
+  },
 });
 
 const REFRESH_ENDPOINT = 'users/auth/refresh';
@@ -64,59 +64,65 @@ let refreshPromise: Promise<string | null> | null = null;
  * Used by 401 interceptor and by AuthService.refreshAccessToken.
  */
 export const refreshSession = async (refreshToken: string): Promise<{ accessToken: string; refreshToken?: string }> => {
-    const { data } = await noAuthApi.post<{ data?: { accessToken?: string; access_token?: string; refreshToken?: string; refresh_token?: string }; accessToken?: string; refreshToken?: string }>(REFRESH_ENDPOINT, { refreshToken });
-    const raw = data?.data ?? data;
-    const accessToken = raw?.accessToken ?? raw?.access_token ?? '';
-    const newRefreshToken = raw?.refreshToken ?? raw?.refresh_token;
-    if (!accessToken) {
-        throw new Error('Refresh failed: no access token in response');
-    }
-    storage.set(StorageKeys.ACCESS_TOKEN, accessToken);
-    if (newRefreshToken) {
-        storage.set(StorageKeys.REFRESH_TOKEN, newRefreshToken);
-    }
-    return { accessToken, refreshToken: newRefreshToken };
+  const { data } = await noAuthApi.post<{
+    data?: { accessToken?: string; access_token?: string; refreshToken?: string; refresh_token?: string };
+    accessToken?: string;
+    refreshToken?: string;
+  }>(REFRESH_ENDPOINT, { refreshToken });
+  const raw = data?.data ?? data;
+  const accessToken = raw?.accessToken ?? raw?.access_token ?? '';
+  const newRefreshToken = raw?.refreshToken ?? raw?.refresh_token;
+  if (!accessToken) {
+    throw new Error('Refresh failed: no access token in response');
+  }
+  storage.set(StorageKeys.ACCESS_TOKEN, accessToken);
+  if (newRefreshToken) {
+    storage.set(StorageKeys.REFRESH_TOKEN, newRefreshToken);
+  }
+  return { accessToken, refreshToken: newRefreshToken };
 };
 
 const attachResponseInterceptors = (instance: AxiosInstance) => {
-    instance.interceptors.response.use(
-        response => response,
-        async (error: AxiosError) => {
-            const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
-            if (error.response?.status !== 401 || originalRequest._retry) {
-                return Promise.reject(error);
-            }
-            if (originalRequest.url?.includes(REFRESH_ENDPOINT)) {
-                return Promise.reject(error);
-            }
-            const refreshToken = storage.getString(StorageKeys.REFRESH_TOKEN);
-            if (!refreshToken) {
-                return Promise.reject(error);
-            }
-            try {
-                if (!refreshPromise) {
-                    refreshPromise = refreshSession(refreshToken).then(r => r.accessToken).catch(() => null);
-                }
-                const newAccessToken = await refreshPromise;
-                refreshPromise = null;
-                if (!newAccessToken) {
-                    storage.delete(StorageKeys.ACCESS_TOKEN);
-                    storage.delete(StorageKeys.REFRESH_TOKEN);
-                    return Promise.reject(error);
-                }
-                originalRequest._retry = true;
-                if (originalRequest.headers) {
-                    originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-                }
-                return instance.request(originalRequest);
-            } catch {
-                refreshPromise = null;
-                storage.delete(StorageKeys.ACCESS_TOKEN);
-                storage.delete(StorageKeys.REFRESH_TOKEN);
-                return Promise.reject(error);
-            }
+  instance.interceptors.response.use(
+    response => response,
+    async (error: AxiosError) => {
+      const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
+      if (error.response?.status !== 401 || originalRequest._retry) {
+        return Promise.reject(error);
+      }
+      if (originalRequest.url?.includes(REFRESH_ENDPOINT)) {
+        return Promise.reject(error);
+      }
+      const refreshToken = storage.getString(StorageKeys.REFRESH_TOKEN);
+      if (!refreshToken) {
+        return Promise.reject(error);
+      }
+      try {
+        if (!refreshPromise) {
+          refreshPromise = refreshSession(refreshToken)
+            .then(r => r.accessToken)
+            .catch(() => null);
         }
-    );
+        const newAccessToken = await refreshPromise;
+        refreshPromise = null;
+        if (!newAccessToken) {
+          storage.delete(StorageKeys.ACCESS_TOKEN);
+          storage.delete(StorageKeys.REFRESH_TOKEN);
+          return Promise.reject(error);
+        }
+        originalRequest._retry = true;
+        if (originalRequest.headers) {
+          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+        }
+        return instance.request(originalRequest);
+      } catch {
+        refreshPromise = null;
+        storage.delete(StorageKeys.ACCESS_TOKEN);
+        storage.delete(StorageKeys.REFRESH_TOKEN);
+        return Promise.reject(error);
+      }
+    },
+  );
 };
 
 // Instances
@@ -186,6 +192,15 @@ export const postFormData = async <T = any>(endpoint: string, body: FormData, co
         'Content-Type': 'multipart/form-data',
       },
     });
+    return { data: response.data, status: response.status, success: true };
+  } catch (error) {
+    return handleError(error);
+  }
+};
+
+export const patchData = async <T = any>(endpoint: string, body: unknown, config?: AxiosRequestConfig): Promise<ApiResponse<T>> => {
+  try {
+    const response: AxiosResponse<T> = await api.patch(endpoint, body, config);
     return { data: response.data, status: response.status, success: true };
   } catch (error) {
     return handleError(error);

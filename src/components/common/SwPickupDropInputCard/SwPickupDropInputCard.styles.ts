@@ -4,7 +4,7 @@ import { ColorsType } from '../../../constants/ui/colors/colors.types';
 export const useStyles = (colors: ColorsType) =>
   StyleSheet.create({
     container: {
-      gap: 16,
+      gap: 8,
       paddingLeft: 24,
     },
     pickupWrapper: {

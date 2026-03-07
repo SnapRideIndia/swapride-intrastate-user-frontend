@@ -5,6 +5,7 @@ export const useStyles = (colors: ColorsType) =>
   StyleSheet.create({
     container: {
       flex: 1,
+      backgroundColor: colors.background_lightBlue,
     },
     contentContainer: {
       flexGrow: 1,
@@ -15,14 +16,10 @@ export const useStyles = (colors: ColorsType) =>
     bannerCard: {
       flexDirection: 'row',
       alignItems: 'center',
-      // justifyContent: "center"
       backgroundColor: colors.background_primary,
       borderRadius: 10,
       paddingHorizontal: 29,
       gap: 20,
-      marginHorizontal: 15,
-      marginTop: 20,
-      marginBottom: 10,
     },
     bannerText: {
       fontSize: 14,
@@ -32,5 +29,21 @@ export const useStyles = (colors: ColorsType) =>
     shuttel: {
       width: 80,
       height: 80,
+    },
+    headerTitleContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+      flex: 1,
+      marginRight: 40,
+    },
+    headerTitleText: {
+      fontSize: 16,
+      color: colors.contentPrimary,
+      flexShrink: 1,
+    },
+    headerArrow: {
+      fontSize: 14,
+      color: colors.contenttertiary,
     },
   });

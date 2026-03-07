@@ -130,7 +130,7 @@ const FindCommute = () => {
   const loadSavedAndRecent = useCallback(
     async (type: 'pickup' | 'drop') => {
       try {
-        const [saved, recent] = await Promise.all([getSavedLocationItems(type), getRecentSearchItems(type)]);
+        const [saved, recent] = await Promise.all([getSavedLocationItems(), getRecentSearchItems(type)]);
         setSavedAddresses(saved);
         setRecentSearches(recent);
       } catch (e) {

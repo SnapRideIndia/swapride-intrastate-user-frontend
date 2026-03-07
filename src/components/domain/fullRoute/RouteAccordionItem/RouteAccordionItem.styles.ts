@@ -25,8 +25,8 @@ const dotByKind = (colors: ColorsType, kind: RouteStepKind) => {
       };
     case 'dropoff':
       return {
-        backgroundColor: colors.contentBlue,
-        borderColor: colors.contentBlue,
+        backgroundColor: colors.secondary,
+        borderColor: colors.secondary,
       };
     default:
       return {

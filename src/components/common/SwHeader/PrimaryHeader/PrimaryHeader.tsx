@@ -8,7 +8,7 @@ import { SwText as Text } from '../../SwText/SwText';
 import { useNavigation } from '@react-navigation/native';
 
 interface IHeaderProps {
-  title: string;
+  title: string | React.ReactNode;
   showBackButton?: boolean;
   onBackPress?: () => void;
   onBackBtnPress?: () => void;
@@ -30,9 +30,13 @@ const PrimaryHeader = ({ title, onBackBtnPress, onEdit }: IHeaderProps) => {
         <TouchableOpacity onPress={onBackBtnPress ?? handleBackPress}>
           <Image source={ImageSource.leftArrow} style={styles.backArrow} />
         </TouchableOpacity>
-        <Text variant="medium" style={styles.title}>
-          {title}
-        </Text>
+        {typeof title === 'string' ? (
+          <Text variant="medium" style={styles.title}>
+            {title}
+          </Text>
+        ) : (
+          title
+        )}
       </View>
 
       <View style={styles.iconContainer}>

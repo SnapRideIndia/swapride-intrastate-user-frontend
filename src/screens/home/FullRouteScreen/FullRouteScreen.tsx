@@ -1,46 +1,44 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { useTheme } from '../../../theme/ThemeProvider';
+import { RootStackParamList } from '../../../navigation/types';
+import { ScreenNames } from '../../../navigation/constant';
 import FullRouteHeader from '../../../components/common/SwHeader/FullRouteHeader/FullRouteHeader';
 import RouteAccordionItem, { RouteAccordionStep } from '../../../components/domain/fullRoute/RouteAccordionItem/RouteAccordionItem';
 import { useStyles } from './FullRouteScreen.styles';
+import { ICommute } from '../../../types/commute.types';
 
 const FullRouteScreen = () => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const navigation = useNavigation();
+  const route = useRoute<RouteProp<RootStackParamList, typeof ScreenNames.FULL_ROUTE_SCREEN>>();
+  const { tripData, initialOpenId } = route.params || {};
 
-  const steps: RouteAccordionStep[] = useMemo(
-    () => [
-      { id: 's1', kind: 'normal', title: 'Wokoli' },
-      { id: 's2', kind: 'walk', title: 'Wakal' },
-      { id: 's3', kind: 'normal', title: 'Wakal' },
-      {
-        id: 's4',
-        kind: 'pickup',
-        label: 'Pickup Stop',
-        title: 'Peninsula Corporate Park',
-        subtitle: '',
-      },
-      { id: 's5', kind: 'normal', title: 'Wakal' },
-      {
-        id: 's6',
-        kind: 'dropoff',
-        label: 'Dropoff Stop',
-        title: 'Peninsula Corporate Park',
-        showDirectionsCta: true,
-        description: 'in front of Mini eStore, under the fly over',
-        previewCardsCount: 2,
-      },
-      { id: 's7', kind: 'normal', title: 'Wokoli' },
-      { id: 's8', kind: 'normal', title: 'Wokoli' },
-    ],
-    [],
-  );
+  const steps: RouteAccordionStep[] = useMemo(() => {
+    if (!tripData?.allStops) return [];
 
-  const [openId, setOpenId] = useState<string>('s6');
+    return tripData.allStops.map(stop => {
+      const isPickup = stop.pointId === tripData.pickup?.pointId;
+      const isDropoff = stop.pointId === tripData.dropoff?.pointId;
+
+      return {
+        id: stop.pointId,
+        kind: isPickup ? 'pickup' : isDropoff ? 'dropoff' : 'normal',
+        label: isPickup ? 'Pickup Stop' : isDropoff ? 'Dropoff Stop' : undefined,
+        title: stop.name,
+        subtitle: stop.address,
+        latitude: stop.latitude,
+        longitude: stop.longitude,
+        images: stop.images?.map(img => ({ id: img.id, imageUrl: img.imageUrl })),
+        showDirectionsCta: (isPickup || isDropoff) && !!stop.latitude && !!stop.longitude,
+      };
+    });
+  }, [tripData]);
+
+  const [openId, setOpenId] = useState<string>(initialOpenId || tripData?.pickup?.pointId || '');
 
   useEffect(() => {
     const renderHeader = () => <FullRouteHeader title="Full Route" />;

@@ -28,7 +28,8 @@ export const useStyles = (colors: ColorsType) =>
       alignItems: 'center',
       justifyContent: 'space-between',
       paddingHorizontal: 16,
-      paddingVertical: 14,
+      paddingTop: 4,
+      paddingBottom: 0,
     },
     headerTitle: {
       fontSize: 18,

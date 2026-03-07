@@ -35,12 +35,12 @@ export const useStyles = (colors: any) =>
     },
     row: {
       flexDirection: 'row',
-      marginBottom: 8,
       alignItems: 'center',
     },
     column: {
       flex: 1,
       alignItems: 'center',
+      paddingBottom: 8,
     },
     aisle: {
       maxWidth: 20,
@@ -58,7 +58,7 @@ export const useStyles = (colors: any) =>
     },
     sideIndicator: {
       width: 24,
-      height: 44,
+      alignSelf: 'stretch',
       alignItems: 'center',
       justifyContent: 'center',
     },

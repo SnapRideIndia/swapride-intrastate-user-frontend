@@ -10,7 +10,7 @@ export const useStyles = (colors: ColorsType) =>
       paddingHorizontal: 24,
       paddingTop: 16,
       paddingBottom: 21,
-      gap: 14,
+      gap: 8,
       backgroundColor: colors.background_primary,
       elevation: 2,
       shadowColor: colors.contentPrimary,
@@ -49,7 +49,7 @@ export const useStyles = (colors: ColorsType) =>
       tintColor: colors.contentPrimary,
     },
     btnContainer: {
-      marginTop: 26,
+      marginTop: 12,
     },
     btnStyle: {
       height: 36,
@@ -58,4 +58,4 @@ export const useStyles = (colors: ColorsType) =>
       fontSize: 16,
     },
   });
-
+  

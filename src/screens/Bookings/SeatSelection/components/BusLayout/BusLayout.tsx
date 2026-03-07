@@ -1,82 +1,111 @@
 import React from 'react';
-import { View, ScrollView } from 'react-native';
+import { View } from 'react-native';
 import { useTheme } from '../../../../../theme/ThemeProvider';
 import { useStyles } from './BusLayout.styles';
 import SwSeat from '../../../../../components/domain/booking/SwSeat/SwSeat';
 import { SwText as Text } from '../../../../../components/common/SwText/SwText';
 
-interface BusLayoutProps {
-  selectedSeat: string | null;
-  onSelectSeat: (seatId: string) => void;
+export interface ApiSeat {
+  seatId: string;
+  seatNumber: string;
+  rowPosition: number;
+  colPosition: number;
+  seatType: 'SEATER' | 'SLEEPER' | 'DRIVER' | 'EMPTY' | string;
+  status: 'AVAILABLE' | 'HELD' | 'BOOKED' | string;
 }
 
-const BusLayout: React.FC<BusLayoutProps> = ({ selectedSeat, onSelectSeat }) => {
+interface BusLayoutProps {
+  seats: ApiSeat[];
+  selectedSeat: string | null;
+  onSelectSeat: (seatNumber: string) => void;
+}
+
+const BusLayout: React.FC<BusLayoutProps> = ({ seats, selectedSeat, onSelectSeat }) => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
 
-  const rows = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  if (!seats || seats.length === 0) return null;
 
-  const bookedSeats = ['2C', '2D', '6D'];
+  const maxRow = Math.max(...seats.map(s => s.rowPosition));
+  const maxCol = Math.max(...seats.map(s => s.colPosition));
 
-  const renderSeat = (row: number, col: string) => {
-    const seatId = `${row}${col}`;
-    const status = selectedSeat === seatId ? 'selected' : bookedSeats.includes(seatId) ? 'booked' : 'available';
+  const rows = Array.from({ length: maxRow + 1 }, (_, i) => i);
+  const columns = Array.from({ length: maxCol + 1 }, (_, i) => i);
 
-    return <SwSeat key={seatId} status={status} label={seatId} onPress={() => onSelectSeat(seatId)} />;
+  const getSeatAt = (row: number, col: number) => seats.find(s => s.rowPosition === row && s.colPosition === col);
+
+  const renderCell = (row: number, col: number) => {
+    const seat = getSeatAt(row, col);
+
+    if (!seat || seat.seatType === 'EMPTY') {
+      return <View key={`empty-${row}-${col}`} style={styles.column} />;
+    }
+
+    const isSelected = selectedSeat === seat.seatNumber;
+    const isBooked = seat.status === 'BOOKED' || seat.status === 'HELD';
+    const seatStatus = isSelected ? 'selected' : isBooked ? 'booked' : 'available';
+
+    return (
+      <View key={seat.seatId} style={styles.column}>
+        <SwSeat
+          status={seatStatus}
+          label={seat.seatNumber}
+          disabled={isBooked}
+          onPress={() => !isBooked && onSelectSeat(seat.seatNumber)}
+        />
+      </View>
+    );
   };
+
+  const lastRow = rows[rows.length - 1];
 
   return (
     <View style={styles.container}>
       <View style={styles.headerRow}>
-        <Text variant="bold" style={styles.headerLabel}>
-          D
-        </Text>
-        <Text variant="bold" style={styles.headerLabel}>
-          C
-        </Text>
-        <Text variant="bold" style={styles.headerLabel}>
-          E
-        </Text>
-        <Text variant="bold" style={styles.headerLabel}>
-          B
-        </Text>
-        <Text variant="bold" style={styles.headerLabel}>
-          A
-        </Text>
-        <View style={{ width: 24 }} />
-      </View>
-
-      <View style={styles.sideIndicatorContainer} />
-
-      <View style={[styles.row, { paddingLeft: 32, paddingRight: 0, marginTop: 8, marginBottom: 14 }]}>
-        <View style={styles.column} />
-        <View style={styles.column} />
-        <View style={styles.column} />
-        <View style={styles.column} />
-        <View style={styles.column}>
-          <SwSeat status="driver" />
-        </View>
-        <View style={{ width: 24 }} />
+        {columns.map(col => (
+          <Text key={col} variant="semi-bold" style={styles.headerLabel}>
+            {String.fromCharCode(65 + col)}
+          </Text>
+        ))}
       </View>
 
       <View style={styles.grid}>
-        {rows.map(row => (
-          <View key={row} style={styles.row}>
-            <View style={styles.column}>{renderSeat(row, 'D')}</View>
-            <View style={styles.column}>{renderSeat(row, 'C')}</View>
+        <View style={styles.row}>
+          {columns.map(col =>
+            col === maxCol ? (
+              <View key="driver-cell" style={[styles.column, { alignItems: 'center' }]}>
+                <SwSeat status="driver" />
+              </View>
+            ) : (
+              <View key={`driver-empty-${col}`} style={styles.column} />
+            ),
+          )}
+          <View style={styles.sideIndicator} />
+        </View>
 
-            <View style={styles.column}>{row === 9 ? renderSeat(row, 'E') : <View style={styles.aisle} />}</View>
-
-            <View style={styles.column}>{renderSeat(row, 'B')}</View>
-            <View style={styles.column}>{renderSeat(row, 'A')}</View>
-
-            <View style={styles.sideIndicator}>
-              <Text variant="bold" style={styles.sideIndicatorText}>
-                {row}
-              </Text>
+        {rows.map(row => {
+          const isFirst = row === rows[0];
+          const isLast = row === lastRow;
+          return (
+            <View key={row} style={styles.row}>
+              {columns.map(col => renderCell(row, col))}
+              <View
+                style={[
+                  styles.sideIndicator,
+                  {
+                    backgroundColor: colors.background_gray,
+                    borderTopLeftRadius: isFirst ? 16 : 0,
+                    borderBottomLeftRadius: isLast ? 16 : 0,
+                  },
+                ]}
+              >
+                <Text variant="bold" style={styles.sideIndicatorText}>
+                  {row + 1}
+                </Text>
+              </View>
             </View>
-          </View>
-        ))}
+          );
+        })}
       </View>
     </View>
   );

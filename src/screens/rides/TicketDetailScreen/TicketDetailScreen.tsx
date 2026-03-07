@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Image, ScrollView } from 'react-native';
+import { View, Image, ScrollView, ActivityIndicator } from 'react-native';
 import { useTheme } from '../../../theme/ThemeProvider';
 import { useStyles } from './TicketDetailScreen.styles';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -10,32 +10,52 @@ import { ScreenNames } from '../../../navigation/constant';
 import { TicketCard } from '../../../components/domain/rides/TicketCard/TicketCard';
 import PrimaryButton from '../../../components/common/SwButton/PrimaryButton/PrimaryButton';
 import { ImageSource } from '../../../constants/images';
-
-const mockTicketData = {
-  from: 'Location A',
-  to: 'Location B',
-  timeRange: '4:30 PM - 5:30 PM',
-  busPlate: 'AB-09-2379',
-  date: '23.08.24',
-};
+import { useTicketDetail } from '../../../hooks/useBooking';
+import { SwText as Text } from '../../../components/common/SwText/SwText';
 
 const TicketDetailScreen = ({ route }: { route: RouteProp<RootStackParamList, typeof ScreenNames.TICKET_DETAIL_SCREEN> }) => {
   const { ticketId } = route.params || {};
-  console.log('Ticket ID:', ticketId);
   const { colors } = useTheme();
   const styles = useStyles(colors);
 
-  const [isActivated, setIsActivated] = useState(false);
+  const { data: ticketData, isLoading, error } = useTicketDetail(ticketId);
 
-  const handleActivateQR = () => {
-    setIsActivated(true);
-  };
+  if (isLoading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <PrimaryHeader title="Your Ticket" />
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <ActivityIndicator size="large" color={colors.primary} />
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (error || !ticketData) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <PrimaryHeader title="Your Ticket" />
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
+          <Text>Failed to load ticket details.</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  const { route: routeInfo, bus, booking } = ticketData;
 
   return (
     <SafeAreaView edges={['bottom']} style={styles.container}>
       <PrimaryHeader title="Your Ticket" />
       <ScrollView contentContainerStyle={styles.contentContainer} showsVerticalScrollIndicator={false}>
-        <TicketCard {...mockTicketData} isActivated={isActivated} onActivate={handleActivateQR} />
+        <TicketCard
+          from={routeInfo.from}
+          to={routeInfo.to}
+          timeRange={routeInfo.timeRange}
+          busPlate={bus.registrationNumber}
+          date={routeInfo.date}
+          qrToken={ticketData.qrCodeToken}
+        />
 
         <PrimaryButton
           title="Scan Bus QR"

@@ -1,0 +1,105 @@
+import { fetchData, postData, patchData, handleErrorResponse } from './ApiUtility';
+import type {
+  InitiateBookingDto,
+  BookingResponse,
+  InitiateRoundTripDto,
+  RoundTripBookingResponse,
+  BookingDetails,
+  ConfirmPaymentDto,
+  ApplyCouponDto,
+} from '../types/booking.types';
+import { API_ENDPOINTS } from './endpoints';
+
+class BookingService {
+  initiateBooking = async (data: InitiateBookingDto): Promise<BookingResponse> => {
+    const url = API_ENDPOINTS.BOOKINGS.INITIATE;
+    const res = await postData<BookingResponse>(url, data);
+
+    if (!res.success || !res.data) {
+      handleErrorResponse(res);
+    }
+
+    return res.data as BookingResponse;
+  };
+
+  initiateRoundTrip = async (data: InitiateRoundTripDto): Promise<RoundTripBookingResponse> => {
+    const url = API_ENDPOINTS.BOOKINGS.INITIATE_ROUND_TRIP;
+    const res = await postData<RoundTripBookingResponse>(url, data);
+
+    if (!res.success || !res.data) {
+      handleErrorResponse(res);
+    }
+
+    return res.data as RoundTripBookingResponse;
+  };
+
+  getBookingDetails = async (id: string, userLat?: number, userLng?: number): Promise<BookingDetails> => {
+    const url = API_ENDPOINTS.BOOKINGS.GET_DETAILS(id);
+    const res = await fetchData<BookingDetails>(url, {
+      params: { userLat, userLng },
+    });
+
+    if (!res.success || !res.data) {
+      handleErrorResponse(res);
+    }
+
+    return res.data as BookingDetails;
+  };
+
+  confirmBooking = async (id: string, data: ConfirmPaymentDto): Promise<any> => {
+    const url = API_ENDPOINTS.BOOKINGS.CONFIRM(id);
+    const res = await postData<any>(url, data);
+
+    if (!res.success || !res.data) {
+      handleErrorResponse(res);
+    }
+
+    return res.data;
+  };
+
+  applyCoupon = async (id: string, data: ApplyCouponDto): Promise<any> => {
+    const url = API_ENDPOINTS.BOOKINGS.APPLY_COUPON(id);
+    const res = await postData<any>(url, data);
+
+    if (!res.success || !res.data) {
+      handleErrorResponse(res);
+    }
+
+    return res.data;
+  };
+
+  getTicketDetail = async (id: string): Promise<any> => {
+    const url = API_ENDPOINTS.BOOKINGS.TICKET_DETAIL(id);
+    const res = await fetchData<any>(url);
+
+    if (!res.success || !res.data) {
+      handleErrorResponse(res);
+    }
+
+    return res.data;
+  };
+
+  getTripSeats = async (tripId: string): Promise<any> => {
+    const url = API_ENDPOINTS.BOOKINGS.GET_SEATS(tripId);
+    const res = await fetchData<any>(url);
+
+    if (!res.success || !res.data) {
+      handleErrorResponse(res);
+    }
+
+    return res.data;
+  };
+
+  changeBookingSeat = async (bookingId: string, seatNumber: string): Promise<any> => {
+    const url = API_ENDPOINTS.BOOKINGS.CHANGE_SEAT(bookingId);
+    const res = await patchData<any>(url, { seatNumber });
+
+    if (!res.success || !res.data) {
+      handleErrorResponse(res);
+    }
+
+    return res.data;
+  };
+}
+
+export default new BookingService();

@@ -53,7 +53,7 @@ export const SwTopModal = ({ isVisible, onClose, children, title }: Props) => {
         <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
       </Animated.View>
 
-      <Animated.View style={[styles.contentWrapper, { paddingTop: insets.top }, animatedContentStyle]}>
+      <Animated.View style={[styles.contentWrapper, { paddingTop: Math.max(insets.top - 15, 0) }, animatedContentStyle]}>
         {title && (
           <View style={styles.header}>
             <Text variant="semi-bold" style={styles.headerTitle}>

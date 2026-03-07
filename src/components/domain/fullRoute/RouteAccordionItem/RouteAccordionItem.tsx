@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { Image, ScrollView, TouchableOpacity, View } from 'react-native';
+import React, { useCallback, useMemo } from 'react';
+import { Image, Linking, ScrollView, TouchableOpacity, View } from 'react-native';
 import Animated, { FadeIn, FadeOut, LinearTransition } from 'react-native-reanimated';
 import { useTheme } from '../../../../theme/ThemeProvider';
 import { SwText as Text } from '../../../common/SwText/SwText';
@@ -17,6 +17,9 @@ export type RouteAccordionStep = {
   description?: string;
   showDirectionsCta?: boolean;
   previewCardsCount?: number; // grey placeholders in figma
+  images?: { id: string; imageUrl: string }[];
+  latitude?: number;
+  longitude?: number;
 };
 
 type Props = {
@@ -31,7 +34,14 @@ const RouteAccordionItem = ({ step, isOpen, isFirst, isLast, onToggle }: Props) 
   const { colors } = useTheme();
   const styles = useStyles(colors, step.kind);
 
-  const hasBody = Boolean(step.description || step.previewCardsCount);
+  const handleDirections = useCallback(() => {
+    if (step.latitude && step.longitude) {
+      const url = `https://www.google.com/maps/search/?api=1&query=${step.latitude},${step.longitude}`;
+      Linking.openURL(url);
+    }
+  }, [step.latitude, step.longitude]);
+
+  const hasBody = Boolean(step.description || step.previewCardsCount || (step.images && step.images.length > 0));
 
   const chevronStyle = useMemo(() => [styles.chevron, isOpen && styles.chevronOpen], [isOpen, styles.chevron, styles.chevronOpen]);
 
@@ -52,12 +62,12 @@ const RouteAccordionItem = ({ step, isOpen, isFirst, isLast, onToggle }: Props) 
               </Text>
             ) : null}
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 21 }}>
-              <Text variant="medium" style={styles.title} numberOfLines={1}>
+              <Text variant="medium" style={styles.title} numberOfLines={isOpen ? undefined : 1}>
                 {step.title}
               </Text>
 
               {step.showDirectionsCta && isOpen ? (
-                <TouchableOpacity activeOpacity={0.85} style={styles.directionsBtn}>
+                <TouchableOpacity activeOpacity={0.85} style={styles.directionsBtn} onPress={handleDirections}>
                   <Image source={ImageSource.direction} style={styles.directionsIcon} />
                   <Text variant="medium" style={styles.directionsText}>
                     Directions
@@ -66,7 +76,7 @@ const RouteAccordionItem = ({ step, isOpen, isFirst, isLast, onToggle }: Props) 
               ) : null}
             </View>
             {step.subtitle ? (
-              <Text variant="medium" style={styles.subtitle} numberOfLines={1}>
+              <Text variant="medium" style={styles.subtitle} numberOfLines={isOpen ? undefined : 1}>
                 {step.subtitle}
               </Text>
             ) : null}
@@ -85,7 +95,20 @@ const RouteAccordionItem = ({ step, isOpen, isFirst, isLast, onToggle }: Props) 
               </Text>
             ) : null}
 
-            {step.previewCardsCount ? (
+            {step.images && step.images.length > 0 ? (
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.previewRow}
+                style={styles.previewRow}
+              >
+                {step.images.map((img, idx) => (
+                  <View key={img.id || idx} style={styles.previewCard}>
+                    <Image source={{ uri: img.imageUrl }} style={{ width: '100%', height: '100%', borderRadius: 10 }} />
+                  </View>
+                ))}
+              </ScrollView>
+            ) : step.previewCardsCount ? (
               <ScrollView
                 contentContainerStyle={{
                   flexGrow: 1,

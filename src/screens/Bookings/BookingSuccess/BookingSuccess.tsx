@@ -8,9 +8,15 @@ import PrimaryHeader from '../../../components/common/SwHeader/PrimaryHeader/Pri
 import { ImageSource } from '../../../constants/images';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { useRoute, RouteProp } from '@react-navigation/native';
+import { RootStackParamList } from '../../../navigation/types';
+import { ScreenNames } from '../../../navigation/constant';
+
 const BookingSuccess = ({ navigation }: any) => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
+  const route = useRoute<RouteProp<RootStackParamList, typeof ScreenNames.BOOKING_SUCCESS>>();
+  const { bookingId } = route.params;
 
   return (
     <View style={styles.container}>
@@ -25,7 +31,11 @@ const BookingSuccess = ({ navigation }: any) => {
       </View>
 
       <SafeAreaView edges={['bottom']} style={styles.footer}>
-        <PrimaryButton title="View ticket" onPress={() => console.log('View ticket')} btnStyle={styles.viewTicketBtn} />
+        <PrimaryButton
+          title="View ticket"
+          onPress={() => navigation.navigate(ScreenNames.TICKET_DETAIL_SCREEN, { ticketId: bookingId })}
+          btnStyle={styles.viewTicketBtn}
+        />
         <PrimaryButton
           title="view ride"
           onPress={() => navigation.popToTop()}
