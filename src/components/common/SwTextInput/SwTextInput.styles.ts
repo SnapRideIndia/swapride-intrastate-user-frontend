@@ -4,19 +4,18 @@ import { getFontFamilyByFW } from '../SwText/SwText';
 
 export const useStyles = (colors: ColorsType) =>
   StyleSheet.create({
-    inputOuterContainer: {
-      flex: 1,
-    },
+    inputOuterContainer: {},
     iconWithTitle: {
       flexDirection: 'row',
       alignItems: 'center',
       gap: 10,
     },
     inputInnerContainer: {
-      marginTop: 5,
+      marginTop: 0,
       flexDirection: 'row',
       alignItems: 'center',
       borderBottomWidth: 1,
+      borderColor: colors.border_3,
     },
     roundedContainer: {
       borderWidth: 1,

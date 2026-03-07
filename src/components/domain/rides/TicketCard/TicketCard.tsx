@@ -4,6 +4,7 @@ import { SwText as Text } from '../../../common/SwText/SwText';
 import { useTheme } from '../../../../theme/ThemeProvider';
 import { useStyles } from './TicketCard.styles';
 import { ImageSource } from '../../../../constants/images';
+import QRCode from 'react-native-qrcode-svg';
 
 export interface TicketCardProps {
   from: string;
@@ -11,11 +12,10 @@ export interface TicketCardProps {
   timeRange: string;
   busPlate: string;
   date: string;
-  isActivated: boolean;
-  onActivate?: () => void;
+  qrToken?: string;
 }
 
-export const TicketCard: React.FC<TicketCardProps> = ({ from, to, timeRange, busPlate, date, isActivated, onActivate }) => {
+export const TicketCard: React.FC<TicketCardProps> = ({ from, to, timeRange, busPlate, date, qrToken }) => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
 
@@ -24,16 +24,10 @@ export const TicketCard: React.FC<TicketCardProps> = ({ from, to, timeRange, bus
       {/* QR Section */}
       <View style={styles.qrSection}>
         <View style={styles.qrBackground}>
-          <Image source={ImageSource.qrCodePlaceholder} style={styles.qrImage} resizeMode="contain" />
-
-          {!isActivated && (
-            <TouchableOpacity style={styles.qrOverlay} activeOpacity={0.9} onPress={onActivate}>
-              <View style={styles.activateStrip}>
-                <Text variant="semi-bold" style={styles.activateText}>
-                  Click to Activate the QR
-                </Text>
-              </View>
-            </TouchableOpacity>
+          {qrToken ? (
+            <QRCode value={qrToken} size={150} color={colors.primary} backgroundColor="white" />
+          ) : (
+            <Image source={ImageSource.qrCodePlaceholder} style={styles.qrImage} resizeMode="contain" />
           )}
         </View>
       </View>

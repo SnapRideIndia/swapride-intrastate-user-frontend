@@ -1,5 +1,5 @@
-import React, { useRef } from 'react';
-import { View, ScrollView } from 'react-native';
+import React, { useRef, useMemo, useState, useCallback } from 'react';
+import { View, ScrollView, ActivityIndicator, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../../theme/ThemeProvider';
 import { useStyles } from './ConfirmBookingDetails.styles';
@@ -14,59 +14,127 @@ import { SwTextInput } from '../../../components/common/SwTextInput/SwTextInput'
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { TouchableOpacity } from 'react-native';
 import { ScreenNames } from '../../../navigation/constant';
+import { useNavigation, useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
+import { RootStackParamList } from '../../../navigation/types';
+import { useBookingDetails, useApplyCoupon, useConfirmBooking } from '../../../hooks/useBooking';
+import { LegDetail, PaymentMethod } from '../../../types/booking.types';
+import { format } from 'date-fns';
 
-const mockBookingData = {
-  outbound: {
-    type: 'outbound' as const,
-    date: 'Tomorrow,2nd Feb',
-    pickup: {
-      time: '4:05 am',
-      title: 'Peninsula Corporate PArk',
-      description: 'In front of Matula cnter , under the fly over',
-      walkText: '3 min walk (17 m)',
-    },
-    dropoff: {
-      time: '4:05 am',
-      title: 'Peninsula Corporate PArk',
-      description: 'In front of Matula cnter , under the fly over',
-      walkText: '3 min walk (17 m)',
-    },
-    seat: '2B',
+const mapLegToSummary = (leg: LegDetail, type: 'outbound' | 'return') => ({
+  type,
+  tripId: leg.tripId,
+  bookingId: leg.bookingId,
+  date: format(new Date(), 'eeee, do MMM'),
+  pickup: {
+    time: leg.pickup.arrivalTime,
+    title: leg.pickup.name,
+    description: leg.pickup.address,
+    walkText: leg.pickup.distanceText || '',
   },
-  returnTrip: {
-    type: 'return' as const,
-    date: 'Tomorrow,2nd Feb',
-    pickup: {
-      time: '4:05 pm',
-      title: 'Peninsula Corporate PArk',
-      description: 'In front of Matula cnter , under the fly over',
-      walkText: '3 min walk (17 m)',
-    },
-    dropoff: {
-      time: '4:05 pm',
-      title: 'Peninsula Corporate PArk',
-      description: 'In front of Matula cnter , under the fly over',
-      walkText: '3 min walk (17 m)',
-    },
-    seat: '2B',
+  dropoff: {
+    time: leg.dropoff.arrivalTime,
+    title: leg.dropoff.name,
+    description: leg.dropoff.address,
+    walkText: '',
   },
+  seat: leg.assignedSeats.map(s => s.seatNumber).join(', '),
+});
 
-  fare: {
-    outboundFare: 199,
-    returnFare: 199,
-    walletBalance: 0,
-  },
-};
-
-const ConfirmBookingDetails = ({ navigation }: any) => {
+const ConfirmBookingDetails = () => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
+  const navigation = useNavigation<any>();
+  const route = useRoute<RouteProp<RootStackParamList, typeof ScreenNames.CONFIRM_BOOKING_DETAILS>>();
+  const { bookingId } = route.params;
+
+  const { data: booking, isLoading, isError, error, refetch } = useBookingDetails(bookingId);
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch]),
+  );
+
   const bottomSheetRef = useRef<BottomSheetModal>(null);
-  const [appliedCoupon, setAppliedCoupon] = React.useState<{ code: string; savings: number } | null>(null);
+  const [promoCode, setPromoCode] = useState('');
+
+  const { mutate: applyCoupon, isPending: isApplyingCoupon } = useApplyCoupon(
+    bookingId,
+    data => {
+      console.log('Apply Coupon Response ===>', data);
+      Alert.alert('Success', 'Coupon applied successfully');
+      refetch();
+      bottomSheetRef.current?.dismiss();
+      setPromoCode('');
+    },
+    err => {
+      Alert.alert('Failed', err?.message || 'Invalid coupon code');
+    },
+  );
 
   const handleApplyPromo = () => {
-    bottomSheetRef.current?.present();
+    if (!promoCode.trim()) return;
+    const payload = {
+      couponCode: promoCode,
+      returnBookingId: booking?.isRoundTrip ? booking.return?.bookingId : undefined,
+    };
+    applyCoupon(payload);
   };
+
+  const handleProceed = () => {
+    navigation.navigate(ScreenNames.PAYMENT_OPTIONS, {
+      bookingId,
+      returnBookingId: booking?.isRoundTrip ? booking.return?.bookingId : undefined,
+      totalAmount: booking?.totalPayable || 0,
+    });
+  };
+
+  const outboundSummary = useMemo(() => {
+    if (!booking) return null;
+    return booking.isRoundTrip ? mapLegToSummary(booking.outbound, 'outbound') : mapLegToSummary(booking as any, 'outbound');
+  }, [booking]);
+
+  const returnSummary = useMemo(() => {
+    if (!booking || !booking.isRoundTrip) return null;
+    return mapLegToSummary(booking.return, 'return');
+  }, [booking]);
+
+  const fareSummary = useMemo(() => {
+    if (!booking) return null;
+    const isRoundTrip = booking.isRoundTrip;
+
+    // For single booking, fields are on root. For round trip, they are on legs.
+    const subTotal = isRoundTrip ? booking.outbound.subTotal + (booking.return?.subTotal || 0) : booking.subTotal;
+
+    const discountAmount = isRoundTrip ? booking.outbound.discountAmount + (booking.return?.discountAmount || 0) : booking.discountAmount;
+
+    return {
+      outboundFare: isRoundTrip ? booking.outbound.totalAmount : booking.totalAmount,
+      returnFare: isRoundTrip ? booking.return?.totalAmount : 0,
+      discountAmount,
+      subTotal,
+      walletBalance: 0, // Should be fetched from wallet hook
+    };
+  }, [booking]);
+
+  if (isLoading) {
+    return (
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
+  }
+
+  if (isError || !booking) {
+    return (
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center', padding: 20 }]}>
+        <Text variant="semi-bold" style={{ textAlign: 'center', marginBottom: 20 }}>
+          {(error as any)?.message || 'Failed to load booking details'}
+        </Text>
+        <PrimaryButton title="Go Back" onPress={() => navigation.goBack()} />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -74,17 +142,44 @@ const ConfirmBookingDetails = ({ navigation }: any) => {
 
       <ScrollView style={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.cardsContainer}>
-          <TripSummaryCard {...mockBookingData.outbound} />
-          <TripSummaryCard {...mockBookingData.returnTrip} />
+          {outboundSummary && (
+            <TripSummaryCard
+              {...outboundSummary}
+              onChangeSeat={() =>
+                navigation.navigate(ScreenNames.SEAT_SELECTION, {
+                  tripId: outboundSummary.tripId,
+                  bookingId: outboundSummary.bookingId,
+                  initialSeatNumber: outboundSummary.seat,
+                })
+              }
+            />
+          )}
+          {returnSummary && (
+            <TripSummaryCard
+              {...returnSummary}
+              onChangeSeat={() =>
+                navigation.navigate(ScreenNames.SEAT_SELECTION, {
+                  tripId: returnSummary.tripId,
+                  bookingId: returnSummary.bookingId,
+                  initialSeatNumber: returnSummary.seat,
+                })
+              }
+            />
+          )}
         </View>
 
         <View style={[styles.whiteSection, styles.whiteSectionWithGap]}>
-          <FareDetails
-            {...mockBookingData.fare}
-            onApplyPromo={handleApplyPromo}
-            onRemovePromo={() => setAppliedCoupon(null)}
-            appliedCoupon={appliedCoupon}
-          />
+          {fareSummary && (
+            <FareDetails
+              {...fareSummary}
+              onApplyPromo={() => bottomSheetRef.current?.present()}
+              onRemovePromo={() => {
+                // Implement remove coupon if backend supports it
+                Alert.alert('Info', 'Remove coupon is not implemented yet');
+              }}
+              appliedCoupon={fareSummary.discountAmount > 0 ? { code: 'Applied', savings: fareSummary.discountAmount } : null}
+            />
+          )}
           <PolicyInfoBox />
         </View>
 
@@ -96,11 +191,7 @@ const ConfirmBookingDetails = ({ navigation }: any) => {
           </View>
           {/* Footer */}
           <SafeAreaView edges={['bottom']} style={styles.footer}>
-            <PrimaryButton
-              title="Proceed to payment"
-              onPress={() => navigation.navigate(ScreenNames.PAYMENT_OPTIONS as never)}
-              btnStyle={styles.proceedBtn}
-            />
+            <PrimaryButton title="Proceed" onPress={handleProceed} btnStyle={styles.proceedBtn} />
           </SafeAreaView>
         </View>
       </ScrollView>
@@ -110,15 +201,13 @@ const ConfirmBookingDetails = ({ navigation }: any) => {
           <SwTextInput
             variant="rounded"
             placeholder="Enter Coupon Code"
+            value={promoCode}
+            onChangeText={setPromoCode}
+            autoCapitalize="characters"
             renderRightIcon={() => (
-              <TouchableOpacity
-                onPress={() => {
-                  setAppliedCoupon({ code: 'DLV25', savings: 20.2 });
-                  bottomSheetRef.current?.dismiss();
-                }}
-              >
-                <Text variant="bold" style={styles.applyBtnText}>
-                  Apply
+              <TouchableOpacity onPress={handleApplyPromo} disabled={isApplyingCoupon || !promoCode.trim()}>
+                <Text variant="bold" style={[styles.applyBtnText, (!promoCode.trim() || isApplyingCoupon) && { opacity: 0.5 }]}>
+                  {isApplyingCoupon ? '...' : 'Apply'}
                 </Text>
               </TouchableOpacity>
             )}

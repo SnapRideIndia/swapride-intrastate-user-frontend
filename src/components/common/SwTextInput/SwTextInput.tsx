@@ -27,7 +27,7 @@ export const SwTextInput = ({ variant = 'default', ...props }: IInputProps) => {
       ) : null}
       <View style={[styles.inputInnerContainer, variant === 'rounded' && styles.roundedContainer, props.isPhno && styles.phNoStyle]}>
         {props.isPhno && <Text>+91 | </Text>}
-        <TextInput style={styles.inputStyle} {...props} />
+        <TextInput style={styles.inputStyle} placeholderTextColor={props.placeholderTextColor || colors.contenttertiary} {...props} />
         {props.renderRightIcon?.()}
       </View>
     </View>

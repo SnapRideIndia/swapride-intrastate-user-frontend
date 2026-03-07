@@ -1,10 +1,10 @@
 import React, { forwardRef, useCallback, useMemo } from 'react';
 import type { ImageSourcePropType } from 'react-native';
-import { Image, TouchableOpacity, View } from 'react-native';
+import { Image, TouchableOpacity, View, Dimensions } from 'react-native';
+import { Easing } from 'react-native-reanimated';
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
-  BottomSheetFlatList,
   BottomSheetScrollView,
   BottomSheetTextInput,
   type BottomSheetBackdropProps,
@@ -40,6 +40,8 @@ type Props = {
 
   onPressItem?: (item: SwLocationSearchItem) => void;
   onClose?: () => void;
+  hideBackdrop?: boolean;
+  onChange?: (index: number) => void;
 };
 
 export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
@@ -55,6 +57,8 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
       recentSearches = [],
       onPressItem,
       onClose,
+      hideBackdrop = false,
+      onChange,
     },
     ref,
   ) => {
@@ -62,7 +66,9 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
     const styles = useStyles(colors);
     const insets = useSafeAreaInsets();
 
-    const snapPoints = useMemo(() => ['90%'], []);
+    const { height: screenHeight } = Dimensions.get('window');
+    const snapPoints = useMemo(() => [screenHeight * 0.85], [screenHeight]);
+    const animationConfigs = useMemo(() => ({ duration: 380, easing: Easing.out(Easing.cubic) }), []);
     const isDropdownOpen = !!query && searchResults.length > 0;
 
     const renderBackdrop = useCallback(
@@ -86,15 +92,18 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
         ref={ref}
         index={0}
         snapPoints={snapPoints}
+        enableDynamicSizing={false}
         enablePanDownToClose
+        animationConfigs={animationConfigs}
         // Keep keyboard open while results render.
-        keyboardBehavior="extend"
+        keyboardBehavior="padding"
         keyboardBlurBehavior="none"
         android_keyboardInputMode="adjustResize"
         // Avoid content pan gesture stealing input focus/scroll.
         enableContentPanningGesture={false}
         onDismiss={handleDismiss}
-        backdropComponent={renderBackdrop}
+        onChange={onChange}
+        backdropComponent={hideBackdrop ? undefined : renderBackdrop}
         backgroundStyle={styles.sheetBackground}
         handleIndicatorStyle={styles.handleIndicator}
       >
@@ -120,13 +129,13 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
             </TouchableOpacity>
           </View>
 
-          {/* Search input with absolutely positioned dropdown */}
-          <View style={{ position: 'relative' }}>
+          {/* Search input with inline results */}
+          <View>
             <View style={styles.searchContainer}>
               <Image source={ImageSource.searhIcon} style={styles.searchIcon} />
               <BottomSheetTextInput
                 placeholder="Search your address"
-                placeholderTextColor={'#AAAAAA'}
+                placeholderTextColor={colors.contenttertiary}
                 value={query}
                 onChangeText={onChangeQuery}
                 style={styles.searchInput}
@@ -138,91 +147,86 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
 
             {!!query && searchResults.length > 0 && (
               <View style={styles.dropdownContainer}>
-                <BottomSheetFlatList
-                  data={searchResults}
-                  keyExtractor={(item: any, index: number) => index.toString()}
-                  keyboardShouldPersistTaps="handled"
-                  showsVerticalScrollIndicator={false}
-                  keyboardDismissMode="none"
-                  renderItem={({ item, index }: { item: any; index: number }) => (
-                    <TouchableOpacity
-                      activeOpacity={0.85}
-                      onPress={() => onPressItem?.(item)}
-                      style={[styles.dropdownItem, index === searchResults.length - 1 && styles.dropdownItemLast]}
-                    >
-                      <View style={styles.dropdownItemIcon}>
-                        <Image source={item.iconSource ?? ImageSource.searhIcon} style={styles.dropdownItemIconImg} />
-                      </View>
-                      <View style={styles.dropdownItemTextWrap}>
-                        <Text variant="medium" style={styles.dropdownItemTitle} numberOfLines={1}>
-                          {item.title}
+                {searchResults.map((item, index) => (
+                  <TouchableOpacity
+                    key={item.id || index.toString()}
+                    activeOpacity={0.85}
+                    onPress={() => onPressItem?.(item)}
+                    style={styles.dropdownItem}
+                  >
+                    <View style={styles.dropdownItemIcon}>
+                      <Image source={item.iconSource ?? ImageSource.searhIcon} style={styles.dropdownItemIconImg} />
+                    </View>
+                    <View style={styles.dropdownItemTextWrap}>
+                      <Text variant="medium" style={styles.dropdownItemTitle} numberOfLines={1}>
+                        {item.title}
+                      </Text>
+                      {!!item.subtitle && (
+                        <Text style={styles.dropdownItemSubtitle} numberOfLines={2}>
+                          {item.subtitle}
                         </Text>
-                        {!!item.subtitle && (
-                          <Text style={styles.dropdownItemSubtitle} numberOfLines={2}>
-                            {item.subtitle}
-                          </Text>
-                        )}
-                      </View>
-                    </TouchableOpacity>
-                  )}
-                />
+                      )}
+                    </View>
+                  </TouchableOpacity>
+                ))}
               </View>
             )}
           </View>
 
-          {showUseCurrentLocation && (
-            <TouchableOpacity onPress={onPressUseCurrentLocation} activeOpacity={0.85} style={styles.useCurrentLocationRow}>
-              <View style={styles.useCurrentLocationIconWrap}>
-                <Image source={ImageSource.gpsIcon} style={styles.useCurrentLocationIcon} />
-              </View>
-              <Text variant="semi-bold" style={styles.useCurrentLocationText}>
-                Use current location
+          {!isDropdownOpen && (
+            <>
+              {showUseCurrentLocation && (
+                <TouchableOpacity onPress={onPressUseCurrentLocation} activeOpacity={0.85} style={styles.useCurrentLocationRow}>
+                  <View style={styles.useCurrentLocationIconWrap}>
+                    <Image source={ImageSource.gpsIcon} style={styles.useCurrentLocationIcon} />
+                  </View>
+                  <Text variant="semi-bold" style={styles.useCurrentLocationText}>
+                    Use current location
+                  </Text>
+                </TouchableOpacity>
+              )}
+
+              {/* <View style={styles.divider} /> */}
+
+              <Text variant="semi-bold" style={styles.sectionTitle}>
+                Saved Addresses
               </Text>
-            </TouchableOpacity>
+              {savedAddresses.length === 0 && <Text style={styles.emptyStateText}>No saved addresses yet</Text>}
+              {savedAddresses.map((item, idx) => (
+                <View key={item.id}>
+                  <TouchableOpacity activeOpacity={0.85} onPress={() => onPressItem?.(item)} style={styles.listRow}>
+                    <View style={styles.listIconWrap}>
+                      <Image source={item.iconSource ?? ImageSource.Home} style={styles.listIcon} />
+                    </View>
+                    <View style={styles.listTextWrap}>
+                      <Text variant="medium" style={styles.listTitle}>
+                        {item.title}
+                      </Text>
+                      {!!item.subtitle && <Text style={styles.listSubtitle}>{item.subtitle}</Text>}
+                    </View>
+                  </TouchableOpacity>
+                </View>
+              ))}
+
+              <Text style={styles.sectionTitle}>Recent Searches</Text>
+              {recentSearches.length === 0 && <Text style={styles.emptyStateText}>No recent searches yet</Text>}
+              {recentSearches.map((item, idx) => (
+                <View key={item.id}>
+                  <TouchableOpacity activeOpacity={0.85} onPress={() => onPressItem?.(item)} style={styles.listRow}>
+                    <View style={styles.listIconWrap}>
+                      <Image source={item.iconSource ?? ImageSource.clock} style={styles.listIcon} />
+                    </View>
+                    <View style={styles.listTextWrap}>
+                      <Text variant="semi-bold" style={styles.listTitle}>
+                        {item.title}
+                      </Text>
+                      {!!item.subtitle && <Text style={styles.listSubtitle}>{item.subtitle}</Text>}
+                    </View>
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </>
           )}
-
-          {/* <View style={styles.divider} /> */}
-
-          <Text variant="semi-bold" style={styles.sectionTitle}>
-            Saved Addresses
-          </Text>
-          {savedAddresses.length === 0 && <Text style={styles.emptyStateText}>No saved addresses yet</Text>}
-          {savedAddresses.map((item, idx) => (
-            <View key={item.id}>
-              <TouchableOpacity activeOpacity={0.85} onPress={() => onPressItem?.(item)} style={styles.listRow}>
-                <View style={styles.listIconWrap}>
-                  <Image source={item.iconSource ?? ImageSource.Home} style={styles.listIcon} />
-                </View>
-                <View style={styles.listTextWrap}>
-                  <Text variant="medium" style={styles.listTitle}>
-                    {item.title}
-                  </Text>
-                  {!!item.subtitle && <Text style={styles.listSubtitle}>{item.subtitle}</Text>}
-                </View>
-              </TouchableOpacity>
-            </View>
-          ))}
-
-          <View style={styles.divider} />
-
-          <Text style={styles.sectionTitle}>Recent Searches</Text>
-          {recentSearches.length === 0 && <Text style={styles.emptyStateText}>No recent searches yet</Text>}
-          {recentSearches.map((item, idx) => (
-            <View key={item.id}>
-              <TouchableOpacity activeOpacity={0.85} onPress={() => onPressItem?.(item)} style={styles.listRow}>
-                <View style={styles.listIconWrap}>
-                  <Image source={item.iconSource ?? ImageSource.clock} style={styles.listIcon} />
-                </View>
-                <View style={styles.listTextWrap}>
-                  <Text variant="semi-bold" style={styles.listTitle}>
-                    {item.title}
-                  </Text>
-                  {!!item.subtitle && <Text style={styles.listSubtitle}>{item.subtitle}</Text>}
-                </View>
-              </TouchableOpacity>
-              {idx !== recentSearches.length - 1 && <View style={styles.rowSeparator} />}
-            </View>
-          ))}
         </BottomSheetScrollView>
       </BottomSheetModal>
     );

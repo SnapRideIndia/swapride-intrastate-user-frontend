@@ -1,5 +1,5 @@
 import { Image, ScrollView, TouchableOpacity, View } from 'react-native';
-import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react';
+import React, { useCallback, useMemo, useState, useRef } from 'react';
 import { useTheme } from '../../../../../theme/ThemeProvider';
 import { useStyles } from './BusSelectionCard.styles';
 import { ImageSource } from '../../../../../constants/images';
@@ -7,19 +7,20 @@ import { SwText as Text } from '../../../../../components/common/SwText/SwText';
 import PrimaryButton from '../../../../../components/common/SwButton/PrimaryButton/PrimaryButton';
 import { useNavigation } from '@react-navigation/native';
 import { ScreenNames } from '../../../../../navigation/constant';
+import { RootStackParamList } from '../../../../../navigation/types';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { SwBottomSheet } from '../../../../../components/common/BottomSheet/BottomSheet';
-import TimeSlotCard from '../../../../../components/domain/booking/TimeSlotCard/TimeSlotCard';
-import { ICommute } from '../../../../../types/commute.types';
-import { format, isValid, parseISO } from 'date-fns';
-import { BottomSheetBackdrop, BottomSheetFlatList, BottomSheetModal, type BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
+import { ICommute, Timing } from '../../../../../types/commute.types';
+import { BottomSheetBackdrop, BottomSheetModal, type BottomSheetBackdropProps, BottomSheetView } from '@gorhom/bottom-sheet';
 import { formatTime } from '../../../../../utils/dateUtils';
 
 interface IBusSelectionCard {
   showLabel: boolean;
   data: ICommute;
+  onProceed?: (timing: Timing) => void;
 }
 
-const BusSelectionCard = ({ showLabel = false, data }: IBusSelectionCard) => {
+const BusSelectionCard = ({ showLabel = false, data, onProceed }: IBusSelectionCard) => {
   const [showSourceStopImages, setShowSourceStopImages] = useState(false);
   const [showDestinationImages, setShowDestinationImages] = useState(false);
   const timingsSheetRef = useRef<BottomSheetModal>(null);
@@ -27,29 +28,23 @@ const BusSelectionCard = ({ showLabel = false, data }: IBusSelectionCard) => {
 
   const { colors } = useTheme();
   const styles = useStyles(colors);
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const timeSheetRef = useRef<BottomSheetModal>(null);
 
-  const mockTimeSlots = [
-    { startTime: '5:55 PM', endTime: '8:17 PM', via: 'Majiwada', stopsCount: 12 },
-    { startTime: '5:55 PM', endTime: '8:17 PM', via: 'Majiwada', stopsCount: 12 },
-    { startTime: '6:15 PM', endTime: '8:45 PM', via: 'Majiwada', stopsCount: 10 },
-    { startTime: '7:00 PM', endTime: '9:30 PM', via: 'Majiwada', stopsCount: 15 },
-  ];
+  const selectedTiming = useMemo(
+    () => data.timings?.find(t => t.tripId === selectedTripId) || data.timings?.[0],
+    [data.timings, selectedTripId],
+  );
 
   const handlePressBtn = () => {
-    navigation.navigate(ScreenNames.BOOKING_OPTIONS as never);
+    if (selectedTiming && onProceed) {
+      onProceed(selectedTiming);
+    }
   };
 
-  const handleOpenTimeSheet = () => {
-    timeSheetRef.current?.present();
+  const handleViewFullRoute = (initialOpenId?: string) => {
+    navigation.navigate(ScreenNames.FULL_ROUTE_SCREEN, { tripData: data, initialOpenId });
   };
-
-  const handleViewFullRoute = () => {
-    navigation.navigate(ScreenNames.FULL_ROUTE_SCREEN as never);
-  };
-
-  const snapPoints = useMemo(() => ['70%'], []);
 
   const openTimingsSheet = useCallback(() => {
     timingsSheetRef.current?.present();
@@ -76,10 +71,11 @@ const BusSelectionCard = ({ showLabel = false, data }: IBusSelectionCard) => {
           <View style={styles.topPickHeaderTitleContainer}>
             <Image source={ImageSource.starBadge} style={styles.starBadgeIcon} />
             <Text variant="bold" style={styles.topPickStyle}>
+              {' '}
               Top pick for you
             </Text>
           </View>
-          <Text style={styles.topPickDesc}>Yay! Your pickup is just 3 min walk away</Text>
+          <Text style={styles.topPickDesc}>Yay! Your pickup is just {data.pickup?.distanceText || 'a short walk'} away</Text>
         </View>
       )}
       {/* bottom main card Section */}
@@ -88,13 +84,13 @@ const BusSelectionCard = ({ showLabel = false, data }: IBusSelectionCard) => {
           <View style={styles.badgeAndDeviderContainer}>
             <View style={styles.badge}>
               <Text variant="medium" style={styles.time}>
-                4:05 pm
+                {selectedTiming?.pickupArrivalTime ? formatTime(selectedTiming.pickupArrivalTime) : '--:--'}
               </Text>
             </View>
             <View style={styles.devider} />
             <View style={styles.badge}>
               <Text variant="medium" style={styles.time}>
-                4:05 pm
+                {selectedTiming?.dropoffArrivalTime ? formatTime(selectedTiming.dropoffArrivalTime) : '--:--'}
               </Text>
             </View>
           </View>
@@ -117,43 +113,22 @@ const BusSelectionCard = ({ showLabel = false, data }: IBusSelectionCard) => {
 
               {showSourceStopImages && (
                 <>
-                  <ScrollView showsHorizontalScrollIndicator={false} horizontal contentContainerStyle={{ paddingVertical: 20, gap: 10 }}>
-                    {[1, 2, 3, 4].map((item, _idx) => (
-                      <View
-                        style={{
-                          width: 150,
-                          height: 100,
-                          backgroundColor: 'gray',
-                          borderRadius: 10,
-                        }}
-                      />
-                    ))}
+                  <ScrollView showsHorizontalScrollIndicator={false} horizontal contentContainerStyle={styles.sourceImagesContainer}>
+                    {(data.pickup?.images?.length ? data.pickup.images : [{ id: 'placeholder-pickup', imageUrl: '' }]).map((img, idx) =>
+                      img.imageUrl ? (
+                        <Image key={img.id || `img-${idx}`} source={{ uri: img.imageUrl }} style={styles.stopImage} />
+                      ) : (
+                        <View key={img.id || `img-${idx}`} style={styles.stopImagePlaceholder} />
+                      ),
+                    )}
                   </ScrollView>
                   <TouchableOpacity
-                    onPress={handleViewFullRoute}
+                    onPress={() => handleViewFullRoute(data.pickup?.pointId)}
                     activeOpacity={0.8}
-                    style={{
-                      flex: 1,
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      gap: 10,
-                    }}
+                    style={styles.viewFullRouteContainer}
                   >
-                    <View
-                      style={{
-                        flex: 1,
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        gap: 10,
-                      }}
-                    >
-                      <View
-                        style={{
-                          flex: 1,
-                          height: 1,
-                          backgroundColor: colors.border_4,
-                        }}
-                      />
+                    <View style={styles.locationConnectionContainer}>
+                      <View style={styles.connectionLine} />
                       <Image source={ImageSource.locationConnection} style={styles.locationConnectionIcon} />
                     </View>
                     <Text>View full route</Text>
@@ -161,40 +136,39 @@ const BusSelectionCard = ({ showLabel = false, data }: IBusSelectionCard) => {
                 </>
               )}
             </View>
-
             <View style={styles.place}>
               <Text variant="bold" style={styles.placeTitle}>
-                Peninsula Corporate PArk
+                {data.dropoff?.name}
               </Text>
               <Text variant="medium" style={styles.placeSubtitle}>
-                In front of Matula cnter , under the fly over
+                {data.dropoff?.address}
               </Text>
               <TouchableOpacity style={styles.walkAndTimeContainer} onPress={() => setShowDestinationImages(prev => !prev)}>
                 <Image source={ImageSource.walkIcon} style={styles.walkIcon} />
                 <Text variant="semi-bold" style={styles.placeSubtitle}>
-                  3 min walk (17 m )
+                  {data.dropoff?.distanceText ?? '-'}
                 </Text>
                 <Image source={ImageSource.downArrow} style={styles.downArrow} />
               </TouchableOpacity>
 
               {showDestinationImages && (
                 <>
-                  <ScrollView showsHorizontalScrollIndicator={false} horizontal contentContainerStyle={{ paddingVertical: 20, gap: 10 }}>
-                    {(data.dropoff?.images?.length ? data.dropoff.images : [{ id: 'placeholder', imageUrl: '' }]).map(img =>
+                  <ScrollView showsHorizontalScrollIndicator={false} horizontal contentContainerStyle={styles.sourceImagesContainer}>
+                    {(data.dropoff?.images?.length ? data.dropoff.images : [{ id: 'placeholder-dropoff', imageUrl: '' }]).map((img, idx) =>
                       img.imageUrl ? (
-                        <Image key={img.id} source={{ uri: img.imageUrl }} style={styles.stopImage} />
+                        <Image key={img.id || `img-${idx}`} source={{ uri: img.imageUrl }} style={styles.stopImage} />
                       ) : (
-                        <View key={img.id} style={styles.stopImagePlaceholder} />
+                        <View key={img.id || `img-${idx}`} style={styles.stopImagePlaceholder} />
                       ),
                     )}
                   </ScrollView>
                   <TouchableOpacity
-                    onPress={handleViewFullRoute}
+                    onPress={() => handleViewFullRoute(data.dropoff?.pointId)}
                     activeOpacity={0.8}
-                    style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 10 }}
+                    style={styles.viewFullRouteContainer}
                   >
-                    <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                      <View style={{ flex: 1, height: 1, backgroundColor: colors.border_4 }} />
+                    <View style={styles.locationConnectionContainer}>
+                      <View style={styles.connectionLine} />
                       <Image source={ImageSource.locationConnection} style={styles.locationConnectionIcon} />
                     </View>
                     <Text variant="semi-bold" style={styles.viewFullRoute}>
@@ -241,9 +215,9 @@ const BusSelectionCard = ({ showLabel = false, data }: IBusSelectionCard) => {
             </Text>
           </TouchableOpacity>
           <View style={styles.buttonAndFareContainer}>
-            <PrimaryButton title="Continue" onPress={handlePressBtn} btnStyle={styles.btnstyle} />
+            <PrimaryButton title="Proceed" onPress={handlePressBtn} btnStyle={styles.btnstyle} />
             <Text variant="medium" style={styles.fareText}>
-              Fares starting from ₹{data.baseFare}
+              Fares starting from <Text style={styles.farePrice}>₹{data.baseFare}</Text>
             </Text>
           </View>
         </View>
@@ -252,34 +226,30 @@ const BusSelectionCard = ({ showLabel = false, data }: IBusSelectionCard) => {
       <BottomSheetModal
         ref={timingsSheetRef}
         index={0}
-        snapPoints={snapPoints}
-        enableDynamicSizing={false}
+        enableDynamicSizing={true}
         enablePanDownToClose
         backdropComponent={renderBackdrop}
         backgroundStyle={styles.sheetBackground}
         handleIndicatorStyle={styles.handleIndicator}
       >
-        <View style={styles.sheetHeader}>
-          <Text variant="semi-bold" style={styles.sheetTitle}>
-            Select a time
-          </Text>
-          <TouchableOpacity
-            accessibilityRole="button"
-            accessibilityLabel="Close timings"
-            onPress={closeTimingsSheet}
-            style={styles.closeButton}
-          >
-            <Image source={ImageSource.cross} style={styles.closeIcon} />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.sheetContent}>
-          <BottomSheetFlatList
-            data={data.timings ?? []}
-            keyExtractor={(item: any) => item.tripId}
-            contentContainerStyle={styles.timingsListContent}
-            showsVerticalScrollIndicator={false}
-            renderItem={({ item }: { item: any }) => (
+        <BottomSheetView style={styles.bottomSheetDynamicContent}>
+          <View style={styles.sheetHeader}>
+            <Text variant="semi-bold" style={styles.sheetTitle}>
+              Select a time
+            </Text>
+            <TouchableOpacity
+              accessibilityRole="button"
+              accessibilityLabel="Close timings"
+              onPress={closeTimingsSheet}
+              style={styles.closeButton}
+            >
+              <Image source={ImageSource.cross} style={styles.closeIcon} />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.timingsListContent}>
+            {(data.timings ?? []).map((item: any) => (
               <TouchableOpacity
+                key={item.tripId}
                 activeOpacity={0.85}
                 style={[styles.timingRow, item.tripId === selectedTripId && styles.timingRowSelected]}
                 onPress={() => handleSelectTiming(item.tripId)}
@@ -291,7 +261,7 @@ const BusSelectionCard = ({ showLabel = false, data }: IBusSelectionCard) => {
 
                   <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                     <Text style={styles.timingVia} numberOfLines={1}>
-                      Via {data.routeName}
+                      {data.routeName}
                     </Text>
                     <View style={styles.timingRight}>
                       <Image source={ImageSource.mapPin} style={styles.stopsIcon} />
@@ -300,9 +270,9 @@ const BusSelectionCard = ({ showLabel = false, data }: IBusSelectionCard) => {
                   </View>
                 </View>
               </TouchableOpacity>
-            )}
-          />
-        </View>
+            ))}
+          </View>
+        </BottomSheetView>
       </BottomSheetModal>
     </View>
   );

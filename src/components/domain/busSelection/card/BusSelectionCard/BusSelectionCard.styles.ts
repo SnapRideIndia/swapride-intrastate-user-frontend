@@ -60,7 +60,7 @@ export const useStyles = (colors: ColorsType) =>
     },
     badgeAndDeviderContainer: {
       maxHeight: 110,
-      alignItems: 'center'
+      alignItems: 'center',
     },
     devider: {
       // height: 59,
@@ -105,39 +105,47 @@ export const useStyles = (colors: ColorsType) =>
       marginBottom: 8,
       marginTop: 16,
     },
-    timeSlotContainer:{
-        paddingHorizontal: 10,
-        paddingVertical: 5,
-        borderWidth:1,
-        borderColor: colors.border_4,
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 10,
-        borderRadius: 10,
+    timeSlotContainer: {
+      paddingHorizontal: 10,
+      paddingVertical: 5,
+      borderWidth: 1,
+      borderColor: colors.border_3,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
+      borderRadius: 10,
     },
     timeSlotContainerSelected: {
-        borderColor: colors.primary,
+      borderColor: colors.primary,
     },
-    ratingAndButtoncontainer:{
-        flexDirection: "row",
-        gap: 32,
-        marginTop: 20,
-        alignItems: 'flex-start'
+    ratingAndButtoncontainer: {
+      flexDirection: 'row',
+      gap: 32,
+      marginTop: 20,
+      alignItems: 'flex-start',
     },
     btnstyle: {
-      flex: 1,
-      height: 27,
+      height: 36,
+      minWidth: 100,
+      paddingHorizontal: 15,
     },
     textStyle: {
       fontSize: 16,
     },
     fareText: {
-      fontSize: 11,
+      fontSize: 13,
       textAlign: 'center',
+      color: colors.contentSecondary,
+    },
+    farePrice: {
+      fontSize: 16,
+      color: colors.primary,
+      fontWeight: 'bold',
     },
     buttonAndFareContainer: {
       gap: 5,
       flex: 1,
+      alignItems: 'flex-end',
     },
     viewAllTimings: {
       fontSize: 16,
@@ -149,7 +157,7 @@ export const useStyles = (colors: ColorsType) =>
     },
     viewFullRoute: {
       fontSize: 13,
-      color: colors.contentPrimary
+      color: colors.contentPrimary,
     },
     sheetBackground: {
       backgroundColor: colors.background_primary,
@@ -160,18 +168,37 @@ export const useStyles = (colors: ColorsType) =>
       backgroundColor: colors.border_3,
       width: 40,
     },
-    sheetContent: {
-      paddingHorizontal: 16,
-      paddingTop: 10,
-      paddingBottom: 16,
+    sourceImagesContainer: {
+      paddingVertical: 20,
+      gap: 10,
+    },
+    viewFullRouteContainer: {
       flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
+    },
+    locationConnectionContainer: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
+    },
+    connectionLine: {
+      flex: 1,
+      height: 1,
+      backgroundColor: colors.border_3,
+    },
+    bottomSheetDynamicContent: {
+      paddingBottom: 20,
     },
     sheetHeader: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
       padding: 20,
-      borderBottomWidth:1
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border_3,
     },
     sheetTitle: {
       fontSize: 18,
@@ -187,6 +214,7 @@ export const useStyles = (colors: ColorsType) =>
     },
     timingsListContent: {
       paddingTop: 10,
+      paddingHorizontal: 16,
       gap: 10,
       paddingBottom: 6,
     },
@@ -198,7 +226,7 @@ export const useStyles = (colors: ColorsType) =>
       paddingHorizontal: 14,
       borderRadius: 12,
       borderWidth: 1,
-      borderColor: colors.border_4,
+      borderColor: colors.border_3,
       backgroundColor: colors.background_primary,
     },
     timingRowSelected: {

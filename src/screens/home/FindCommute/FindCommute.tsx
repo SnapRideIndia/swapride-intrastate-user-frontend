@@ -3,12 +3,9 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../../theme/ThemeProvider';
 import PrimaryHeader from '../../../components/common/SwHeader/PrimaryHeader/PrimaryHeader';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { SwText as Text } from '../../../components/common/SwText/SwText';
-import { SwPickupDropInputCard } from '../../../components/common/SwPickupDropInputCard/SwPickupDropInputCard';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import { ImageSource } from '../../../constants/images';
-import PrimaryButton from '../../../components/common/SwButton/PrimaryButton/PrimaryButton';
 import {
   SwLocationSearchBottomSheet,
   SwLocationSearchItem,
@@ -26,7 +23,9 @@ import { format } from 'date-fns';
 import { ScreenNames } from '../../../navigation/constant';
 import { setCommuteData, setCommuteSearchContext } from '../../../slice/commuteSlice';
 import { useStyles } from './FindCommute.styles';
+import { FindCommuteCard } from '../../../components/domain/booking/FindCommuteCard/FindCommuteCard';
 import type { CommuteDateTab } from '../../../types/commuteDates.types';
+import { useLocationSheetBackHandler } from '../../../hooks/useLocationSheetBackHandler';
 
 const FindCommute = () => {
   const { colors } = useTheme();
@@ -42,6 +41,7 @@ const FindCommute = () => {
   const [dropItem, setDropItem] = useState<SwLocationSearchItem | null>(null);
   const [activeLocationField, setActiveLocationField] = useState<'pickup' | 'drop'>('pickup');
   const locationSheetRef = useRef<BottomSheetModal>(null);
+  const { onChange: onSheetChange, onClose: onSheetClose } = useLocationSheetBackHandler(locationSheetRef);
   const [locationQuery, setLocationQuery] = useState('');
   const sessionTokenRef = useRef<string | null>(null);
   const [searchResults, setSearchResults] = useState<SwLocationSearchItem[]>([]);
@@ -130,7 +130,7 @@ const FindCommute = () => {
   const loadSavedAndRecent = useCallback(
     async (type: 'pickup' | 'drop') => {
       try {
-        const [saved, recent] = await Promise.all([getSavedLocationItems(type), getRecentSearchItems(type)]);
+        const [saved, recent] = await Promise.all([getSavedLocationItems(), getRecentSearchItems(type)]);
         setSavedAddresses(saved);
         setRecentSearches(recent);
       } catch (e) {
@@ -316,6 +316,8 @@ const FindCommute = () => {
           dropoffLng,
           userLat,
           userLng,
+          pickupName: pickupLocation,
+          dropoffName: dropLocation,
         },
       }),
     );
@@ -354,77 +356,21 @@ const FindCommute = () => {
   return (
     <SafeAreaView edges={['bottom']} style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.contentContainer}>
-        <Text variant="semi-bold" style={styles.title}>
-          Tell us about your commute !
-        </Text>
-
-        <View style={styles.card}>
-          <SwPickupDropInputCard
-            pickupInputProps={{
-              title: 'Preffered Pickup location',
-              placeholder: 'Enter pickup location',
-              value: pickupLocation,
-              onChangeText: setPickupLocation,
-              renderTitleIcon: () => <Image source={ImageSource.Home} style={styles.titleIcon} />,
-            }}
-            dropInputProps={{
-              title: 'Preffered Drop location',
-              placeholder: 'Enter drop location',
-              value: dropLocation,
-              onChangeText: setDropLocation,
-              renderTitleIcon: () => <Image source={ImageSource.office} style={styles.titleIcon} />,
-            }}
-            onPressPickup={() => openLocationSheet('pickup')}
-            onPressDrop={() => openLocationSheet('drop')}
-          />
-
-          {/* the date section */}
-          <View style={{ flexDirection: 'row', gap: 10 }}>
-            <ScrollView
-              contentContainerStyle={{ flexDirection: 'row', alignItems: 'center', gap: 8, flexGrow: 1, paddingHorizontal: 10 }}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-            >
-              {dateTabs.slice(0, 4).map((t, idx) => {
-                const isActive = idx === activeDateIndex;
-                return (
-                  <TouchableOpacity
-                    key={t.id}
-                    onPress={() => handlePressDateTab(idx)}
-                    activeOpacity={0.8}
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      gap: 5,
-                      borderWidth: 1,
-                      borderColor: isActive ? colors.primary : colors.border_4,
-                      paddingHorizontal: 10,
-                      height: 23,
-                      justifyContent: 'center',
-                      borderRadius: 6,
-                    }}
-                  >
-                    {isActive && <Image source={ImageSource.checkCircle} style={{ width: 11, height: 11 }} />}
-                    <Text>{t.title}</Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </ScrollView>
-            <TouchableOpacity activeOpacity={0.8} onPress={openCalendar}>
-              <Image source={ImageSource.calenderBlue} style={{ width: 24, height: 24, tintColor: colors.contentPrimary }} />
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.btnContainer}>
-            <PrimaryButton
-              title={isSearchingTrips ? 'Submitting...' : 'Submit'}
-              btnStyle={styles.btnStyle}
-              textStyle={styles.textStyle}
-              onPress={handleSubmit}
-              disabled={!canSubmit || isSearchingTrips}
-            />
-          </View>
-        </View>
+        <FindCommuteCard
+          pickupLocation={pickupLocation}
+          setPickupLocation={setPickupLocation}
+          dropLocation={dropLocation}
+          setDropLocation={setDropLocation}
+          onPressPickup={() => openLocationSheet('pickup')}
+          onPressDrop={() => openLocationSheet('drop')}
+          dateTabs={dateTabs}
+          activeDateIndex={activeDateIndex}
+          onPressDateTab={handlePressDateTab}
+          onPressCalendar={openCalendar}
+          onSubmit={handleSubmit}
+          isSearching={isSearchingTrips}
+          canSubmit={canSubmit}
+        />
 
         <SwLocationSearchBottomSheet
           ref={locationSheetRef}
@@ -438,10 +384,12 @@ const FindCommute = () => {
           recentSearches={recentSearches}
           onPressItem={handleSelectLocation}
           onClose={() => {
+            onSheetClose();
             setLocationQuery('');
             setSearchResults([]);
             sessionTokenRef.current = null;
           }}
+          onChange={onSheetChange}
         />
       </ScrollView>
 

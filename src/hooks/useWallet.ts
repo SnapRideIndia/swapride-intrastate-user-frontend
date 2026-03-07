@@ -24,7 +24,7 @@ export const useTransactions = (filter: string = 'ALL') => {
 };
 
 interface UseTopUpOptions {
-  onSuccess?: () => void;
+  onSuccess?: (data: any) => void;
   onError?: (error: any) => void;
 }
 
@@ -58,7 +58,7 @@ export const useInitiateTopUp = ({ onSuccess, onError }: UseTopUpOptions = {}) =
           queryKey: ['wallet-transactions'],
         });
 
-        onSuccess?.();
+        onSuccess?.(data);
       } catch (err: any) {
         const cancelled = RazorpayService.isCancellation(err);
         console.log(cancelled ? 'RazorpayService: user cancelled payment' : 'RazorpayService: payment failed', err);

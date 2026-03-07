@@ -1,6 +1,7 @@
 import { fetchData, handleErrorResponse } from './ApiUtility';
 import type { LocationFieldType, RecentSearchDto, SavedLocationDto } from '../types/search.types';
 import type { SearchTripsParams, SearchTripsResponseDto } from '../types/trips.types';
+import { API_ENDPOINTS } from './endpoints';
 
 export type PlaceSuggestion = {
   text: string;
@@ -14,15 +15,12 @@ export type { LocationFieldType };
 
 const getTypeCandidates = (type: LocationFieldType): Array<'pickup' | 'drop' | 'dropoff'> => {
   if (type === 'pickup') return ['pickup'];
-  // Backend might expect either "dropoff" or "drop"
   return ['dropoff', 'drop'];
 };
 
 class SearchService {
-  baseUrl = '/search';
-
   placeAutocomplete = async (input: string, sessionToken: string) => {
-    const url = `${this.baseUrl}/place-autocomplete`;
+    const url = API_ENDPOINTS.SEARCH.PLACE_AUTOCOMPLETE;
     const res = await fetchData<PlaceSuggestion[]>(url, {
       params: { input, sessionToken },
     });
@@ -35,7 +33,7 @@ class SearchService {
   };
 
   reverseGeocode = async (latitude: number, longitude: number, sessionToken: string) => {
-    const url = `${this.baseUrl}/reverse-geocode`;
+    const url = API_ENDPOINTS.SEARCH.REVERSE_GEOCODE;
     const res = await fetchData<PlaceSuggestion[]>(url, {
       params: {
         latitude,
@@ -54,12 +52,11 @@ class SearchService {
   };
 
   recentSearches = async (type: LocationFieldType) => {
-    const url = `${this.baseUrl}/recent-searches`;
+    const url = API_ENDPOINTS.SEARCH.RECENT_SEARCHES;
     let lastError: unknown;
     for (const t of getTypeCandidates(type)) {
       try {
         const res = await fetchData<RecentSearchDto[]>(url, { params: { type: t } });
-        console.log("This is recent searches ===>", res)
         if (!res.success || !res.data) {
           handleErrorResponse(res);
         }
@@ -69,35 +66,31 @@ class SearchService {
       }
     }
 
-    throw lastError;
+    return [];
   };
 
-  savedLocations = async (type: LocationFieldType) => {
-    const url = `/users/saved-locations?type=${type}`;
-    const res = await fetchData(url);
+  savedLocations = async () => {
+    const url = API_ENDPOINTS.USERS.SAVED_LOCATIONS;
 
-    console.log('response of saved locations', res);
+    const res = await fetchData<any>(url);
 
     if (!res.success || !res.data) {
       handleErrorResponse(res);
     }
 
-    return res.data.data;
+    return res.data.data || res.data || [];
   };
 
   searchTrips = async (params: SearchTripsParams) => {
-    const url = `${this.baseUrl}/trips`;
+    const url = API_ENDPOINTS.SEARCH.TRIPS;
     const res = await fetchData<SearchTripsResponseDto>(url, { params });
-
-    console.log("this is the resposne of search trips ===>", res)
 
     if (!res.success || !res.data) {
       handleErrorResponse(res);
     }
 
-    return res.data;
+    return res.data as SearchTripsResponseDto;
   };
 }
 
 export default new SearchService();
-

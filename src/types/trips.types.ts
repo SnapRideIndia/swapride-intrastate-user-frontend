@@ -8,10 +8,12 @@ export type SearchTripsParams = {
   tripDate: string; // YYYY-MM-DD
   userLat: number;
   userLng: number;
+  pickupName?: string;
+  dropoffName?: string;
+  preferredTime?: string;
 };
 
 export type SearchTripsBaseParams = Omit<SearchTripsParams, 'tripDate'>;
 
 // /search/trips response
 export type SearchTripsResponseDto = Root;
-

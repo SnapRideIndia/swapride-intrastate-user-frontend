@@ -1,4 +1,5 @@
 import { fetchData, handleErrorResponse, postData } from './ApiUtility';
+import { API_ENDPOINTS } from './endpoints';
 
 export interface Transaction {
   id: string;
@@ -41,14 +42,10 @@ export interface TopUpResponse {
 }
 
 class WalletService {
-  baseUrl = '/wallet';
-
   getBalance = async () => {
-    const url = `${this.baseUrl}/balance`;
+    const url = API_ENDPOINTS.WALLET.BALANCE;
     const res = await fetchData(url);
-
-    console.log('Balance API response ===>', res);
-
+    
     if (!res.success || !res.data) {
       handleErrorResponse(res);
     }
@@ -57,10 +54,8 @@ class WalletService {
   };
 
   getTransactions = async (filter: string = 'ALL', offset: number = 0, limit: number = 20): Promise<TransactionsResponse> => {
-    const url = `/financials/transactions?filter=${filter}&limit=${limit}&offset=${offset}`;
+    const url = `${API_ENDPOINTS.WALLET.TRANSACTIONS}?filter=${filter}&limit=${limit}&offset=${offset}`;
     const res = await fetchData<TransactionsResponse>(url);
-
-    console.log('Transactions API response ===>', res);
 
     if (!res.success || !res.data) {
       handleErrorResponse(res);
@@ -70,10 +65,8 @@ class WalletService {
   };
 
   initiateTopUp = async (amount: number): Promise<TopUpResponse> => {
-    const url = `${this.baseUrl}/topup/initiate`;
+    const url = API_ENDPOINTS.WALLET.TOPUP_INITIATE;
     const res = await postData<TopUpResponse>(url, { amount });
-
-    console.log('TopUp initiate response ===>', res);
 
     if (!res.success || !res.data) {
       handleErrorResponse(res);
