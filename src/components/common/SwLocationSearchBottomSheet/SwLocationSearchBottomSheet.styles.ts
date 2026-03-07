@@ -96,6 +96,13 @@ export const useStyles = (colors: ColorsType) =>
       color: colors.contentPrimary,
       textTransform: 'lowercase',
     },
+    emptyStateText: {
+      fontSize: 12,
+      color: colors.contenttertiary,
+      marginTop: 6,
+      marginBottom: 4,
+      paddingLeft: 55, // aligns with text column after icon
+    },
     listRow: {
       flexDirection: 'row',
       alignItems: 'flex-start',

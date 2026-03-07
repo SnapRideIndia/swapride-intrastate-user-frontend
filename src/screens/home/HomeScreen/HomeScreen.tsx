@@ -18,10 +18,13 @@ const HomeScreen = () => {
   const navigation = useNavigation();
   const { profileData } = useSelector((store: RootState) => store.profile);
 
+  console.log("this is profile data ===>", profileData);
+
+
   const handlePressOptionCard = (type: 'shuttel' | 'wallet' | 'ticket') => {
     switch (type) {
       case 'shuttel':
-        navigation.navigate(ScreenNames.SET_COMMUTE as never);
+        navigation.navigate(ScreenNames.FIND_COMMUTE as never);
         break;
 
       case 'wallet':

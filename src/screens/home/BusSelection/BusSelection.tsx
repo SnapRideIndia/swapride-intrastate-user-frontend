@@ -1,21 +1,35 @@
-import { Image, ScrollView, View } from 'react-native';
-import React, { useEffect, useMemo, useState } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTheme } from '../../../theme/ThemeProvider';
-import { useStyles } from './BusSelction.styles';
-import PrimaryHeader from '../../../components/common/SwHeader/PrimaryHeader/PrimaryHeader';
-import { useNavigation } from '@react-navigation/native';
-import TopDateTabBar from '../../../components/common/TopDateTabBar/TopDateTabBar';
-import { SwText as Text } from '../../../components/common/SwText/SwText';
-import { ImageSource } from '../../../constants/images';
-import BusSelectionCard from '../../../components/domain/busSelection/card/BusSelectionCard/BusSelectionCard';
+import { Image, ScrollView, View } from 'react-native'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { useTheme } from '../../../theme/ThemeProvider'
+import { useStyles } from './BusSelction.styles'
+import PrimaryHeader from '../../../components/common/SwHeader/PrimaryHeader/PrimaryHeader'
+import { useNavigation } from '@react-navigation/native'
+import TopDateTabBar from '../../../components/common/TopDateTabBar/TopDateTabBar'
+import { SwText as Text } from '../../../components/common/SwText/SwText'
+import { ImageSource } from '../../../constants/images'
+import BusSelectionCard from '../../../components/domain/busSelection/card/BusSelectionCard/BusSelectionCard'
+import { useDispatch, useSelector } from 'react-redux'
+import { RootState } from '../../../store'
+import { setActiveDateIndex, setCommuteData } from '../../../slice/commuteSlice'
+import { useSearchTrips } from '../../../hooks/useSearch'
 
 const BusSelection = () => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const {commuteData, dateTabs: storedTabs, activeDateIndex: storedActiveIndex, searchBaseParams} = useSelector((store: RootState)=>store.commute);
 
-  const [activeTabIndex, setActiveTabIndex] = useState(0);
+  const [activeTabIndex, setActiveTabIndex] = useState(storedActiveIndex ?? 0);
+  const { mutate: searchTrips } = useSearchTrips(
+    (data: any) => dispatch(setCommuteData(data)),
+    (e: any) => console.log('searchTrips error >>>', e),
+  );
+
+  useEffect(() => {
+    setActiveTabIndex(storedActiveIndex ?? 0);
+  }, [storedActiveIndex]);
 
   const formatDayWithSuffix = (day: number) => {
     if (day > 3 && day < 21) return `${day}th`;
@@ -35,7 +49,7 @@ const BusSelection = () => {
 
   const weekDayShortNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-  const tabs = useMemo(() => {
+  const fallbackTabs = useMemo(() => {
     const today = new Date();
 
     return Array.from({ length: 10 }).map((_, index) => {
@@ -54,9 +68,23 @@ const BusSelection = () => {
       return {
         id: `${date.getTime()}`,
         title,
+        date: `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`,
       };
     });
   }, []);
+
+  const tabs = storedTabs?.length ? storedTabs : fallbackTabs;
+
+  const handleTabPress = useCallback((index: number) => {
+    setActiveTabIndex(index);
+    dispatch(setActiveDateIndex(index));
+
+    const tab = tabs[index] as any;
+    const tripDate = tab?.date;
+    if (!tripDate || !searchBaseParams) return;
+
+    searchTrips({ ...searchBaseParams, tripDate });
+  }, [dispatch, searchBaseParams, searchTrips, tabs]);
 
   useEffect(() => {
     const renderHeader = () => <PrimaryHeader title={'Buses'} onEdit={() => {}} />;
@@ -68,7 +96,11 @@ const BusSelection = () => {
 
   return (
     <SafeAreaView edges={['bottom']} style={styles.container}>
-      <TopDateTabBar tabs={tabs} activeIndex={activeTabIndex} onTabPress={setActiveTabIndex} />
+      <TopDateTabBar
+        tabs={tabs}
+        activeIndex={activeTabIndex}
+        onTabPress={handleTabPress}
+      />
       <View style={styles.bannerCard}>
         <Text variant="semi-bold" style={styles.bannerText}>
           Showing nearest stops & bus timings on your route
@@ -76,9 +108,9 @@ const BusSelection = () => {
         <Image source={ImageSource.shuttel} style={styles.shuttel} />
       </View>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.contentContainer}>
-        {[1, 2, 3, 4].map((item, _idx) => (
-          <BusSelectionCard showLabel={true} />
-        ))}
+        {
+          commuteData?.map((item, _idx)=> <BusSelectionCard key={item.routeId} showLabel={true} data={item} />)
+        }
       </ScrollView>
     </SafeAreaView>
   );

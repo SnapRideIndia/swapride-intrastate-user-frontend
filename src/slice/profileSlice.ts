@@ -1,32 +1,30 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import { IProfileData } from '../types/profileData.Types';
+import { ICoords } from '../types/coords.types';
 
-export interface ICurrentLocation {
-  latitude: number;
-  longitude: number;
-}
 
 export interface IProfile {
-  profileData: IProfileData | null;
-  currentLocation: ICurrentLocation | null;
+   profileData: IProfileData | null;
+   currentCoords: ICoords  | null;
 }
 
 const initialState: IProfile = {
-  profileData: null,
-  currentLocation: null,
+   profileData: null,
+   currentCoords: null,
 };
 const profileSlice = createSlice({
-  name: 'profile',
-  initialState: initialState,
-  reducers: {
-    setProfileData: (state, action: PayloadAction<IProfileData | null>) => {
-      state.profileData = action.payload;
+    name: 'profile',
+    initialState: initialState,
+    reducers: {
+       setProfileData: (state, action: PayloadAction<IProfileData | null>)=>{
+        state.profileData = action.payload;
+       },
+       setCurrentCoords: (state, action: PayloadAction<ICoords | null>)=>{
+        state.currentCoords = action.payload;
+       },
     },
-    setCurrentLocation: (state, action: PayloadAction<ICurrentLocation | null>) => {
-      state.currentLocation = action.payload;
-    },
-  },
 });
 
-export const { setProfileData, setCurrentLocation } = profileSlice.actions;
+export const { setProfileData, setCurrentCoords } =
+    profileSlice.actions;
 export default profileSlice.reducer;

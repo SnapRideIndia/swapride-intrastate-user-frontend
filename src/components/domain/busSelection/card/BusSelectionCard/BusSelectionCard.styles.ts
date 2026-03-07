@@ -59,8 +59,8 @@ export const useStyles = (colors: ColorsType) =>
       color: colors.contentPrimary,
     },
     badgeAndDeviderContainer: {
-      maxHeight: 255,
-      alignItems: 'center',
+      maxHeight: 110,
+      alignItems: 'center'
     },
     devider: {
       // height: 59,
@@ -105,21 +105,24 @@ export const useStyles = (colors: ColorsType) =>
       marginBottom: 8,
       marginTop: 16,
     },
-    timeSlotContainer: {
-      paddingHorizontal: 10,
-      paddingVertical: 5,
-      borderWidth: 1,
-      borderColor: colors.primary,
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 10,
-      borderRadius: 10,
+    timeSlotContainer:{
+        paddingHorizontal: 10,
+        paddingVertical: 5,
+        borderWidth:1,
+        borderColor: colors.border_4,
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 10,
+        borderRadius: 10,
     },
-    ratingAndButtoncontainer: {
-      flexDirection: 'row',
-      gap: 32,
-      marginTop: 20,
-      alignItems: 'flex-start',
+    timeSlotContainerSelected: {
+        borderColor: colors.primary,
+    },
+    ratingAndButtoncontainer:{
+        flexDirection: "row",
+        gap: 32,
+        marginTop: 20,
+        alignItems: 'flex-start'
     },
     btnstyle: {
       flex: 1,
@@ -146,6 +149,97 @@ export const useStyles = (colors: ColorsType) =>
     },
     viewFullRoute: {
       fontSize: 13,
+      color: colors.contentPrimary
+    },
+    sheetBackground: {
+      backgroundColor: colors.background_primary,
+      borderTopLeftRadius: 16,
+      borderTopRightRadius: 16,
+    },
+    handleIndicator: {
+      backgroundColor: colors.border_3,
+      width: 40,
+    },
+    sheetContent: {
+      paddingHorizontal: 16,
+      paddingTop: 10,
+      paddingBottom: 16,
+      flex: 1,
+    },
+    sheetHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      padding: 20,
+      borderBottomWidth:1
+    },
+    sheetTitle: {
+      fontSize: 18,
       color: colors.contentPrimary,
+    },
+    closeButton: {
+      padding: 6,
+    },
+    closeIcon: {
+      width: 14,
+      height: 14,
+      tintColor: colors.contentPrimary,
+    },
+    timingsListContent: {
+      paddingTop: 10,
+      gap: 10,
+      paddingBottom: 6,
+    },
+    timingRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingVertical: 12,
+      paddingHorizontal: 14,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: colors.border_4,
+      backgroundColor: colors.background_primary,
+    },
+    timingRowSelected: {
+      borderColor: colors.primary,
+    },
+    timingLeft: {
+      flex: 1,
+      paddingRight: 10,
+      gap: 4,
+    },
+    timingRange: {
+      fontSize: 14,
+      color: colors.contentPrimary,
+    },
+    timingVia: {
+      fontSize: 12,
+      color: colors.contentPrimary,
+    },
+    timingRight: {
+      flexDirection: 'row',
+      gap: 6,
+    },
+    stopsIcon: {
+      width: 13.33,
+      height: 16.67,
+      tintColor: colors.contentPrimary,
+    },
+    stopsText: {
+      fontSize: 12,
+      color: colors.contentPrimary,
+    },
+    stopImage: {
+      width: 150,
+      height: 100,
+      borderRadius: 10,
+      backgroundColor: colors.border_4,
+    },
+    stopImagePlaceholder: {
+      width: 150,
+      height: 100,
+      borderRadius: 10,
+      backgroundColor: 'gray',
     },
   });

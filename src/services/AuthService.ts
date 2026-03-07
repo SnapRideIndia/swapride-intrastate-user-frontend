@@ -1,4 +1,4 @@
-import { handleErrorResponse, postData } from './ApiUtility';
+import { handleErrorResponse, postData, refreshSession } from './ApiUtility';
 
 class AuthService {
   baseUrl = '/users/auth';
@@ -49,6 +49,15 @@ class AuthService {
     }
 
     return res.data;
+  };
+
+  /**
+   * Refresh access token using refresh token (for sliding session).
+   * Uses refreshSession from ApiUtility (no Bearer token sent).
+   * Use via useRefreshToken hook or called automatically on 401 by API interceptor.
+   */
+  refreshAccessToken = async (refreshToken: string): Promise<{ accessToken: string; refreshToken?: string }> => {
+    return refreshSession(refreshToken);
   };
 }
 
