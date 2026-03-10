@@ -111,4 +111,55 @@ export const useStyles = (colors: ColorsType) =>
       width: 16.13,
       height: 14.63,
     },
+    modalBackdrop: {
+      flex: 1,
+      backgroundColor: 'rgba(0,0,0,0.4)',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    modalContainer: {
+      width: '80%',
+      borderRadius: 16,
+      paddingVertical: 20,
+      paddingHorizontal: 16,
+      backgroundColor: colors.background_primary,
+    },
+    modalTitle: {
+      fontSize: 16,
+      marginBottom: 12,
+      color: colors.contentPrimary,
+    },
+    modalOption: {
+      paddingVertical: 10,
+    },
+    modalOptionText: {
+      fontSize: 14,
+      color: colors.contentPrimary,
+    },
+    timeInputContainer: {
+      gap: 8,
+    },
+    timeInputsWrapper: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 11,
+      paddingLeft: 24,
+    },
+    timeInput: {
+      width: 73,
+      paddingBottom: 4,
+      borderBottomWidth: 1,
+      borderColor: colors.border_4,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    inputTitle: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
+    },
+    clock: {
+      width: 14,
+      height: 14,
+    },
   });

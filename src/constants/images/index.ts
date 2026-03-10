@@ -78,4 +78,8 @@ export const ImageSource = {
 offer: require('.././../assets/images/offer.png'),
 razorpay: require('.././../assets/images/razorpay.png'),
 
+// splash
+  splashLogo: require('.././../assets/images/splashLogo.png'),
+  metroGIF: require('.././../assets/images/metro.gif'),
+  metroLottie: require('../../assets/images/metro.gif'),
 }

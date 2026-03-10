@@ -1,8 +1,9 @@
-import { Platform, View, Image, TouchableOpacity, ImageSourcePropType } from 'react-native';
-import React, { useEffect, useRef, useState } from 'react';
+import { Platform, View, Image, TouchableOpacity, ImageSourcePropType, Modal } from 'react-native';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import DatePicker from 'react-native-date-picker';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useTheme } from '../../../theme/ThemeProvider';
 import { SwText as Text } from '../../../components/common/SwText/SwText';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -16,6 +17,12 @@ import { useUpdateProfile, useFetchCurrentProfile } from '../../../hooks/useProf
 import type { ProfileObj } from '../../../services/ProfileService';
 import { useStyles } from './SetYourProfileScreen.styles';
 import type { RootStackParamList } from '../../../navigation/types';
+import { format } from 'date-fns';
+import {
+  SwLocationSearchBottomSheet,
+  type SwLocationSearchItem,
+} from '../../../components/common/SwLocationSearchBottomSheet/SwLocationSearchBottomSheet';
+import { usePlaceAutocomplete, useRecentSearch, useSavedLocations } from '../../../hooks/useSearch';
 
 const INITIAL_PROFILE: ProfileObj = {
   fullName: '',
@@ -44,13 +51,46 @@ const SetYourProfileScreen = () => {
   const { isFromOtp } = route.params ?? {};
 
   const [profileObj, setProfileObj] = useState<ProfileObj>(INITIAL_PROFILE);
+  const [homeAddress, setHomeAddress] = useState('');
+  const [officeAddress, setOfficeAddress] = useState('');
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [showImagePickerSheet, setShowImagePickerSheet] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showGenderModal, setShowGenderModal] = useState(false);
+  const [showBloodGroupModal, setShowBloodGroupModal] = useState(false);
   const hasPrefilled = useRef(false);
+  const [activeTimeField, setActiveTimeField] = useState<'start' | 'end'>('start');
+
+  const [officeStartTime, setOfficeStartTime] = useState<Date | null>(() => {
+    const d = new Date();
+    d.setHours(9, 0, 0, 0);
+    return d;
+  });
+
+  const [officeEndTime, setOfficeEndTime] = useState<Date | null>(() => {
+    const d = new Date();
+    d.setHours(17, 0, 0, 0);
+    return d;
+  });
+
+  const [timePickerDate, setTimePickerDate] = useState<Date>(new Date());
+  const [isTimePickerOpen, setIsTimePickerOpen] = useState(false);
+
+  const locationSheetRef = useRef<BottomSheetModal>(null);
+  const [activeLocationField, setActiveLocationField] = useState<'home' | 'office'>('home');
+  const [locationQuery, setLocationQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<SwLocationSearchItem[]>([]);
+  const [savedAddresses, setSavedAddresses] = useState<SwLocationSearchItem[]>([]);
+  const [recentSearches, setRecentSearches] = useState<SwLocationSearchItem[]>([]);
+
+  const { getPlaceAutocompleteItems } = usePlaceAutocomplete();
+  const { getRecentSearchItems } = useRecentSearch();
+  const { getSavedLocationItems } = useSavedLocations();
 
   const { data: currentProfile } = useFetchCurrentProfile();
   const { mutate: updateProfileApi, isPending } = useUpdateProfile();
+
+  console.log("this is currentprofile inside set your profile screen ===>", currentProfile);
 
   useEffect(() => {
     const renderHeader = () => <PrimaryHeader title={'Set your profile'} />;
@@ -102,6 +142,15 @@ const SetYourProfileScreen = () => {
     );
   };
 
+  const getTimeDisplayValue = useCallback((d: Date | null) => {
+    if (!d) return '00:00 AM';
+    try {
+      return format(d, 'hh:mm a');
+    } catch (e) {
+      return '00:00 AM';
+    }
+  }, []);
+
   const handleSelectGallery = () => {
     launchImageLibrary(
       {
@@ -135,6 +184,28 @@ const SetYourProfileScreen = () => {
     return new Date();
   };
 
+  const openTimePicker = useCallback(
+    (field: 'start' | 'end') => {
+      setActiveTimeField(field);
+      const initial = field === 'start' ? officeStartTime ?? new Date() : officeEndTime ?? new Date();
+      setTimePickerDate(initial);
+      setIsTimePickerOpen(true);
+    },
+    [officeEndTime, officeStartTime],
+  );
+
+  const handleConfirmTime = useCallback(
+    (date: Date) => {
+      if (activeTimeField === 'start') {
+        setOfficeStartTime(date);
+      } else {
+        setOfficeEndTime(date);
+      }
+      setIsTimePickerOpen(false);
+    },
+    [activeTimeField],
+  );
+
   const handleDateConfirm = (date: Date) => {
     updateProfile('dateOfBirth', formatDate(date));
     setShowDatePicker(false);
@@ -143,6 +214,71 @@ const SetYourProfileScreen = () => {
   const getDobDisplayValue = () => {
     return profileObj.dateOfBirth || 'Select date';
   };
+
+  const genderOptions = ['Male', 'Female', 'Others'];
+  const bloodGroupOptions = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+
+  const loadSavedAndRecent = useCallback(async () => {
+    try {
+      const [saved, recent] = await Promise.all([getSavedLocationItems(), getRecentSearchItems('pickup')]);
+      setSavedAddresses(saved);
+      setRecentSearches(recent);
+    } catch (e) {
+      setSavedAddresses([]);
+      setRecentSearches([]);
+    }
+  }, [getRecentSearchItems, getSavedLocationItems]);
+
+  const openLocationSheet = useCallback(
+    (field: 'home' | 'office') => {
+      setActiveLocationField(field);
+      setLocationQuery('');
+      setSearchResults([]);
+      loadSavedAndRecent();
+      locationSheetRef.current?.present();
+    },
+    [loadSavedAndRecent],
+  );
+
+  const handleSelectLocation = useCallback(
+    (item: SwLocationSearchItem) => {
+      const valueToFill = item.subtitle || item.title;
+      if (activeLocationField === 'home') {
+        setHomeAddress(valueToFill);
+      } else {
+        setOfficeAddress(valueToFill);
+      }
+      // @ts-ignore - BottomSheetModal ref type
+      locationSheetRef.current?.dismiss?.();
+    },
+    [activeLocationField],
+  );
+
+  useEffect(() => {
+    const q = locationQuery.trim();
+    if (!q || q.length < 2) {
+      setSearchResults([]);
+      return;
+    }
+
+    let cancelled = false;
+    (async () => {
+      try {
+        const items = await getPlaceAutocompleteItems(q, 'profile-session');
+        if (!cancelled) {
+          setSearchResults(items ?? []);
+        }
+      } catch (e) {
+        if (!cancelled) {
+          setSearchResults([]);
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [locationQuery, getPlaceAutocompleteItems]);
 
   const handleSave = () => {
     updateProfileApi(
@@ -218,13 +354,18 @@ const SetYourProfileScreen = () => {
           />
           <View style={styles.rowInputs}>
             <View style={styles.flexInput}>
-              <TextInput
-                title="Gender"
-                renderTitleIcon={() => <Image source={ImageSource.genderOutline as ImageSourcePropType} style={styles.titleIcon} />}
-                value={profileObj.gender}
-                onChangeText={v => updateProfile('gender', v)}
-                placeholder="Gender"
-              />
+              <TouchableOpacity onPress={() => setShowGenderModal(true)}>
+                <TextInput
+                  title="Gender"
+                  renderTitleIcon={() => (
+                    <Image source={ImageSource.genderOutline as ImageSourcePropType} style={styles.titleIcon} />
+                  )}
+                  value={profileObj.gender}
+                  editable={false}
+                  placeholder="Select gender"
+                  pointerEvents="none"
+                />
+              </TouchableOpacity>
             </View>
             <View style={styles.flexInput}>
               <TouchableOpacity onPress={() => setShowDatePicker(true)}>
@@ -241,13 +382,18 @@ const SetYourProfileScreen = () => {
           </View>
           <View style={styles.rowInputs}>
             <View style={styles.flexInput}>
-              <TextInput
-                title="Blood Group"
-                renderTitleIcon={() => <Image source={ImageSource.bloodOutline as ImageSourcePropType} style={styles.titleIcon} />}
-                value={profileObj.bloodGroup}
-                onChangeText={v => updateProfile('bloodGroup', v)}
-                placeholder="e.g. A+"
-              />
+              <TouchableOpacity onPress={() => setShowBloodGroupModal(true)}>
+                <TextInput
+                  title="Blood Group"
+                  renderTitleIcon={() => (
+                    <Image source={ImageSource.bloodOutline as ImageSourcePropType} style={styles.titleIcon} />
+                  )}
+                  value={profileObj.bloodGroup}
+                  editable={false}
+                  placeholder="Select blood group"
+                  pointerEvents="none"
+                />
+              </TouchableOpacity>
             </View>
             <View style={{ flex: 1 }} />
           </View>
@@ -265,29 +411,47 @@ const SetYourProfileScreen = () => {
               </Text>
             </View>
 
-            <TextInput
-              title="Home Address"
-              renderTitleIcon={() => <Image source={ImageSource.Home as ImageSourcePropType} style={styles.titleIcon} />}
-              value={profileObj.fullName}
-              onChangeText={v => updateProfile('fullName', v)}
-              placeholder="Enter your full name"
-            />
+            <TouchableOpacity onPress={() => openLocationSheet('home')}>
+              <TextInput
+                title="Home Address"
+                renderTitleIcon={() => (
+                  <Image source={ImageSource.Home as ImageSourcePropType} style={styles.titleIcon} />
+                )}
+                value={homeAddress}
+                editable={false}
+                placeholder="Search your home address"
+                pointerEvents="none"
+              />
+            </TouchableOpacity>
 
-            <TextInput
-              title="Office Address"
-              renderTitleIcon={() => <Image source={ImageSource.office as ImageSourcePropType} style={styles.titleIcon} />}
-              value={profileObj.fullName}
-              onChangeText={v => updateProfile('fullName', v)}
-              placeholder="Enter your full name"
-            />
+            <TouchableOpacity onPress={() => openLocationSheet('office')}>
+              <TextInput
+                title="Office Address"
+                renderTitleIcon={() => (
+                  <Image source={ImageSource.office as ImageSourcePropType} style={styles.titleIcon} />
+                )}
+                value={officeAddress}
+                editable={false}
+                placeholder="Search your office address"
+                pointerEvents="none"
+              />
+            </TouchableOpacity>
 
-            <TextInput
-              title="Office timings"
-              renderTitleIcon={() => <Image source={ImageSource.clock as ImageSourcePropType} style={styles.titleIcon} />}
-              value={profileObj.fullName}
-              onChangeText={v => updateProfile('fullName', v)}
-              placeholder="Enter your full name"
-            />
+            <View style={styles.timeInputContainer}>
+              <View style={styles.inputTitle}>
+                <Image source={ImageSource.clock} style={styles.clock} />
+                <Text>Office Timing</Text>
+              </View>
+              <View style={styles.timeInputsWrapper}>
+                <TouchableOpacity style={styles.timeInput} activeOpacity={0.8} onPress={() => openTimePicker('start')}>
+                  <Text>{getTimeDisplayValue(officeStartTime)}</Text>
+                </TouchableOpacity>
+                <Text>to</Text>
+                <TouchableOpacity style={styles.timeInput} activeOpacity={0.8} onPress={() => openTimePicker('end')}>
+                  <Text>{getTimeDisplayValue(officeEndTime)}</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
           </View>
         )}
       </KeyboardAwareScrollView>
@@ -304,6 +468,66 @@ const SetYourProfileScreen = () => {
         onSelectGallery={handleSelectGallery}
       />
 
+      {/* Gender selection modal */}
+      <Modal
+        visible={showGenderModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowGenderModal(false)}
+      >
+        <View style={styles.modalBackdrop}>
+          <View style={styles.modalContainer}>
+            <Text variant="semi-bold" style={styles.modalTitle}>
+              Select Gender
+            </Text>
+            {genderOptions.map(option => (
+              <TouchableOpacity
+                key={option}
+                style={styles.modalOption}
+                onPress={() => {
+                  updateProfile('gender', option);
+                  setShowGenderModal(false);
+                }}
+              >
+                <Text variant="medium" style={styles.modalOptionText}>
+                  {option}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+      </Modal>
+
+      {/* Blood group selection modal */}
+      <Modal
+        visible={showBloodGroupModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowBloodGroupModal(false)}
+      >
+        <View style={styles.modalBackdrop}>
+          <View style={styles.modalContainer}>
+            <Text variant="semi-bold" style={styles.modalTitle}>
+              Select Blood Group
+            </Text>
+            {bloodGroupOptions.map(option => (
+              <TouchableOpacity
+                key={option}
+                style={styles.modalOption}
+                onPress={() => {
+                  updateProfile('bloodGroup', option);
+                  setShowBloodGroupModal(false);
+                }}
+              >
+                <Text variant="medium" style={styles.modalOptionText}>
+                  {option}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+      </Modal>
+
       <DatePicker
         modal
         open={showDatePicker}
@@ -312,6 +536,31 @@ const SetYourProfileScreen = () => {
         onConfirm={handleDateConfirm}
         onCancel={() => setShowDatePicker(false)}
         maximumDate={new Date()}
+      />
+
+      <SwLocationSearchBottomSheet
+        ref={locationSheetRef}
+        title={activeLocationField === 'home' ? 'Search Home Address' : 'Search Office Address'}
+        query={locationQuery}
+        onChangeQuery={setLocationQuery}
+        searchResults={searchResults}
+        showUseCurrentLocation={false}
+        savedAddresses={savedAddresses}
+        recentSearches={recentSearches}
+        onPressItem={handleSelectLocation}
+        onClose={() => {
+          setLocationQuery('');
+          setSearchResults([]);
+        }}
+      />
+
+      <DatePicker
+        modal
+        open={isTimePickerOpen}
+        date={timePickerDate}
+        mode="time"
+        onConfirm={handleConfirmTime}
+        onCancel={() => setIsTimePickerOpen(false)}
       />
     </SafeAreaView>
   );
