@@ -31,28 +31,12 @@ export const useStyles = (colors: ColorsType) =>
     },
     inputLabel: {
       flex: 1,
-      fontSize: 14,
+      justifyContent: 'center',
+    },
+    timeDisplayText: {
+      fontSize: 15,
+      fontWeight: '600',
       color: colors.contentSecondary,
-    },
-    toggleContainer: {
-      flexDirection: 'row',
-      backgroundColor: colors.background_lightBlue,
-      borderRadius: 8,
-      overflow: 'hidden',
-    },
-    toggleButton: {
-      paddingHorizontal: 12,
-      paddingVertical: 6,
-    },
-    toggleButtonActive: {
-      backgroundColor: colors.button_secondary,
-    },
-    toggleText: {
-      fontSize: 12,
-      color: colors.primaryLight,
-    },
-    toggleTextActive: {
-      color: colors.background_primary,
     },
     showBusesBtn: {
       height: 44,

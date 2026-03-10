@@ -16,15 +16,16 @@ import { TouchableOpacity } from 'react-native';
 import { ScreenNames } from '../../../navigation/constant';
 import { useNavigation, useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
 import { RootStackParamList } from '../../../navigation/types';
-import { useBookingDetails, useApplyCoupon, useConfirmBooking } from '../../../hooks/useBooking';
-import { LegDetail, PaymentMethod } from '../../../types/booking.types';
+import { useBookingDetails, useApplyCoupon, useRemoveCoupon } from '../../../hooks/useBooking';
+import { useBalance } from '../../../hooks/useWallet';
+import { LegDetail } from '../../../types/booking.types';
 import { format } from 'date-fns';
 
 const mapLegToSummary = (leg: LegDetail, type: 'outbound' | 'return') => ({
   type,
   tripId: leg.tripId,
   bookingId: leg.bookingId,
-  date: format(new Date(), 'eeee, do MMM'),
+  date: format(leg.tripDate ? new Date(leg.tripDate) : new Date(), 'eeee, do MMM'),
   pickup: {
     time: leg.pickup.arrivalTime,
     title: leg.pickup.name,
@@ -48,6 +49,7 @@ const ConfirmBookingDetails = () => {
   const { bookingId } = route.params;
 
   const { data: booking, isLoading, isError, error, refetch } = useBookingDetails(bookingId);
+  const { data: balanceData } = useBalance();
 
   useFocusEffect(
     useCallback(() => {
@@ -61,7 +63,6 @@ const ConfirmBookingDetails = () => {
   const { mutate: applyCoupon, isPending: isApplyingCoupon } = useApplyCoupon(
     bookingId,
     data => {
-      console.log('Apply Coupon Response ===>', data);
       Alert.alert('Success', 'Coupon applied successfully');
       refetch();
       bottomSheetRef.current?.dismiss();
@@ -69,6 +70,17 @@ const ConfirmBookingDetails = () => {
     },
     err => {
       Alert.alert('Failed', err?.message || 'Invalid coupon code');
+    },
+  );
+
+  const { mutate: removeCoupon } = useRemoveCoupon(
+    bookingId,
+    () => {
+      Alert.alert('Success', 'Coupon removed successfully');
+      refetch();
+    },
+    err => {
+      Alert.alert('Failed', err?.message || 'Failed to remove coupon');
     },
   );
 
@@ -102,20 +114,19 @@ const ConfirmBookingDetails = () => {
   const fareSummary = useMemo(() => {
     if (!booking) return null;
     const isRoundTrip = booking.isRoundTrip;
-
-    // For single booking, fields are on root. For round trip, they are on legs.
     const subTotal = isRoundTrip ? booking.outbound.subTotal + (booking.return?.subTotal || 0) : booking.subTotal;
 
     const discountAmount = isRoundTrip ? booking.outbound.discountAmount + (booking.return?.discountAmount || 0) : booking.discountAmount;
 
     return {
-      outboundFare: isRoundTrip ? booking.outbound.totalAmount : booking.totalAmount,
-      returnFare: isRoundTrip ? booking.return?.totalAmount : 0,
+      outboundFare: isRoundTrip ? booking.outbound.subTotal : booking.subTotal,
+      returnFare: isRoundTrip ? booking.return?.subTotal : undefined,
+      totalPayable: booking.totalPayable,
       discountAmount,
       subTotal,
-      walletBalance: 0, // Should be fetched from wallet hook
+      walletBalance: balanceData?.balance || 0,
     };
-  }, [booking]);
+  }, [booking, balanceData]);
 
   if (isLoading) {
     return (
@@ -174,8 +185,10 @@ const ConfirmBookingDetails = () => {
               {...fareSummary}
               onApplyPromo={() => bottomSheetRef.current?.present()}
               onRemovePromo={() => {
-                // Implement remove coupon if backend supports it
-                Alert.alert('Info', 'Remove coupon is not implemented yet');
+                Alert.alert('Remove Coupon', 'Are you sure you want to remove this coupon?', [
+                  { text: 'Cancel', style: 'cancel' },
+                  { text: 'Remove', style: 'destructive', onPress: () => removeCoupon() },
+                ]);
               }}
               appliedCoupon={fareSummary.discountAmount > 0 ? { code: 'Applied', savings: fareSummary.discountAmount } : null}
             />

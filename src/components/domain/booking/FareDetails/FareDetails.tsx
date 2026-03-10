@@ -12,6 +12,7 @@ import AppliedCoupon from '../AppliedCoupon/AppliedCoupon';
 export interface FareDetailsProps {
   outboundFare: number;
   returnFare?: number;
+  totalPayable: number;
   walletBalance: number;
   onApplyPromo?: () => void;
   onRemovePromo?: () => void;
@@ -21,6 +22,7 @@ export interface FareDetailsProps {
 const FareDetails: React.FC<FareDetailsProps> = ({
   outboundFare,
   returnFare,
+  totalPayable,
   walletBalance,
   onApplyPromo,
   onRemovePromo,
@@ -28,8 +30,6 @@ const FareDetails: React.FC<FareDetailsProps> = ({
 }) => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
-
-  const total = outboundFare + (returnFare ?? 0) - walletBalance;
 
   return (
     <View style={styles.container}>
@@ -82,7 +82,7 @@ const FareDetails: React.FC<FareDetailsProps> = ({
           Total Payable
         </Text>
         <Text variant="bold" style={styles.totalValue}>
-          ₹{total - (appliedCoupon ? appliedCoupon.savings : 0)}
+          ₹{totalPayable}
         </Text>
       </View>
     </View>

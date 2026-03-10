@@ -33,7 +33,7 @@ export const useStyles = (colors: ColorsType) =>
       justifyContent: 'flex-end',
     },
     editIcon: {
-      width: 15,
-      height: 15,
+      width: 20,
+      height: 20,
     },
   });

@@ -23,6 +23,7 @@ type Props = {
   activeDateIndex: number;
   onPressDateTab: (index: number) => void;
   onPressCalendar: () => void;
+  onSwapLocations?: () => void;
   onSubmit: () => void;
   isSearching?: boolean;
   canSubmit?: boolean;
@@ -41,6 +42,7 @@ export const FindCommuteCard = ({
   activeDateIndex,
   onPressDateTab,
   onPressCalendar,
+  onSwapLocations,
   onSubmit,
   isSearching = false,
   canSubmit = true,
@@ -67,6 +69,7 @@ export const FindCommuteCard = ({
         }}
         onPressPickup={onPressPickup}
         onPressDrop={onPressDrop}
+        onSwap={onSwapLocations}
       />
 
       <View style={styles.dateSection}>

@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useInfiniteQuery } from '@tanstack/react-query';
 import BookingService from '../services/BookingService';
 import { ConfirmPaymentDto, ApplyCouponDto } from '../types/booking.types';
 
@@ -42,6 +42,14 @@ export const useApplyCoupon = (id: string, onSuccess?: (data: any) => void, onEr
   });
 };
 
+export const useRemoveCoupon = (id: string, onSuccess?: (data: any) => void, onError?: (error: any) => void) => {
+  return useMutation({
+    mutationFn: () => BookingService.removeCoupon(id),
+    onSuccess,
+    onError,
+  });
+};
+
 export const useTicketDetail = (id: string) => {
   return useQuery({
     queryKey: ['ticket-detail', id],
@@ -64,5 +72,21 @@ export const useChangeSeat = (onSuccess?: (data: any) => void, onError?: (error:
       BookingService.changeBookingSeat(bookingId, seatNumber),
     onSuccess,
     onError,
+  });
+};
+
+export const useMyBookings = (type?: string, limit = 10) => {
+  return useInfiniteQuery({
+    queryKey: ['my-bookings-infinite', type],
+    queryFn: ({ pageParam = 0 }) => BookingService.getMyBookings(type, limit, pageParam as number),
+    getNextPageParam: (lastPage, allPages) => {
+      // If the last page has less than 'limit' items, there are no more pages
+      if (lastPage?.data?.length < limit) {
+        return undefined;
+      }
+      // Otherwise, the next offset is the total number of items fetched so far
+      return allPages.length * limit;
+    },
+    initialPageParam: 0,
   });
 };

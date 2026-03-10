@@ -1,5 +1,5 @@
 import { Image, ScrollView, TouchableOpacity, View } from 'react-native';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../../theme/ThemeProvider';
 import { useStyles } from './SetCommuteScreen.styles';
@@ -23,9 +23,10 @@ import uuid from 'react-native-uuid';
 import type { ICoords } from '../../../types/coords.types';
 import { usePlaceAutocomplete, useRecentSearch, useReverseGeocode, useSavedLocations, useSearchTrips } from '../../../hooks/useSearch';
 import DatePicker from 'react-native-date-picker';
-import { format } from 'date-fns';
+import { format, isToday } from 'date-fns';
 import { ScreenNames } from '../../../navigation/constant';
-import { setCommuteData } from '../../../slice/commuteSlice';
+import { setCommuteData, setCommuteSearchContext } from '../../../slice/commuteSlice';
+import type { CommuteDateTab } from '../../../types/commuteDates.types';
 
 const SetCommuteScreen = () => {
   const { colors } = useTheme();
@@ -67,14 +68,16 @@ const SetCommuteScreen = () => {
   const [timePickerDate, setTimePickerDate] = useState<Date>(new Date());
   const [tripDate] = useState<Date>(new Date());
 
-  const onSuccessTrips = useCallback((data: any) => {
-    console.log('searchTrips success >>>', data);
-    dispatch(setCommuteData(data));
-    navigation.navigate(ScreenNames.BUS_SELECTION_SCREEN as never);
-  }, []);
+  const onSuccessTrips = useCallback(
+    (data: any) => {
+      dispatch(setCommuteData(data));
+      navigation.navigate(ScreenNames.BUS_SELECTION_SCREEN as never);
+    },
+    [dispatch, navigation],
+  );
 
-  const onErrorTrips = useCallback((error: any) => {
-    console.log('searchTrips error >>>', error);
+  const onErrorTrips = useCallback((_error: any) => {
+    // Error handled by hook or generic toast
   }, []);
 
   const { mutate: searchTrips, isPending: isSearchingTrips } = useSearchTrips(onSuccessTrips, onErrorTrips);
@@ -102,6 +105,26 @@ const SetCommuteScreen = () => {
     },
     [getRecentSearchItems, getSavedLocationItems],
   );
+
+  const formatTabTitle = useCallback((d: Date) => {
+    if (isToday(d)) return 'Today';
+    return format(d, 'EEE, do MMM');
+  }, []);
+
+  const defaultDateTabs = useMemo<CommuteDateTab[]>(() => {
+    const today = new Date();
+    return [0, 1, 2, 3, 4].map(offset => {
+      const d = new Date(today);
+      d.setDate(today.getDate() + offset);
+      return {
+        id: format(d, 'yyyy-MM-dd'),
+        date: format(d, 'yyyy-MM-dd'),
+        title: formatTabTitle(d),
+      };
+    });
+  }, [formatTabTitle]);
+
+  const [dateTabs] = useState<CommuteDateTab[]>(defaultDateTabs);
 
   useEffect(() => {
     // Initial render load (default active field = pickup)
@@ -224,8 +247,16 @@ const SetCommuteScreen = () => {
     [loadSavedAndRecent],
   );
 
-  const canSubmit = !!pickupItem?.latitude && !!pickupItem?.longitude && !!dropItem?.latitude && !!dropItem?.longitude;
-  !!officeStartTime && !!officeEndTime;
+  const canSubmit = useMemo(() => {
+    return !!(
+      pickupItem?.latitude &&
+      pickupItem?.longitude &&
+      dropItem?.latitude &&
+      dropItem?.longitude &&
+      officeStartTime &&
+      officeEndTime
+    );
+  }, [pickupItem, dropItem, officeStartTime, officeEndTime]);
 
   const handleSubmit = useCallback(async () => {
     if (!canSubmit) return;
@@ -249,25 +280,52 @@ const SetCommuteScreen = () => {
 
     if (typeof userLat !== 'number' || typeof userLng !== 'number') return;
 
-    searchTrips({
-      pickupLat,
-      pickupLng,
-      dropoffLat,
-      dropoffLng,
+    const officeTimings = `${getTimeDisplayValue(officeStartTime)} - ${getTimeDisplayValue(officeEndTime)}`;
+
+    const searchBaseParams = {
+      pickup: {
+        latitude: pickupLat,
+        longitude: pickupLng,
+        address: pickupItem!.subtitle || pickupItem!.title,
+      },
+      dropoff: {
+        latitude: dropoffLat,
+        longitude: dropoffLng,
+        address: dropItem!.subtitle || dropItem!.title,
+      },
+      userLocation: {
+        latitude: userLat,
+        longitude: userLng,
+      },
+    };
+
+    const searchParams = {
+      ...searchBaseParams,
       tripDate: format(tripDate, 'yyyy-MM-dd'),
-      userLat,
-      userLng,
-    });
+      officeTimings,
+    };
+
+    dispatch(
+      setCommuteSearchContext({
+        dateTabs,
+        activeDateIndex: 0,
+        searchBaseParams,
+      }),
+    );
+    searchTrips(searchParams);
   }, [
     canSubmit,
-    currentCoords?.latitude,
-    currentCoords?.longitude,
+    currentCoords,
     dispatch,
     dropItem,
     getCurrentLocation,
+    getTimeDisplayValue,
+    officeEndTime,
+    officeStartTime,
     pickupItem,
     searchTrips,
     tripDate,
+    dateTabs,
   ]);
 
   useEffect(() => {
