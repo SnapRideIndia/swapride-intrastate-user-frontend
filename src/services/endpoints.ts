@@ -17,9 +17,13 @@ export const API_ENDPOINTS = {
     GET_BY_ID: (id: string) => `/bookings/${id}`,
     GET_DETAILS: (id: string) => `/bookings/${id}/details`,
     TICKET_DETAIL: (id: string) => `/bookings/ticket/${id}`,
+    TRACK_RIDE: (id: string) => `/bookings/track/${id}`,
   },
   USERS: {
     SAVED_LOCATIONS: '/users/saved-locations',
+  },
+  DRIVERS: {
+    GET_DETAILS: (id: string) => `/drivers/${id}/details`,
   },
   WALLET: {
     BALANCE: '/wallet/balance',

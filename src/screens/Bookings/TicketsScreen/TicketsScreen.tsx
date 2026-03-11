@@ -2,7 +2,7 @@ import { FlatList, ActivityIndicator, View, RefreshControl } from 'react-native'
 import React, { useEffect, useState, useCallback } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../../theme/ThemeProvider';
-import { useStyles } from './HistoryScreen.styles';
+import { useStyles } from './TicketsScreen.styles';
 import PrimaryHeader from '../../../components/common/SwHeader/PrimaryHeader/PrimaryHeader';
 import { SwText as Text } from '../../../components/common/SwText/SwText';
 import { useMyBookings } from '../../../hooks/useBooking';
@@ -10,7 +10,7 @@ import BookingCard from '../../../components/domain/booking/card/BookingCard/Boo
 import { format } from 'date-fns';
 import { MyBookingType } from '../../../types/booking.types';
 
-const HistoryScreen = () => {
+const TicketsScreen = () => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const {
@@ -22,7 +22,7 @@ const HistoryScreen = () => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useMyBookings(MyBookingType.HISTORY);
+  } = useMyBookings(MyBookingType.UPCOMING);
   const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = useCallback(async () => {
@@ -33,17 +33,17 @@ const HistoryScreen = () => {
 
   useEffect(() => {
     if (bookings) {
-      console.log('My Bookings Response ===>', bookings);
+      console.log('My Tickets Response ===>', bookings);
     }
   }, [bookings]);
 
   if (isError) {
     return (
       <SafeAreaView edges={['bottom']} style={styles.container}>
-        <PrimaryHeader title="History" />
+        <PrimaryHeader title="My Tickets" />
         <View style={[styles.container, { justifyContent: 'center', alignItems: 'center', padding: 20 }]}>
           <Text variant="semi-bold" style={{ textAlign: 'center', color: colors.contentSecondary }}>
-            {(error as any)?.message || 'Failed to load bookings'}
+            {(error as any)?.message || 'Failed to load tickets'}
           </Text>
         </View>
       </SafeAreaView>
@@ -84,7 +84,7 @@ const HistoryScreen = () => {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 100 }}>
         <Text variant="medium" style={{ color: colors.contenttertiary }}>
-          No bookings found
+          No tickets found
         </Text>
       </View>
     );
@@ -92,7 +92,7 @@ const HistoryScreen = () => {
 
   return (
     <SafeAreaView edges={['bottom']} style={styles.container}>
-      <PrimaryHeader title="History" />
+      <PrimaryHeader title="My Tickets" />
       <FlatList
         data={allBookings}
         keyExtractor={(item, index) => item.id || index.toString()}
@@ -113,4 +113,4 @@ const HistoryScreen = () => {
   );
 };
 
-export default HistoryScreen;
+export default TicketsScreen;

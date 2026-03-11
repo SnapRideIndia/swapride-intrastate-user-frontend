@@ -35,7 +35,7 @@ const HomeScreen = () => {
         break;
 
       default:
-        navigation.navigate(ScreenNames.TICKET_DETAIL_SCREEN as never);
+        navigation.navigate(ScreenNames.TICKETS_SCREEN as never);
         break;
     }
   };

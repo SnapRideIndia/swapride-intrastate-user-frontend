@@ -9,7 +9,7 @@ export const useBalance = () => {
   });
 };
 
-export const useTransactions = (filter: string = 'ALL') => {
+export const useTransactions = (filter: string = 'WALLET') => {
   return useInfiniteQuery({
     queryKey: ['wallet-transactions', filter],
     queryFn: ({ pageParam = 0 }) => WalletService.getTransactions(filter, pageParam as number),

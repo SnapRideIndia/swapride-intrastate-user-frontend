@@ -48,21 +48,43 @@ const BusSelection = () => {
 
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
 
-  const [pickupLocation, setPickupLocation] = useState(searchBaseParams?.pickupName || '');
-  const [dropLocation, setDropLocation] = useState(searchBaseParams?.dropoffName || '');
+  const [pickupLocation, setPickupLocation] = useState(searchBaseParams?.pickup?.address || '');
+  const [dropLocation, setDropLocation] = useState(searchBaseParams?.dropoff?.address || '');
   const [pickupCoords, setPickupCoords] = useState(
-    searchBaseParams ? { lat: searchBaseParams.pickupLat, lng: searchBaseParams.pickupLng } : null,
+    searchBaseParams ? { lat: searchBaseParams.pickup.latitude, lng: searchBaseParams.pickup.longitude } : null,
   );
   const [dropoffCoords, setDropoffCoords] = useState(
-    searchBaseParams ? { lat: searchBaseParams.dropoffLat, lng: searchBaseParams.dropoffLng } : null,
+    searchBaseParams ? { lat: searchBaseParams.dropoff.latitude, lng: searchBaseParams.dropoff.longitude } : null,
   );
 
+  const { mutate: searchTrips, isPending: isSearchingTrips } = useSearchTrips(
+    (data: any) => {
+      dispatch(setCommuteData(data));
+      setIsEditModalVisible(false);
+    },
+    (e: any) => {
+      const errorMsg = Array.isArray(e?.message) ? e.message.join(', ') : e?.message || 'Unable to fetch buses';
+    },
+  );
+
+  const handleSwapLocations = useCallback(() => {
+    const tempCoords = pickupCoords;
+    const tempLocation = pickupLocation;
+
+    setPickupCoords(dropoffCoords);
+    setPickupLocation(dropLocation);
+
+    setDropoffCoords(tempCoords);
+    setDropLocation(tempLocation);
+  }, [pickupCoords, dropoffCoords, pickupLocation, dropLocation]);
+
   useEffect(() => {
+    console.log('BusSelection searchBaseParams updated ===>', searchBaseParams);
     if (searchBaseParams) {
-      setPickupLocation(searchBaseParams.pickupName || '');
-      setDropLocation(searchBaseParams.dropoffName || '');
-      setPickupCoords({ lat: searchBaseParams.pickupLat, lng: searchBaseParams.pickupLng });
-      setDropoffCoords({ lat: searchBaseParams.dropoffLat, lng: searchBaseParams.dropoffLng });
+      setPickupLocation(searchBaseParams.pickup.address || '');
+      setDropLocation(searchBaseParams.dropoff.address || '');
+      setPickupCoords({ lat: searchBaseParams.pickup.latitude, lng: searchBaseParams.pickup.longitude });
+      setDropoffCoords({ lat: searchBaseParams.dropoff.latitude, lng: searchBaseParams.dropoff.longitude });
     }
   }, [searchBaseParams]);
 
@@ -89,19 +111,9 @@ const BusSelection = () => {
   const { getSavedLocationItems } = useSavedLocations();
 
   const [activeTabIndex, setActiveTabIndex] = useState(storedActiveIndex ?? 0);
-  const { mutate: searchTrips, isPending: isSearchingTrips } = useSearchTrips(
-    (data: any) => {
-      dispatch(setCommuteData(data));
-      setIsEditModalVisible(false);
-    },
-    (e: any) => {
-      Alert.alert('Search Failed', e?.message || 'Unable to fetch buses');
-    },
-  );
 
   const { mutate: initiateRoundTrip, isPending: isInitiatingRoundTrip } = useInitiateRoundTrip(
     (data: any) => {
-      console.log('Initiate Round-Trip Response ===>', data);
       navigation.navigate(ScreenNames.CONFIRM_BOOKING_DETAILS, { bookingId: data.outboundBookingId });
     },
     (error: any) => {
@@ -126,7 +138,6 @@ const BusSelection = () => {
             totalAmount: result.baseFare,
           },
         };
-        console.log('Initiate Round-Trip Request Payload ===>', payload);
         initiateRoundTrip(payload);
       } else {
         navigation.navigate(ScreenNames.BOOKING_OPTIONS, {
@@ -258,14 +269,20 @@ const BusSelection = () => {
     if (!pickupCoords || !dropoffCoords) return;
 
     const baseParams = {
-      pickupLat: pickupCoords.lat,
-      pickupLng: pickupCoords.lng,
-      dropoffLat: dropoffCoords.lat,
-      dropoffLng: dropoffCoords.lng,
-      userLat: searchBaseParams?.userLat || 17.385,
-      userLng: searchBaseParams?.userLng || 78.4867,
-      pickupName: pickupLocation,
-      dropoffName: dropLocation,
+      pickup: {
+        latitude: pickupCoords.lat,
+        longitude: pickupCoords.lng,
+        address: pickupLocation,
+      },
+      dropoff: {
+        latitude: dropoffCoords.lat,
+        longitude: dropoffCoords.lng,
+        address: dropLocation,
+      },
+      userLocation: {
+        latitude: searchBaseParams?.userLocation?.latitude || 17.385,
+        longitude: searchBaseParams?.userLocation?.longitude || 78.4867,
+      },
     };
 
     dispatch(
@@ -278,16 +295,9 @@ const BusSelection = () => {
 
     dispatch(setCommuteData(null));
     const tripDate = tabs[activeTabIndex].date;
-    const preferredTime = isReturnLeg ? '05:30 PM' : undefined;
     const apiParams = {
-      pickupLat: baseParams.pickupLat,
-      pickupLng: baseParams.pickupLng,
-      dropoffLat: baseParams.dropoffLat,
-      dropoffLng: baseParams.dropoffLng,
-      userLat: baseParams.userLat,
-      userLng: baseParams.userLng,
+      ...baseParams,
       tripDate,
-      preferredTime,
     };
 
     searchTrips(apiParams);
@@ -310,9 +320,7 @@ const BusSelection = () => {
 
       dispatch(setCommuteData(null));
 
-      const { pickupName, dropoffName, ...apiBaseParams } = searchBaseParams;
-      const preferredTime = isReturnLeg ? '05:30 PM' : undefined;
-      searchTrips({ ...apiBaseParams, tripDate, preferredTime });
+      searchTrips({ ...searchBaseParams, tripDate });
     },
     [dispatch, searchBaseParams, searchTrips, tabs, isReturnLeg],
   );
@@ -324,8 +332,11 @@ const BusSelection = () => {
   }, [storedActiveIndex]);
 
   const HeaderTitle = useMemo(() => {
-    const pickup = pickupLocation.split(',')[0] || 'Pickup';
-    const drop = dropLocation.split(',')[0] || 'Dropoff';
+    const pickupAddr = searchBaseParams?.pickup?.address || pickupLocation;
+    const dropoffAddr = searchBaseParams?.dropoff?.address || dropLocation;
+
+    const pickup = pickupAddr.split(',')[0] || 'Pickup';
+    const drop = dropoffAddr.split(',')[0] || 'Dropoff';
 
     return (
       <View style={styles.headerTitleContainer}>
@@ -338,7 +349,7 @@ const BusSelection = () => {
         </Text>
       </View>
     );
-  }, [pickupLocation, dropLocation, styles, colors.primary, colors.contenttertiary]);
+  }, [searchBaseParams, pickupLocation, dropLocation, styles]);
 
   useEffect(() => {
     const renderHeader = () => <PrimaryHeader title={HeaderTitle} onEdit={() => setIsEditModalVisible(true)} />;
@@ -382,6 +393,7 @@ const BusSelection = () => {
           setDropLocation={setDropLocation}
           onPressPickup={() => openLocationSheet('pickup')}
           onPressDrop={() => openLocationSheet('drop')}
+          onSwapLocations={handleSwapLocations}
           dateTabs={localDateTabs}
           activeDateIndex={activeTabIndex}
           onPressDateTab={setActiveTabIndex}
@@ -389,7 +401,7 @@ const BusSelection = () => {
           onSubmit={handleEditSubmit}
           isSearching={isSearchingTrips}
           canSubmit={!!pickupCoords && !!dropoffCoords}
-          containerStyle={{ borderWidth: 0, elevation: 0, shadowOpacity: 0, paddingTop: 0, paddingHorizontal: 16, paddingBottom: 12 }}
+          containerStyle={{ borderWidth: 0, elevation: 0, shadowOpacity: 0, paddingTop: 0, paddingHorizontal: 24, paddingBottom: 12 }}
         />
       </SwTopModal>
 

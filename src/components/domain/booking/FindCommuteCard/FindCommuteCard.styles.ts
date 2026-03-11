@@ -58,4 +58,3 @@ export const useStyles = (colors: ColorsType) =>
       fontSize: 16,
     },
   });
-  

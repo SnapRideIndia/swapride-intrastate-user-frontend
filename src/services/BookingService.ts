@@ -1,4 +1,4 @@
-import { fetchData, postData, patchData, handleErrorResponse } from './ApiUtility';
+import { fetchData, postData, patchData, deleteData, handleErrorResponse } from './ApiUtility';
 import type {
   InitiateBookingDto,
   BookingResponse,
@@ -68,6 +68,17 @@ class BookingService {
     return res.data;
   };
 
+  removeCoupon = async (id: string): Promise<any> => {
+    const url = API_ENDPOINTS.BOOKINGS.REMOVE_COUPON(id);
+    const res = await deleteData<any>(url);
+
+    if (!res.success) {
+      handleErrorResponse(res);
+    }
+
+    return res.data;
+  };
+
   getTicketDetail = async (id: string): Promise<any> => {
     const url = API_ENDPOINTS.BOOKINGS.TICKET_DETAIL(id);
     const res = await fetchData<any>(url);
@@ -93,6 +104,41 @@ class BookingService {
   changeBookingSeat = async (bookingId: string, seatNumber: string): Promise<any> => {
     const url = API_ENDPOINTS.BOOKINGS.CHANGE_SEAT(bookingId);
     const res = await patchData<any>(url, { seatNumber });
+
+    if (!res.success || !res.data) {
+      handleErrorResponse(res);
+    }
+
+    return res.data;
+  };
+
+  getMyBookings = async (type?: string, limit: number = 10, offset: number = 0): Promise<any> => {
+    const url = API_ENDPOINTS.BOOKINGS.MY_BOOKINGS;
+    const res = await fetchData<any>(url, {
+      params: { type, limit, offset },
+    });
+
+    if (!res.success || !res.data) {
+      handleErrorResponse(res);
+    }
+
+    return res.data;
+  };
+ 
+  trackRide = async (bookingId: string): Promise<any> => {
+    const url = API_ENDPOINTS.BOOKINGS.TRACK_RIDE(bookingId);
+    const res = await fetchData<any>(url);
+ 
+    if (!res.success || !res.data) {
+      handleErrorResponse(res);
+    }
+ 
+    return res.data;
+  };
+
+  getDriverDetails = async (driverId: string): Promise<any> => {
+    const url = API_ENDPOINTS.DRIVERS.GET_DETAILS(driverId);
+    const res = await fetchData<any>(url);
 
     if (!res.success || !res.data) {
       handleErrorResponse(res);

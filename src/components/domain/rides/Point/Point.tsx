@@ -18,7 +18,7 @@ export const Point: React.FC<PointProps> = ({
   time,
   title,
   description,
-  images = [1, 2], // Using dummy array for placeholders (will be cleanedup later)
+  images,
   onDirectionPress,
   showLine = true,
 }) => {
@@ -79,11 +79,22 @@ export const Point: React.FC<PointProps> = ({
         </Text>
 
         {/* Images */}
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.imagesContainer}>
-          {images.map((_, index) => (
-            <View key={index} style={styles.placeholderImage} />
-          ))}
-        </ScrollView>
+        {images && images.length > 0 && (
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.imagesContainer}>
+            {images.map((img, index) => {
+              const imageSource = typeof img === 'string' 
+                ? { uri: img } 
+                : (img?.imageUrl ? { uri: img.imageUrl } : img);
+              return (
+                <Image 
+                  key={index} 
+                  source={imageSource} 
+                  style={styles.placeholderImage}
+                />
+              );
+            })}
+          </ScrollView>
+        )}
       </View>
     </View>
   );

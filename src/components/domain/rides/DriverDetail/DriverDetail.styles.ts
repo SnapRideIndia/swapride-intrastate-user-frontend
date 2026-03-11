@@ -93,4 +93,18 @@ export const useStyles = (colors: ColorsType) =>
       color: colors.contentSecondary,
       lineHeight: 20,
     },
+    callButton: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: colors.background_secondary || colors.border_2,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginLeft: 8,
+    },
+    callIcon: {
+      width: 20,
+      height: 20,
+      tintColor: colors.primary,
+    },
   });

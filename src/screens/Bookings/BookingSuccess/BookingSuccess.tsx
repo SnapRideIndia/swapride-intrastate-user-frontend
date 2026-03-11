@@ -8,7 +8,7 @@ import PrimaryHeader from '../../../components/common/SwHeader/PrimaryHeader/Pri
 import { ImageSource } from '../../../constants/images';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { useRoute, RouteProp } from '@react-navigation/native';
+import { useRoute, RouteProp, CommonActions } from '@react-navigation/native';
 import { RootStackParamList } from '../../../navigation/types';
 import { ScreenNames } from '../../../navigation/constant';
 
@@ -33,12 +33,29 @@ const BookingSuccess = ({ navigation }: any) => {
       <SafeAreaView edges={['bottom']} style={styles.footer}>
         <PrimaryButton
           title="View ticket"
-          onPress={() => navigation.navigate(ScreenNames.TICKET_DETAIL_SCREEN, { ticketId: bookingId })}
+          onPress={() =>
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 1,
+                routes: [
+                  { name: ScreenNames.DASHBOARD_SCREEN },
+                  { name: ScreenNames.TICKET_DETAIL_SCREEN, params: { ticketId: bookingId } },
+                ],
+              }),
+            )
+          }
           btnStyle={styles.viewTicketBtn}
         />
         <PrimaryButton
           title="view ride"
-          onPress={() => navigation.popToTop()}
+          onPress={() =>
+            navigation.dispatch(
+              CommonActions.reset({
+                index: 0,
+                routes: [{ name: ScreenNames.DASHBOARD_SCREEN }],
+              }),
+            )
+          }
           btnStyle={styles.viewRideBtn}
           textStyle={styles.viewRideBtnText}
         />
