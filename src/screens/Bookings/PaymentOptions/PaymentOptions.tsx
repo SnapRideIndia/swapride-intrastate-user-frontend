@@ -8,7 +8,7 @@ import PrimaryButton from '../../../components/common/SwButton/PrimaryButton/Pri
 import { ImageSource } from '../../../constants/images';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScreenNames } from '../../../navigation/constant';
-import { useNavigation, useRoute, RouteProp, CommonActions } from '@react-navigation/native';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../../../navigation/types';
 import { useConfirmBooking } from '../../../hooks/useBooking';
 import { PaymentMethod } from '../../../types/booking.types';
@@ -55,12 +55,7 @@ const PaymentOptions = () => {
         },
       });
       console.log('Razorpay Payment Success (Booking)');
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 1,
-          routes: [{ name: ScreenNames.DASHBOARD_SCREEN }, { name: ScreenNames.BOOKING_SUCCESS, params: { bookingId } }],
-        }),
-      );
+      navigation.navigate(ScreenNames.BOOKING_SUCCESS as never, { bookingId });
     } catch (err: any) {
       const isCancelled = RazorpayService.isCancellation(err);
       console.log(isCancelled ? 'Razorpay cancelled' : 'Razorpay error', err);
@@ -84,12 +79,7 @@ const PaymentOptions = () => {
     data => {
       console.log('Confirm Booking Response ===>', data);
       if (data.status === 'SUCCESS') {
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 1,
-            routes: [{ name: ScreenNames.DASHBOARD_SCREEN }, { name: ScreenNames.BOOKING_SUCCESS, params: { bookingId } }],
-          }),
-        );
+        navigation.navigate(ScreenNames.BOOKING_SUCCESS as never, { bookingId });
       } else if (data.status === 'PENDING_GATEWAY' && data.gatewayData) {
         handleRazorpayPayment(data.gatewayData);
       }

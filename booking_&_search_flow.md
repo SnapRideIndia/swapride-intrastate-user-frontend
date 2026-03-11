@@ -87,7 +87,6 @@ Content-Type: application/json
     "longitude": 78.3880
   },
   "tripDate": "2026-03-04",
-  "preferredTime": "05:30 PM", (Optional)
   "officeTimings": "09:00 AM - 06:00 PM" (Optional)
 }
 ```

@@ -45,7 +45,7 @@ class WalletService {
   getBalance = async () => {
     const url = API_ENDPOINTS.WALLET.BALANCE;
     const res = await fetchData(url);
-
+    
     if (!res.success || !res.data) {
       handleErrorResponse(res);
     }
@@ -61,7 +61,6 @@ class WalletService {
       handleErrorResponse(res);
     }
 
-    console.log('Transactions ==>,', res.data);
     return res.data as TransactionsResponse;
   };
 

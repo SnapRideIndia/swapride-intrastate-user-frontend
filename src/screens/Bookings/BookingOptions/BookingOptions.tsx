@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, ScrollView, Alert } from 'react-native';
 import { useTheme } from '../../../theme/ThemeProvider';
 import { useStyles } from './BookingOptions.styles';
@@ -10,7 +10,6 @@ import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../../../navigation/types';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useInitiateBooking } from '../../../hooks/useBooking';
-import { useSearchTrips } from '../../../hooks/useSearch';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import { setCommuteSearchContext, setCommuteData } from '../../../slice/commuteSlice';
@@ -24,17 +23,13 @@ const BookingOptions = () => {
   const dispatch = useDispatch();
   const { searchBaseParams, dateTabs, activeDateIndex } = useSelector((state: RootState) => state.commute);
 
-  const [preferredTime, setPreferredTime] = useState('');
-  const [meridian, setMeridian] = useState<'AM' | 'PM'>('PM');
-
   const { mutate: initiateBooking, isPending } = useInitiateBooking(
     data => {
       console.log('Initiate Booking Response ===>', data);
       navigation.navigate(ScreenNames.CONFIRM_BOOKING_DETAILS, { bookingId: data.bookingId });
     },
     error => {
-      const errorMsg = Array.isArray(error?.message) ? error.message.join(', ') : error?.message || 'Something went wrong';
-      Alert.alert('Booking Failed', errorMsg);
+      Alert.alert('Booking Failed', error?.message || 'Something went wrong');
     },
   );
 
@@ -49,41 +44,18 @@ const BookingOptions = () => {
     initiateBooking(payload);
   };
 
-  const { mutate: searchTrips, isPending: isSearchingTrips } = useSearchTrips(
-    data => {
-      dispatch(setCommuteData(data));
-      navigation.navigate(ScreenNames.BUS_SELECTION_SCREEN, {
-        isReturnLeg: true,
-        outbound: outbound,
-      });
-    },
-    error => {
-      const errorMsg = Array.isArray(error?.message) ? error.message.join(', ') : error?.message || 'Unable to fetch return buses';
-      Alert.alert('Search Failed', errorMsg);
-    },
-  );
-
-  const handleShowReturnBuses = (timeString?: string) => {
+  const handleShowReturnBuses = () => {
     if (!searchBaseParams) return;
-
-    const timeToPass = timeString || (preferredTime ? `${preferredTime} ${meridian}` : undefined);
 
     // Swap locations for return trip
     const returnParams = {
-      pickup: {
-        latitude: searchBaseParams.dropoff.latitude,
-        longitude: searchBaseParams.dropoff.longitude,
-        address: searchBaseParams.dropoff.address,
-      },
-      dropoff: {
-        latitude: searchBaseParams.pickup.latitude,
-        longitude: searchBaseParams.pickup.longitude,
-        address: searchBaseParams.pickup.address,
-      },
-      userLocation: {
-        latitude: searchBaseParams.userLocation.latitude,
-        longitude: searchBaseParams.userLocation.longitude,
-      },
+      ...searchBaseParams,
+      pickupLat: searchBaseParams.dropoffLat,
+      pickupLng: searchBaseParams.dropoffLng,
+      pickupName: searchBaseParams.dropoffName,
+      dropoffLat: searchBaseParams.pickupLat,
+      dropoffLng: searchBaseParams.pickupLng,
+      dropoffName: searchBaseParams.pickupName,
     };
 
     dispatch(
@@ -95,12 +67,9 @@ const BookingOptions = () => {
     );
     dispatch(setCommuteData(null));
 
-    const tripDate = dateTabs[activeDateIndex]?.date;
-
-    searchTrips({
-      ...returnParams,
-      tripDate: tripDate,
-      ...(timeToPass && { preferredTime: timeToPass }),
+    navigation.navigate(ScreenNames.BUS_SELECTION_SCREEN, {
+      isReturnLeg: true,
+      outbound: outbound,
     });
   };
 
@@ -110,13 +79,7 @@ const BookingOptions = () => {
       <ScrollView style={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.cardsContainer}>
           <BookOnewayCard price={outbound.result.baseFare.toString()} onProceed={handleProceedOneway} />
-          <ReturnRideCard
-            preferredTime={preferredTime}
-            setPreferredTime={setPreferredTime}
-            meridian={meridian}
-            setMeridian={setMeridian}
-            onShowBuses={handleShowReturnBuses}
-          />
+          <ReturnRideCard onShowBuses={handleShowReturnBuses} />
         </View>
       </ScrollView>
     </View>

@@ -13,12 +13,11 @@ interface SwBottomSheetProps {
   children: React.ReactNode;
   snapPoints?: (string | number)[];
   onClose?: () => void;
-  onChange?: (index: number) => void;
   index?: number;
 }
 
 export const SwBottomSheet = forwardRef<BottomSheetModal, SwBottomSheetProps>(
-  ({ title, children, snapPoints, onClose, onChange, index = -1 }, ref) => {
+  ({ title, children, snapPoints, onClose, index = -1 }, ref) => {
     const { colors } = useTheme();
     const styles = useStyles(colors);
     const insets = useSafeAreaInsets();
@@ -43,15 +42,14 @@ export const SwBottomSheet = forwardRef<BottomSheetModal, SwBottomSheetProps>(
     return (
       <BottomSheetModal
         ref={ref}
-        index={index === -1 ? 0 : index}
+        index={index === -1 ? 0 : index} // If we present it, we want it to show at least at the first point
         snapPoints={resolvedSnapPoints}
         enablePanDownToClose
         enableDynamicSizing={!snapPoints}
         backdropComponent={renderBackdrop}
         backgroundStyle={styles.background}
         handleIndicatorStyle={styles.handleIndicator}
-        onDismiss={handleClose}
-        onChange={onChange}
+        onDismiss={onClose}
       >
         <BottomSheetView style={{ paddingBottom: Math.max(insets.bottom, 20) }}>
           {title && (

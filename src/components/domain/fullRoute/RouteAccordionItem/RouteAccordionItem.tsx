@@ -30,7 +30,7 @@ type Props = {
   onToggle: () => void;
 };
 
-const RouteAccordionItem = React.memo(({ step, isOpen, isFirst, isLast, onToggle }: Props) => {
+const RouteAccordionItem = ({ step, isOpen, isFirst, isLast, onToggle }: Props) => {
   const { colors } = useTheme();
   const styles = useStyles(colors, step.kind);
 
@@ -128,6 +128,6 @@ const RouteAccordionItem = React.memo(({ step, isOpen, isFirst, isLast, onToggle
       </View>
     </Animated.View>
   );
-});
+};
 
 export default RouteAccordionItem;

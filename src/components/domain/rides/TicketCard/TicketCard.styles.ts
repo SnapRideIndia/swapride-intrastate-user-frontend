@@ -99,10 +99,15 @@ export const useStyles = (colors: ColorsType) =>
       alignItems: 'center',
       justifyContent: 'center',
       borderWidth: 1,
-      borderColor: colors.background_black,
+      borderColor: colors.primary,
+    },
+    dateBox: {
+      flex: 1.2,
+      backgroundColor: colors.secondary,
+      borderColor: colors.primary,
     },
     detailText: {
       fontSize: 14,
-      color: colors.contentPrimary,
+      color: colors.primary,
     },
   });

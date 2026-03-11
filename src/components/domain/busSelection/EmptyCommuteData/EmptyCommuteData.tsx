@@ -9,20 +9,15 @@ interface Props {
   message?: string;
 }
 
-export const EmptyCommuteData: React.FC<Props> = ({ message }) => {
+export const EmptyCommuteData: React.FC<Props> = ({ message = 'No buses found for this route on this date.' }) => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
 
   return (
     <View style={styles.container}>
-      <View style={styles.iconContainer}>
-        <Image source={ImageSource.shuttel} style={styles.image} />
-      </View>
-      <Text variant="bold" style={styles.title}>
-        No Buses Available
-      </Text>
-      <Text style={styles.text}>
-        {message || "We couldn't find any buses for this route on the selected date. Please try a different date or route."}
+      <Image source={ImageSource.shuttel} style={styles.image} />
+      <Text variant="semi-bold" style={styles.text}>
+        {message}
       </Text>
     </View>
   );
