@@ -24,5 +24,6 @@ export const ScreenNames = {
   SET_COMMUTE: 'SetCommuteScreen', // first commute
   FIND_COMMUTE: 'FindCommute', // second time
   SEAT_SELECTION: 'SeatSelectionScreen',
-  SPLASH_SCREEN: "SplashScreen"
+  TICKETS_SCREEN: 'TicketsScreen',
+  SPLASH_SCREEN: 'SplashScreen',
 } as const;

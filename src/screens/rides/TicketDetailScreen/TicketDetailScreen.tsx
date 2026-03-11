@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Image, ScrollView, ActivityIndicator } from 'react-native';
 import { useTheme } from '../../../theme/ThemeProvider';
 import { useStyles } from './TicketDetailScreen.styles';
@@ -19,6 +19,12 @@ const TicketDetailScreen = ({ route }: { route: RouteProp<RootStackParamList, ty
   const styles = useStyles(colors);
 
   const { data: ticketData, isLoading, error } = useTicketDetail(ticketId);
+
+  useEffect(() => {
+    if (ticketData) {
+      console.log('Ticket Response ===>', JSON.stringify(ticketData, null, 2));
+    }
+  }, [ticketData]);
 
   if (isLoading) {
     return (
@@ -51,8 +57,8 @@ const TicketDetailScreen = ({ route }: { route: RouteProp<RootStackParamList, ty
         <TicketCard
           from={routeInfo.from}
           to={routeInfo.to}
-          timeRange={routeInfo.timeRange}
           busPlate={bus.registrationNumber}
+          seatNumbers={booking?.seats || []}
           date={routeInfo.date}
           qrToken={ticketData.qrCodeToken}
         />

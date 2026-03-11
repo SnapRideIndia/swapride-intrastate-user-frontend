@@ -26,6 +26,7 @@ export const useStyles = (colors: ColorsType) =>
     buttonStyles: {
       backgroundColor: colors.button_secondary,
       width: '100%',
+      height: 40,
     },
 
     buttonTextStyles: {

@@ -1,3 +1,8 @@
+export enum MyBookingType {
+  UPCOMING = 'UPCOMING',
+  HISTORY = 'HISTORY',
+}
+
 export interface InitiateBookingDto {
   tripId: string;
   pickupStopId: string;
@@ -40,6 +45,7 @@ export interface LegDetail {
   totalAmount: number;
   expiresAt: string;
   assignedSeats: Array<{ seatId: string; seatNumber: string }>;
+  tripDate: string;
   pickup: {
     name: string;
     address: string;

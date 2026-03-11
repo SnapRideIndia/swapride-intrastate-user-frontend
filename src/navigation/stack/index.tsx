@@ -28,6 +28,7 @@ import BookingOptions from '../../screens/Bookings/BookingOptions/BookingOptions
 import PaymentOptions from '../../screens/Bookings/PaymentOptions/PaymentOptions';
 import BookingSuccess from '../../screens/Bookings/BookingSuccess/BookingSuccess';
 import SeatSelection from '../../screens/Bookings/SeatSelection/SeatSelection';
+import TicketsScreen from '../../screens/Bookings/TicketsScreen/TicketsScreen';
 import SplashScreen from '../../screens/splash/SplashScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -93,6 +94,7 @@ const AppNavigation = () => {
         <Stack.Screen name={ScreenNames.PAYMENT_OPTIONS as never} component={PaymentOptions} />
         <Stack.Screen name={ScreenNames.BOOKING_SUCCESS as never} component={BookingSuccess} />
         <Stack.Screen name={ScreenNames.SEAT_SELECTION as never} component={SeatSelection} />
+        <Stack.Screen name={ScreenNames.TICKETS_SCREEN as never} component={TicketsScreen} />
         <Stack.Screen name={ScreenNames.SPLASH_SCREEN as never} component={SplashScreen} />
       </Stack.Navigator>
     </NavigationContainer>

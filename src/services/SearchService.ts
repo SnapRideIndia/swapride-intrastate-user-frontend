@@ -1,4 +1,4 @@
-import { fetchData, handleErrorResponse } from './ApiUtility';
+import { fetchData, postData, handleErrorResponse } from './ApiUtility';
 import type { LocationFieldType, RecentSearchDto, SavedLocationDto } from '../types/search.types';
 import type { SearchTripsParams, SearchTripsResponseDto } from '../types/trips.types';
 import { API_ENDPOINTS } from './endpoints';
@@ -78,12 +78,14 @@ class SearchService {
       handleErrorResponse(res);
     }
 
-    return res.data.data || res.data || [];
+    return res.data || [];
   };
 
   searchTrips = async (params: SearchTripsParams) => {
     const url = API_ENDPOINTS.SEARCH.TRIPS;
-    const res = await fetchData<SearchTripsResponseDto>(url, { params });
+    const res = await postData<SearchTripsResponseDto>(url, params);
+
+    console.log('Trips API Response ===>', res.data);
 
     if (!res.success || !res.data) {
       handleErrorResponse(res);

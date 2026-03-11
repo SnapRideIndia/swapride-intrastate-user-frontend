@@ -19,7 +19,7 @@ import uuid from 'react-native-uuid';
 import type { ICoords } from '../../../types/coords.types';
 import { usePlaceAutocomplete, useRecentSearch, useReverseGeocode, useSavedLocations, useSearchTrips } from '../../../hooks/useSearch';
 import DatePicker from 'react-native-date-picker';
-import { format } from 'date-fns';
+import { format, isToday } from 'date-fns';
 import { ScreenNames } from '../../../navigation/constant';
 import { setCommuteData, setCommuteSearchContext } from '../../../slice/commuteSlice';
 import { useStyles } from './FindCommute.styles';
@@ -40,6 +40,16 @@ const FindCommute = () => {
   const [pickupItem, setPickupItem] = useState<SwLocationSearchItem | null>(null);
   const [dropItem, setDropItem] = useState<SwLocationSearchItem | null>(null);
   const [activeLocationField, setActiveLocationField] = useState<'pickup' | 'drop'>('pickup');
+
+  const handleSwapLocations = useCallback(() => {
+    const tempItem = pickupItem;
+    const tempLocation = pickupLocation;
+    setPickupItem(dropItem);
+    setPickupLocation(dropLocation);
+    setDropItem(tempItem);
+    setDropLocation(tempLocation);
+  }, [pickupItem, dropItem, pickupLocation, dropLocation]);
+
   const locationSheetRef = useRef<BottomSheetModal>(null);
   const { onChange: onSheetChange, onClose: onSheetClose } = useLocationSheetBackHandler(locationSheetRef);
   const [locationQuery, setLocationQuery] = useState('');
@@ -58,36 +68,10 @@ const FindCommute = () => {
 
   const toDateKey = useCallback((d: Date) => format(d, 'yyyy-MM-dd'), []);
 
-  const formatDayWithSuffix = useCallback((day: number) => {
-    if (day > 3 && day < 21) return `${day}th`;
-    switch (day % 10) {
-      case 1:
-        return `${day}st`;
-      case 2:
-        return `${day}nd`;
-      case 3:
-        return `${day}rd`;
-      default:
-        return `${day}th`;
-    }
+  const formatTabTitle = useCallback((d: Date) => {
+    if (isToday(d)) return 'Today';
+    return format(d, 'EEE, do MMM');
   }, []);
-
-  const weekDayShortNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  const monthShortNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-  const formatTabTitle = useCallback(
-    (d: Date, today: Date) => {
-      const isToday = d.getDate() === today.getDate() && d.getMonth() === today.getMonth() && d.getFullYear() === today.getFullYear();
-
-      if (isToday) return 'Today';
-
-      const dayWithSuffix = formatDayWithSuffix(d.getDate());
-      const month = monthShortNames[d.getMonth()];
-      const weekDay = weekDayShortNames[d.getDay()];
-      return `${weekDay}, ${dayWithSuffix} ${month}`;
-    },
-    [formatDayWithSuffix],
-  );
 
   const defaultDateTabs = useMemo<CommuteDateTab[]>(() => {
     const today = new Date();
@@ -97,7 +81,7 @@ const FindCommute = () => {
       return {
         id: toDateKey(d),
         date: toDateKey(d),
-        title: formatTabTitle(d, today),
+        title: formatTabTitle(d),
       };
     });
   }, [formatTabTitle, toDateKey]);
@@ -105,14 +89,16 @@ const FindCommute = () => {
   const [dateTabs, setDateTabs] = useState<CommuteDateTab[]>(defaultDateTabs);
   const [activeDateIndex, setActiveDateIndexLocal] = useState(0);
 
-  const onSuccessTrips = useCallback((data: any) => {
-    console.log('searchTrips success >>>', data);
-    dispatch(setCommuteData(data));
-    navigation.navigate(ScreenNames.BUS_SELECTION_SCREEN as never);
-  }, []);
+  const onSuccessTrips = useCallback(
+    (data: any) => {
+      dispatch(setCommuteData(data));
+      navigation.navigate(ScreenNames.BUS_SELECTION_SCREEN as never);
+    },
+    [dispatch, navigation],
+  );
 
-  const onErrorTrips = useCallback((error: any) => {
-    console.log('searchTrips error >>>', error);
+  const onErrorTrips = useCallback((_error: any) => {
+    // Error handled by hook or global toast
   }, []);
 
   const { mutate: searchTrips, isPending: isSearchingTrips } = useSearchTrips(onSuccessTrips, onErrorTrips);
@@ -175,7 +161,7 @@ const FindCommute = () => {
       const customTab: CommuteDateTab = {
         id: key,
         date: key,
-        title: formatTabTitle(d, today),
+        title: formatTabTitle(d),
         isCustom: true,
       };
 
@@ -286,11 +272,8 @@ const FindCommute = () => {
     const dropoffLat = dropItem!.latitude!;
     const dropoffLng = dropItem!.longitude!;
 
-    // let userLat = currentCoords?.latitude;
-    // let userLng = currentCoords?.longitude;
-
-    let userLat = 17.385;
-    let userLng = 78.4867;
+    let userLat = currentCoords?.latitude;
+    let userLng = currentCoords?.longitude;
 
     if (typeof userLat !== 'number' || typeof userLng !== 'number') {
       const position = await getCurrentLocation();
@@ -303,33 +286,36 @@ const FindCommute = () => {
 
     if (typeof userLat !== 'number' || typeof userLng !== 'number') return;
 
+    const payloadBase = {
+      pickup: {
+        latitude: pickupLat,
+        longitude: pickupLng,
+        address: pickupLocation,
+      },
+      dropoff: {
+        latitude: dropoffLat,
+        longitude: dropoffLng,
+        address: dropLocation,
+      },
+      userLocation: {
+        latitude: userLat,
+        longitude: userLng,
+      },
+    };
+
     const tripDate = dateTabs[activeDateIndex]?.date ?? toDateKey(new Date());
 
     dispatch(
       setCommuteSearchContext({
         dateTabs,
         activeDateIndex,
-        searchBaseParams: {
-          pickupLat,
-          pickupLng,
-          dropoffLat,
-          dropoffLng,
-          userLat,
-          userLng,
-          pickupName: pickupLocation,
-          dropoffName: dropLocation,
-        },
+        searchBaseParams: payloadBase,
       }),
     );
 
     searchTrips({
-      pickupLat,
-      pickupLng,
-      dropoffLat,
-      dropoffLng,
+      ...payloadBase,
       tripDate,
-      userLat,
-      userLng,
     });
   }, [
     canSubmit,
@@ -363,6 +349,7 @@ const FindCommute = () => {
           setDropLocation={setDropLocation}
           onPressPickup={() => openLocationSheet('pickup')}
           onPressDrop={() => openLocationSheet('drop')}
+          onSwapLocations={handleSwapLocations}
           dateTabs={dateTabs}
           activeDateIndex={activeDateIndex}
           onPressDateTab={handlePressDateTab}
