@@ -1,4 +1,4 @@
-import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, View, TouchableOpacity, Image } from 'react-native';
+import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 import React, { useCallback, useRef } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../../theme/ThemeProvider';
@@ -9,7 +9,6 @@ import BalanceCard from '../../../components/domain/wallet/card/BalanceCard/Bala
 import TransactionCard from '../../../components/domain/wallet/card/TransactionCard/TransactionCard';
 import { BottomSheetModal as BottomSheetType } from '@gorhom/bottom-sheet';
 import { AddAmountSheet } from '../../../components/domain/wallet/sheets/AddAmountSheet/AddAmountSheet';
-import { ImageSource } from '../../../constants/images';
 import { useBalance, useInitiateTopUp, useTransactions } from '../../../hooks/useWallet';
 import { Transaction } from '../../../services/WalletService';
 
@@ -85,17 +84,9 @@ const WalletScreen = () => {
         <BalanceCard balance={balanceData?.balance || '0.00'} onAddMoney={handleOpenAddMoney} />
       )}
 
-      <View style={styles.historyHeaderRow}>
-        <Text variant="semi-bold" style={styles.transactionTitle}>
-          Transaction History
-        </Text>
-        <TouchableOpacity style={styles.seeAllContainer}>
-          <Text variant="semi-bold" style={styles.seeAllText}>
-            See all
-          </Text>
-          <Image source={ImageSource.chevron} style={styles.chevronIcon} />
-        </TouchableOpacity>
-      </View>
+      <Text variant="semi-bold" style={styles.transactionTitle}>
+        Transaction History
+      </Text>
 
       {txError && (
         <Text variant="regular" style={styles.errorText}>

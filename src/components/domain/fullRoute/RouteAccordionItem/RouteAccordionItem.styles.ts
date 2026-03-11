@@ -103,11 +103,11 @@ export const useStyles = (colors: ColorsType, kind: RouteStepKind) =>
       color: colors.contentSecondary,
     },
     title: {
-      fontSize: 16,
+      fontSize: 14,
       color: colors.contentPrimary,
     },
     subtitle: {
-      fontSize: 14,
+      fontSize: 12,
       color: colors.contenttertiary,
     },
     chevron: {
@@ -124,7 +124,7 @@ export const useStyles = (colors: ColorsType, kind: RouteStepKind) =>
       gap: 10,
     },
     description: {
-      fontSize: 14,
+      fontSize: 12,
       color: colors.contentSecondary,
       lineHeight: 18,
       width: '92%',

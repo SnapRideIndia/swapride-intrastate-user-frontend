@@ -5,39 +5,22 @@ export const useStyles = (colors: ColorsType) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: colors.background_primary,
+      backgroundColor: colors.background_lightBlue,
     },
     contentContainerStyle: {
       flexGrow: 1,
     },
 
     contentContainer: {
-      paddingVertical: 16,
+      padding: 26,
+      paddingHorizontal: 16,
       gap: 16,
     },
 
     transactionTitle: {
       fontSize: 16,
       color: colors.contentPrimary,
-    },
-    historyHeaderRow: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-    },
-    seeAllContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 4,
-    },
-    seeAllText: {
-      fontSize: 14,
-      color: colors.button_secondary,
-    },
-    chevronIcon: {
-      width: 12,
-      height: 12,
-      tintColor: colors.button_secondary,
+      textAlign: 'center',
     },
 
     transactionContainer: {

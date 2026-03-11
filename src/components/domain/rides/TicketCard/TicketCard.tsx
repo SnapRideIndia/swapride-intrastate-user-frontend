@@ -9,13 +9,13 @@ import QRCode from 'react-native-qrcode-svg';
 export interface TicketCardProps {
   from: string;
   to: string;
+  timeRange: string;
   busPlate: string;
-  seatNumbers: string[];
   date: string;
   qrToken?: string;
 }
 
-export const TicketCard: React.FC<TicketCardProps> = ({ from, to, busPlate, seatNumbers, date, qrToken }) => {
+export const TicketCard: React.FC<TicketCardProps> = ({ from, to, timeRange, busPlate, date, qrToken }) => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
 
@@ -25,7 +25,7 @@ export const TicketCard: React.FC<TicketCardProps> = ({ from, to, busPlate, seat
       <View style={styles.qrSection}>
         <View style={styles.qrBackground}>
           {qrToken ? (
-            <QRCode value={qrToken} size={180} color="#000000" backgroundColor="white" />
+            <QRCode value={qrToken} size={150} color={colors.primary} backgroundColor="white" />
           ) : (
             <Image source={ImageSource.qrCodePlaceholder} style={styles.qrImage} resizeMode="contain" />
           )}
@@ -37,19 +37,19 @@ export const TicketCard: React.FC<TicketCardProps> = ({ from, to, busPlate, seat
 
       {/* Route Info */}
       <View style={styles.routeSection}>
-        <Text variant="bold" style={[styles.locationText, { textAlign: 'center' }]}>
+        <Text variant="bold" style={[styles.locationText, { textAlign: 'left' }]}>
           {from}
         </Text>
         <Image source={ImageSource.swapPoints} style={styles.swapIcon} resizeMode="contain" />
-        <Text variant="bold" style={[styles.locationText, { textAlign: 'center' }]}>
+        <Text variant="bold" style={[styles.locationText, { textAlign: 'right' }]}>
           {to}
         </Text>
       </View>
 
       {/* Time Strip */}
       <View style={styles.timeStrip}>
-        <Text variant="medium" style={styles.timeText}>
-          Date: {date}
+        <Text variant="bold" style={styles.timeText}>
+          {timeRange}
         </Text>
       </View>
 
@@ -57,12 +57,12 @@ export const TicketCard: React.FC<TicketCardProps> = ({ from, to, busPlate, seat
       <View style={styles.detailsRow}>
         <View style={styles.detailBox}>
           <Text variant="bold" style={styles.detailText}>
-            BusNo: {busPlate}
+            {busPlate}
           </Text>
         </View>
-        <View style={styles.detailBox}>
-          <Text variant="bold" style={styles.detailText}>
-            Seat No: {seatNumbers?.join(', ') || 'N/A'}
+        <View style={[styles.detailBox, styles.dateBox]}>
+          <Text variant="medium" style={styles.detailText}>
+            Date: <Text variant="bold">{date}</Text>
           </Text>
         </View>
       </View>
