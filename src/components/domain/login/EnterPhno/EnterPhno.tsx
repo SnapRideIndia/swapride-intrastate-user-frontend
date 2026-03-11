@@ -10,6 +10,7 @@ import PrimaryButton from '../../../common/SwButton/PrimaryButton/PrimaryButton'
 import { useDispatch, useSelector } from 'react-redux';
 import { AuthStep, setAuthStep, setPhno } from '../../../../slice/authSlice';
 import { RootState } from '../../../../store';
+import { showToast } from '../../../../utils/showToast';
 
 const EnterPhno = () => {
   const [authCred, setAuthCred] = useState({
@@ -23,10 +24,12 @@ const EnterPhno = () => {
 
   const onSuccessSendOTP = async (data: any) => {
     dispatch(setAuthStep(step < 4 ? step + 1 : step));
+    showToast("success", data?.message ?? "OTP Sent!", '', 1500);
   };
 
   const onErrorSendOTP = async (error: any) => {
     console.log('Error login data ===>', error);
+    showToast("error", data?.message ?? "Oops, Something went wrong!", '', 1500);
   };
 
   const { mutate: login } = useLogin(onSuccessSendOTP, onErrorSendOTP);

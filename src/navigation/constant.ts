@@ -26,4 +26,5 @@ export const ScreenNames = {
   SEAT_SELECTION: 'SeatSelectionScreen',
   TICKETS_SCREEN: 'TicketsScreen',
   SPLASH_SCREEN: 'SplashScreen',
+  DUMMY: "DUMMY"
 } as const;

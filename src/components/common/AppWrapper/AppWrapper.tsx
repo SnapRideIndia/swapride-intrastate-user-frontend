@@ -6,6 +6,7 @@ import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
 import { useErrorReporting } from '../../../hooks/useErrorReporting';
 import ThemeProvider from '../../../theme/ThemeProvider';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import ToastManager, { Toast } from 'toastify-react-native';
 
 const AppWrapper = () => {
   const { reportError } = useErrorReporting({
@@ -18,12 +19,15 @@ const AppWrapper = () => {
     },
   });
 
+  
+
   return (
     <GestureHandlerRootView style={styles.container}>
       <ThemeProvider>
         <BottomSheetModalProvider>
           <ErrorBoundary onError={reportError}>
             <AppNavigation />
+            <ToastManager />
           </ErrorBoundary>
         </BottomSheetModalProvider>
       </ThemeProvider>

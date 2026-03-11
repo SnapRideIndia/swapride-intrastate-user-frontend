@@ -38,33 +38,33 @@ interface TrackRideMockData {
   };
 }
 
-const mockTrackRideData: TrackRideMockData = {
-  busNo: 'C123',
-  seatNo: '5B',
-  pickupTime: '8:37 am',
-  statusMessage: 'Bus is on its way. Last crossed stop is Lodha Splendora.',
-  rideDetails: {
-    pickupData: {
-      time: '9:00 am',
-      title: 'Peninsula Corporate Park',
-      description: 'In front of Matula cnter, under the fly over',
-    },
-    dropoffData: {
-      time: '10:30 am',
-      title: 'Business Hub Central',
-      description: 'Main Gate, near the security post',
-    },
-  },
-  driverData: {
-    name: 'Mr. Raja Das',
-    plate: '( MH-00-AB-1234 )',
-    experience: '9 years exp',
-    languages: 'Hindi, English',
-    location: 'Assam',
-    aboutDescription: 'Raja lives in Thane with his brother, who inspired him to take as a career. he has 3 years of experience.',
-    avatar: null,
-  },
-};
+// const mockTrackRideData: TrackRideMockData = {
+//   busNo: 'C123',
+//   seatNo: '5B',
+//   pickupTime: '8:37 am',
+//   statusMessage: 'Bus is on its way. Last crossed stop is Lodha Splendora.',
+//   rideDetails: {
+//     pickupData: {
+//       time: '9:00 am',
+//       title: 'Peninsula Corporate Park',
+//       description: 'In front of Matula cnter, under the fly over',
+//     },
+//     dropoffData: {
+//       time: '10:30 am',
+//       title: 'Business Hub Central',
+//       description: 'Main Gate, near the security post',
+//     },
+//   },
+//   driverData: {
+//     name: 'Mr. Raja Das',
+//     plate: '( MH-00-AB-1234 )',
+//     experience: '9 years exp',
+//     languages: 'Hindi, English',
+//     location: 'Assam',
+//     aboutDescription: 'Raja lives in Thane with his brother, who inspired him to take as a career. he has 3 years of experience.',
+//     avatar: null,
+//   },
+// };
 
 const TrackRideScreen = ({ route }: { route: RouteProp<RootStackParamList, typeof ScreenNames.TRACK_RIDE_SCREEN> }) => {
   const { colors } = useTheme();

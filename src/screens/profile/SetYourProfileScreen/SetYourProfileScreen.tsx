@@ -302,14 +302,6 @@ const SetYourProfileScreen = () => {
   }, [locationQuery, getPlaceAutocompleteItems]);
 
   const handleSave = () => {
-    updateProfileApi(
-      { profileObj, profileImageUri: profileImage },
-      {
-        onSuccess: () => {
-          navigation.goBack();
-        },
-      },
-    );
     if (!isFromOtp) {
       if (!homeAddress || !officeAddress) {
         showToast("error", "Please provide home address and office address", '', 1500);
@@ -318,6 +310,14 @@ const SetYourProfileScreen = () => {
         showToast("error", "Please provide office start time and office end time ", '', 1500);
         return;
       }
+      updateProfileApi(
+        { profileObj, profileImageUri: profileImage },
+        {
+          onSuccess: () => {
+            navigation.goBack();
+          },
+        },
+      );
       if (homeAddress) {
         updateTravelPreference({
           endpoint: "/home",

@@ -1,9 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 import React, { useEffect } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { NavigationContainer } from '@react-navigation/native';
-import { useErrorReporting } from '../../hooks/useErrorReporting';
-import ErrorBoundary from '../../components/common/ErrorBoundary/ErrorBoundary';
+import { NavigationContainer } from '@react-navigation/native'
 import { ScreenNames } from '../constant';
 import { useTheme } from '../../theme/ThemeProvider';
 import DrawerNavigator from '../Drawer';
@@ -30,19 +28,21 @@ import BookingSuccess from '../../screens/Bookings/BookingSuccess/BookingSuccess
 import SeatSelection from '../../screens/Bookings/SeatSelection/SeatSelection';
 import TicketsScreen from '../../screens/Bookings/TicketsScreen/TicketsScreen';
 import SplashScreen from '../../screens/splash/SplashScreen';
+import Dummy from '../../screens/dummy/Dummy';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-const ScreenWrapper = ({ children }: { children: React.ReactNode }) => {
-  const { reportError } = useErrorReporting({
-    logToConsole: true,
-    showAlert: false,
-  });
+// const ScreenWrapper = ({ children }: { children: React.ReactNode }) => {
+//   const { reportError } = useErrorReporting({
+//     logToConsole: true,
+//     showAlert: false,
+//   });
 
-  return <ErrorBoundary onError={reportError}>{children}</ErrorBoundary>;
-};
+//   return <ErrorBoundary onError={reportError}>{children}</ErrorBoundary>;
+// };
 
 const AppNavigation = () => {
+  // const [showSplash, setShowSplash] = useState(false);
   const { colors } = useTheme();
   const dispatch = useDispatch();
 
@@ -57,8 +57,8 @@ const AppNavigation = () => {
   // initialRouteName only applies when Stack.Navigator first mounts - it does NOT
   // react to later prop changes. Redux acc_token is empty on first render (before
   // useEffect runs), so we must read from storage directly. MMKV getString is sync.
-  const tokenFromStorage = storage.getString(StorageKeys.ACCESS_TOKEN);
-  const initialRouteName = tokenFromStorage ? ScreenNames.DASHBOARD_SCREEN : ScreenNames.LOGIN_SCREEN;
+  // const tokenFromStorage = storage.getString(StorageKeys.ACCESS_TOKEN);
+  // const initialRouteName = tokenFromStorage ? ScreenNames.DASHBOARD_SCREEN : ScreenNames.LOGIN_SCREEN;
 
   useEffect(() => {
     // Keep Redux in sync with storage for the rest of the app
@@ -66,11 +66,15 @@ const AppNavigation = () => {
     const isNewUser = storage.getBoolean(StorageKeys.IS_NEW_USER);
     dispatch(setIsNewUser(isNewUser));
     dispatch(setAccessToken(token ?? ''));
+
+    // ()=>{
+    //   clearTimeout(timer);
+    // }
   }, [dispatch]);
 
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={initialRouteName}>
+      <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={ScreenNames.SPLASH_SCREEN as never}>
         <Stack.Screen name={ScreenNames.DASHBOARD_SCREEN}>
           {() => (
             <View style={styles.tabBarContainer}>
@@ -96,6 +100,7 @@ const AppNavigation = () => {
         <Stack.Screen name={ScreenNames.SEAT_SELECTION as never} component={SeatSelection} />
         <Stack.Screen name={ScreenNames.TICKETS_SCREEN as never} component={TicketsScreen} />
         <Stack.Screen name={ScreenNames.SPLASH_SCREEN as never} component={SplashScreen} />
+        <Stack.Screen name={ScreenNames.DUMMY as never} component={Dummy} />
       </Stack.Navigator>
     </NavigationContainer>
   );

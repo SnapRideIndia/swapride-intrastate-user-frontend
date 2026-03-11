@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import React, { useMemo } from 'react';
 import { useTheme } from '../../../../theme/ThemeProvider';
 import { useStyles } from './TrackRideMap.styles';

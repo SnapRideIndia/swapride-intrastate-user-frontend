@@ -27,7 +27,7 @@ const EnterOtp = () => {
   const onSuccessVerifyOTP = (data: any) => {
     console.log('This is data of Successful Verify OTP >>>', data);
     if (data && data?.isNewUser) {
-      showToast('success', '', data?.message, 1500);
+      showToast('success', '', data?.message ?? "OTP verified successfully!", 1500);
       dispatch(setAuthStep(2));
       dispatch(setVerificationId(data?.verificationId));
       dispatch(setIsNewUser(true));
@@ -37,7 +37,7 @@ const EnterOtp = () => {
       dispatch(setRefreshToken(data.refreshToken));
       storage.set(StorageKeys.ACCESS_TOKEN, data.accessToken);
       storage.set(StorageKeys.REFRESH_TOKEN, data.refreshToken);
-      showToast('success', '', data.message, 3000);
+      showToast('success', '', data.message ?? "OTP verified successfully!", 3000);
       if (isNewUser) {
         (navigation as any).navigate(ScreenNames.SET_PROFILE_SCREEN as never, {
           isFromOtp: true,
@@ -50,6 +50,7 @@ const EnterOtp = () => {
 
   const onErrorVerifyOTP = (error: any) => {
     console.log('This is Error of Verify OTP >>>', error);
+    showToast('error', '', data.message ?? "OTP verification failed!", 3000);
   };
 
   const { mutate: verifyOTP } = useVerifyOTP(onSuccessVerifyOTP, onErrorVerifyOTP);

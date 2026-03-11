@@ -31,7 +31,7 @@ const SwMapView: React.FC<SwMapViewProps> = ({
   }, [initialRegion]);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, style]}>
       <MapView
         ref={mapRef}
         provider={PROVIDER_GOOGLE}
@@ -108,10 +108,11 @@ const SwMapView: React.FC<SwMapViewProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    ...StyleSheet.absoluteFillObject,
+    width: '100%',
+    height: '100%',
   },
   map: {
-    ...StyleSheet.absoluteFillObject,
+    flex: 1,
   },
   dot: {
     width: 16,

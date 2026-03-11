@@ -11,7 +11,17 @@ export const useStyles = (colors: ColorsType) =>
     scrollContainer: {
       flexGrow: 1,
     },
-
+    mapViewContainer: {
+      height: 233,
+      width: 140,
+      borderRadius: 6,
+      overflow: 'hidden',
+    },
+    mapView: {
+      flex: 1,
+      width: '100%',
+      height: '100%',
+    },
     contentContainer: {
       padding: 26,
       paddingHorizontal: 16,
