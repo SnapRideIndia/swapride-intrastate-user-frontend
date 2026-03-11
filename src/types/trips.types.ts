@@ -17,3 +17,4 @@ export type SearchTripsBaseParams = Omit<SearchTripsParams, 'tripDate'>;
 
 // /search/trips response
 export type SearchTripsResponseDto = Root;
+

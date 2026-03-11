@@ -13,21 +13,22 @@ import { ImageSource } from '../../../constants/images';
 import PrimaryHeader from '../../../components/common/SwHeader/PrimaryHeader/PrimaryHeader';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { ImagePickerBottomSheet } from '../../../components/common/ImagePickerBottomSheet';
-import { useUpdateProfile, useFetchCurrentProfile } from '../../../hooks/useProfile';
+import { useUpdateProfile, useFetchCurrentProfile, useUpdateTravelPreference, useUpdateOfficeTimings } from '../../../hooks/useProfile';
 import type { ProfileObj } from '../../../services/ProfileService';
 import { useStyles } from './SetYourProfileScreen.styles';
 import type { RootStackParamList } from '../../../navigation/types';
 import { format } from 'date-fns';
 import {
   SwLocationSearchBottomSheet,
-  type SwLocationSearchItem,
 } from '../../../components/common/SwLocationSearchBottomSheet/SwLocationSearchBottomSheet';
 import { usePlaceAutocomplete, useRecentSearch, useSavedLocations } from '../../../hooks/useSearch';
+import { SwLocationSearchItem } from '../../../types/placeAutofill.types';
+import { showToast } from '../../../utils/showToast';
 
 const INITIAL_PROFILE: ProfileObj = {
   fullName: '',
+  email: '',
   mobileNumber: '',
-  emailAddress: '',
   gender: '',
   dateOfBirth: '',
   bloodGroup: '',
@@ -51,8 +52,8 @@ const SetYourProfileScreen = () => {
   const { isFromOtp } = route.params ?? {};
 
   const [profileObj, setProfileObj] = useState<ProfileObj>(INITIAL_PROFILE);
-  const [homeAddress, setHomeAddress] = useState('');
-  const [officeAddress, setOfficeAddress] = useState('');
+  const [homeAddress, setHomeAddress] = useState<SwLocationSearchItem | null>(null);
+  const [officeAddress, setOfficeAddress] = useState<SwLocationSearchItem | null>(null);
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [showImagePickerSheet, setShowImagePickerSheet] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -90,7 +91,26 @@ const SetYourProfileScreen = () => {
   const { data: currentProfile } = useFetchCurrentProfile();
   const { mutate: updateProfileApi, isPending } = useUpdateProfile();
 
-  console.log("this is currentprofile inside set your profile screen ===>", currentProfile);
+  const onSuccessfulUpdateTravelPreference = (data: any) => {
+    console.log("this is data of update travel preference ===>", data);
+  }
+
+  const onErrorUpdateTravelPreference = (error: any) => {
+    console.log("This is error ===>", error.message);
+  }
+
+  const onSuccessfulUpdateOfficeTimings = (data: any) => {
+    console.log("This is the updated office timing response data ===>", data);
+  }
+
+  const onErrorUpdateOfficeTimings = (error: any) => {
+    console.log("This is the response of error in office timings update ===>", error.message);
+  }
+
+  const { mutate: updateTravelPreference } = useUpdateTravelPreference(onSuccessfulUpdateTravelPreference, onErrorUpdateTravelPreference);
+  const { mutate: updateOfficeTimings } = useUpdateOfficeTimings(onSuccessfulUpdateOfficeTimings, onErrorUpdateOfficeTimings);
+
+  console.log("This is profile obj ===>", profileObj);
 
   useEffect(() => {
     const renderHeader = () => <PrimaryHeader title={'Set your profile'} />;
@@ -107,7 +127,7 @@ const SetYourProfileScreen = () => {
     setProfileObj({
       fullName: (p?.fullName as string) ?? '',
       mobileNumber: (p?.mobileNumber as string) ?? '',
-      emailAddress: (p?.email as string) ?? '',
+      email: (p?.email as string) ?? '',
       gender: (p?.gender as string) ?? '',
       dateOfBirth: apiDateToDisplay((p?.dateOfBirth as string) ?? ''),
       bloodGroup: (p?.bloodGroup as string) ?? '',
@@ -242,17 +262,18 @@ const SetYourProfileScreen = () => {
 
   const handleSelectLocation = useCallback(
     (item: SwLocationSearchItem) => {
-      const valueToFill = item.subtitle || item.title;
       if (activeLocationField === 'home') {
-        setHomeAddress(valueToFill);
+        setHomeAddress(item || null);
       } else {
-        setOfficeAddress(valueToFill);
+        setOfficeAddress(item);
       }
       // @ts-ignore - BottomSheetModal ref type
       locationSheetRef.current?.dismiss?.();
     },
     [activeLocationField],
   );
+
+  console.log("is office start time and end time is present >>> ", officeStartTime, officeEndTime);
 
   useEffect(() => {
     const q = locationQuery.trim();
@@ -289,6 +310,42 @@ const SetYourProfileScreen = () => {
         },
       },
     );
+    if (!isFromOtp) {
+      if (!homeAddress || !officeAddress) {
+        showToast("error", "Please provide home address and office address", '', 1500);
+        return;
+      } if (!officeStartTime || !officeEndTime) {
+        showToast("error", "Please provide office start time and office end time ", '', 1500);
+        return;
+      }
+      if (homeAddress) {
+        updateTravelPreference({
+          endpoint: "/home",
+          payload: {
+            address: homeAddress.title,
+            latitude: homeAddress.latitude,
+            longitude: homeAddress.longitude
+          }
+        });
+      }
+      if (officeAddress) {
+        updateTravelPreference({
+          endpoint: "/office",
+          payload: {
+            address: officeAddress.title,
+            latitude: officeAddress.latitude,
+            longitude: officeAddress.longitude
+          }
+        });
+      }
+      if (officeStartTime && officeEndTime) {
+        updateOfficeTimings({
+          payload: {
+            timings: `${getTimeDisplayValue(officeStartTime)} - ${getTimeDisplayValue(officeEndTime)}`
+          }
+        })
+      }
+    }
   };
 
   return (
@@ -347,8 +404,8 @@ const SetYourProfileScreen = () => {
           <TextInput
             title="Email Address"
             renderTitleIcon={() => <Image source={ImageSource.emailOutline as ImageSourcePropType} style={styles.titleIcon} />}
-            value={profileObj.emailAddress}
-            onChangeText={v => updateProfile('emailAddress', v)}
+            value={profileObj.email}
+            onChangeText={v => updateProfile('email', v)}
             placeholder="Enter email address"
             keyboardType="email-address"
           />
@@ -417,7 +474,7 @@ const SetYourProfileScreen = () => {
                 renderTitleIcon={() => (
                   <Image source={ImageSource.Home as ImageSourcePropType} style={styles.titleIcon} />
                 )}
-                value={homeAddress}
+                value={homeAddress?.title}
                 editable={false}
                 placeholder="Search your home address"
                 pointerEvents="none"
@@ -430,7 +487,7 @@ const SetYourProfileScreen = () => {
                 renderTitleIcon={() => (
                   <Image source={ImageSource.office as ImageSourcePropType} style={styles.titleIcon} />
                 )}
-                value={officeAddress}
+                value={officeAddress?.title}
                 editable={false}
                 placeholder="Search your office address"
                 pointerEvents="none"
@@ -461,6 +518,8 @@ const SetYourProfileScreen = () => {
         <PrimaryButton title={isPending ? 'Saving...' : 'Save'} onPress={handleSave} disabled={isPending} />
       </View>
 
+      {/* Image picker bottom sheet */}
+
       <ImagePickerBottomSheet
         visible={showImagePickerSheet}
         onClose={() => setShowImagePickerSheet(false)}
@@ -485,7 +544,7 @@ const SetYourProfileScreen = () => {
                 key={option}
                 style={styles.modalOption}
                 onPress={() => {
-                  updateProfile('gender', option);
+                  updateProfile('gender', option?.toUpperCase());
                   setShowGenderModal(false);
                 }}
               >
@@ -515,7 +574,7 @@ const SetYourProfileScreen = () => {
                 key={option}
                 style={styles.modalOption}
                 onPress={() => {
-                  updateProfile('bloodGroup', option);
+                  updateProfile('bloodGroup', option?.toUpperCase());
                   setShowBloodGroupModal(false);
                 }}
               >

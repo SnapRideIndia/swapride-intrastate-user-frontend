@@ -1,4 +1,4 @@
-import { Image, StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import React, { useState } from 'react';
 import { useTheme } from '../../../../theme/ThemeProvider';
 import { useStyles } from './Register.styles';
@@ -9,7 +9,7 @@ import { useLogin, useRegisterUser } from '../../../../hooks/useAuth';
 import PrimaryButton from '../../../common/SwButton/PrimaryButton/PrimaryButton';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../../store';
-import { setAccessToken, setRefreshToken } from '../../../../slice/authSlice';
+import { AuthStep, setAccessToken, setAuthStep, setRefreshToken } from '../../../../slice/authSlice';
 import { storage } from '../../../../utils/store';
 import { StorageKeys } from '../../../../constants/storage/storageKeys';
 import { useNavigation } from '@react-navigation/native';
@@ -20,7 +20,7 @@ const Register = () => {
     name: '',
     email: '',
     password: '',
-    refCode: 'SWAP2024',
+    refCode: '',
   });
   const { colors } = useTheme();
   const styles = useStyles(colors);
@@ -43,6 +43,14 @@ const Register = () => {
   const onErrorRegistration = (error: any) => {
     console.log('This is Error of registartion >>>', error);
   };
+
+ const handlePressLogin = ()=>{
+  dispatch(setAuthStep(AuthStep.Step0));
+ }
+
+ const handlePressForgotPassword = ()=>{
+  dispatch(setAuthStep(AuthStep.step3))
+ }
 
   const { mutate: register } = useRegisterUser(onSuccessRegistartion, onErrorRegistration);
 
@@ -78,13 +86,15 @@ const Register = () => {
         />
         <View>
           <TextInput title={'Set Password'} isPhno={false} onChangeText={text => handleChange('password', text)} />
-          <Text style={styles.forgotPassword} variant="bold">
+         <TouchableOpacity onPress={handlePressForgotPassword}>
+           <Text style={styles.forgotPassword} variant="bold">
             Forgot Password?
           </Text>
+         </TouchableOpacity>
         </View>
         <View style={styles.spacer} />
 
-        <Text style={styles.loginPhno} variant="bold">
+        <Text style={styles.loginPhno} variant="bold" onPress={handlePressLogin}>
           Login using phone number
         </Text>
       </View>

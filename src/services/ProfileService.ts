@@ -1,9 +1,10 @@
-import { fetchData, handleErrorResponse, patchFormData } from './ApiUtility';
+import { SwLocationSearchItem } from '../types/placeAutofill.types';
+import { deleteData, fetchData, handleErrorResponse, patchData, patchFormData } from './ApiUtility';
 
 export interface ProfileObj {
   fullName: string;
   mobileNumber: string;
-  emailAddress: string;
+  email: string;
   gender: string;
   dateOfBirth: string;
   bloodGroup: string;
@@ -72,8 +73,8 @@ class ProfileService {
       } as any);
     }
 
-    if (profileObj.emailAddress) {
-      formData.append('email', profileObj.emailAddress);
+    if (profileObj.email) {
+      formData.append('email', profileObj.email);
     }
     if (profileObj.gender) {
       formData.append('gender', profileObj.gender.toUpperCase());
@@ -84,15 +85,15 @@ class ProfileService {
     }
 
     // Optional fields - add if API supports
-    // if (profileObj.fullName) {
-    //   formData.append('fullName', profileObj.fullName);
-    // }
+    if (profileObj.fullName) {
+      formData.append('fullName', profileObj.fullName);
+    }
     // if (profileObj.mobileNumber) {
     //   formData.append('mobileNumber', profileObj.mobileNumber);
     // }
-    // if (profileObj.bloodGroup) {
-    //   formData.append('bloodGroup', profileObj.bloodGroup);
-    // }
+    if (profileObj.bloodGroup) {
+      formData.append('bloodGroup', profileObj.bloodGroup);
+    }
 
     console.log('This is formData payload ===>', formData);
 
@@ -105,6 +106,43 @@ class ProfileService {
 
     return res.data;
   };
+
+  updateTravelPreference = async (endpoint: '/home' | '/office', payload: any) => {
+    const url = `${this.baseUrl}/me/travel-preferences/${endpoint}`;
+    const res = await patchData(url, payload);
+
+    console.log('this is response of update travel preference ===>', res);
+
+    if (!res.success) {
+      handleErrorResponse(res);
+    }
+    return res.data;
+  };
+
+    updateOfficeTimings = async (endpoint: string , payload: any) => {
+    const url = `${this.baseUrl}/me/travel-preferences/${endpoint}`;
+    const res = await patchData(url, payload);
+
+    console.log('this is response of update office timings ===>', res);
+
+    if (!res.success) {
+      handleErrorResponse(res);
+    }
+    return res.data;
+  };
+
+   deleteProfile = async () => {
+    const url = `${this.baseUrl}/profile`;
+    const res = await deleteData(url, {});
+
+    console.log('this is response of delete profile ===>', res);
+
+    if (!res.success) {
+      handleErrorResponse(res);
+    }
+    return res.data;
+  };
+  
 }
 
 export default new ProfileService();

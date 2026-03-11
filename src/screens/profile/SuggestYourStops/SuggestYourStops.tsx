@@ -14,11 +14,11 @@ import { SwPickupDropInputCard } from '../../../components/common/SwPickupDropIn
 import type { BottomSheetModal } from '@gorhom/bottom-sheet';
 import {
     SwLocationSearchBottomSheet,
-    type SwLocationSearchItem,
 } from '../../../components/common/SwLocationSearchBottomSheet/SwLocationSearchBottomSheet'
 import useGetLocation from '../../../hooks/permissions/geoLocation'
 import uuid from 'react-native-uuid'
 import { useReverseGeocode } from '../../../hooks/useSearch'
+import { SwLocationSearchItem } from '../../../types/placeAutofill.types';
 
 const SuggestYourStops = () => {
   const [selectedSlot, setSelectedSlot] = useState({
@@ -147,31 +147,6 @@ const SuggestYourStops = () => {
           }}
         >
           <View style={{ flexDirection: 'row', gap: 10 }}>
-            <View style={{ alignItems: 'center', marginTop: 4 }}>
-              <View
-                style={{
-                  width: 5,
-                  height: 5,
-                  borderRadius: 50,
-                  backgroundColor: '#FFCA5A',
-                }}
-              />
-              <View
-                style={{
-                  height: 80,
-                  borderLeftWidth: 1,
-                  borderStyle: 'dashed',
-                }}
-              />
-              <View
-                style={{
-                  width: 5,
-                  height: 5,
-                  borderRadius: 50,
-                  backgroundColor: '#000',
-                }}
-              />
-            </View>
             <View style={{ flex: 1, gap: 16 }}>
               <SwPickupDropInputCard
                 showSwapArrow

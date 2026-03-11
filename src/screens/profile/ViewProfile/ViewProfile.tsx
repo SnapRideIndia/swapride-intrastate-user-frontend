@@ -8,7 +8,7 @@ import ProfileHeader from '../../../components/domain/profile/Header/ProfileHead
 import { SwText as Text } from '../../../components/common/SwText/SwText';
 import { ImageSource } from '../../../constants/images';
 import PrimaryButton from '../../../components/common/SwButton/PrimaryButton/PrimaryButton';
-import { useFetchCurrentProfile, useFetchTravelPreferences } from '../../../hooks/useProfile';
+import { useDeleteProfile, useFetchCurrentProfile, useFetchTravelPreferences } from '../../../hooks/useProfile';
 import {
   BottomSheetBackdrop,
   BottomSheetTextInput,
@@ -17,19 +17,48 @@ import {
   type BottomSheetBackdropProps,
 } from '@gorhom/bottom-sheet';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { setLogout } from '../../../slice/authSlice';
+import { showToast } from '../../../utils/showToast';
+import { useLogout } from '../../../hooks/useAuth';
+import { useDispatch } from 'react-redux';
+import { storage } from '../../../utils/store';
+import { StorageKeys } from '../../../constants/storage/storageKeys';
+import { ScreenNames } from '../../../navigation/constant';
 
 const ViewProfile = () => {
+  const [phNo, setPhNo] = useState('');
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   const { data: profileData } = useFetchCurrentProfile();
-  const { data: travelPreferences, isLoading: isTravelPreferencesLoading } = useFetchTravelPreferences();
+  const { data: travelPreferences, isLoading: isTravelPreferencesLoading, refetch: refetchTravelPreference } = useFetchTravelPreferences();
+
+  const onSuccessfulDeleteProfile = (data: any) => {
+    console.log("This is the delete data response ===>", data);
+    handleConfirmDelete();
+    handlePressLogout();
+  }
+  const onErrorDeleteProfile = (error: any) => {
+    console.log("This is error in delete profile ===>", error);
+  }
+
+  const onSuccessLogout = (data: any) => {
+    console.log('This is logout reponse ===>', data);
+  };
+
+  const onErrorLogout = (error: any) => {
+    console.log('This is error response ===>', error);
+  };
+
+  const { mutate: logout } = useLogout(onSuccessLogout, onErrorLogout);
+
+  const { mutate: deleteProfile } = useDeleteProfile(onSuccessfulDeleteProfile, onErrorDeleteProfile)
 
   console.log('This is travelPreference data ==>', travelPreferences);
 
   const deleteAccountSheetRef = useRef<BottomSheetModal>(null);
-  const [deletePhoneNumber, setDeletePhoneNumber] = useState('');
 
   const openDeleteAccountSheet = useCallback(() => {
     deleteAccountSheetRef.current?.present();
@@ -44,12 +73,39 @@ const ViewProfile = () => {
     deleteAccountSheetRef.current?.dismiss();
   }, []);
 
+  const handlePressProceed = () => {
+    if (!phNo) {
+      showToast("error", "Please enter phone number associated with this account!", '', 1500);
+      return;
+    }
+    try {
+      deleteProfile();
+    } catch (error) {
+      console.log("Error in delete profile api >>>", error?.message);
+    }
+  }
+
+  const handlePressLogout = () => {
+    try {
+      dispatch(setLogout());
+      storage.set(StorageKeys.ACCESS_TOKEN, '');
+      storage.set(StorageKeys.REFRESH_TOKEN, '');
+      navigation.navigate(ScreenNames.LOGIN_SCREEN as never);
+      // api calling
+      logout({});
+    } catch (error) {
+      console.error('Error of logout ===>', error?.toString());
+    }
+  };
+
+
   useEffect(() => {
     const renderHeader = () => <ProfileHeader profileData={profileData} />;
     navigation.setOptions({
       headerShown: true,
       header: renderHeader,
     });
+    refetchTravelPreference();
   }, [navigation, profileData]);
 
   const homeAddress = travelPreferences?.home?.address ?? 'Not set';
@@ -98,7 +154,7 @@ const ViewProfile = () => {
             <CommunicationPreferenceCard />
           </View>
         </View>
-        <PrimaryButton title={'Logout'} btnStyle={styles.btnStyle} />
+        <PrimaryButton title={'Logout'} btnStyle={styles.btnStyle} onPress={handlePressLogout}/>
         <PrimaryButton
           title={'Delete Account'}
           onPress={openDeleteAccountSheet}
@@ -113,7 +169,7 @@ const ViewProfile = () => {
         index={0}
         enableDynamicSizing
         enablePanDownToClose
-        onDismiss={() => setDeletePhoneNumber('')}
+        onDismiss={() => setPhNo('')}
         backdropComponent={(props: BottomSheetBackdropProps) => (
           <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={0} opacity={0.5} pressBehavior="close" />
         )}
@@ -148,7 +204,7 @@ const ViewProfile = () => {
             </Text>
             <View style={styles.inputInnerContainer}>
               <Text>+91 | </Text>
-              <BottomSheetTextInput placeholder="Enter Mobile Number" />
+              <BottomSheetTextInput placeholder="Enter Mobile Number" value={phNo} onChangeText={setPhNo} keyboardType='number-pad' style={{ flex: 1 }} />
             </View>
           </View>
 
@@ -157,7 +213,7 @@ const ViewProfile = () => {
               <PrimaryButton title="Cancel" btnStyle={{ backgroundColor: colors.contentDisabled }} onPress={closeDeleteAccountSheet} />
             </View>
             <View style={styles.btnWrapper}>
-              <PrimaryButton title="Proceed" />
+              <PrimaryButton title="Proceed" onPress={handlePressProceed} />
             </View>
           </View>
         </BottomSheetView>

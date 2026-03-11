@@ -1,5 +1,4 @@
 import React, { forwardRef, useCallback, useMemo } from 'react';
-import type { ImageSourcePropType } from 'react-native';
 import { Image, TouchableOpacity, View, Dimensions } from 'react-native';
 import { Easing } from 'react-native-reanimated';
 import {
@@ -14,15 +13,7 @@ import { useTheme } from '../../../theme/ThemeProvider';
 import { ImageSource } from '../../../constants/images';
 import { SwText as Text } from '../SwText/SwText';
 import { useStyles } from './SwLocationSearchBottomSheet.styles';
-
-export type SwLocationSearchItem = {
-  id: string;
-  title: string;
-  subtitle?: string;
-  iconSource?: ImageSourcePropType;
-  latitude?: number;
-  longitude?: number;
-};
+import { SwLocationSearchItem } from '../../../types/placeAutofill.types';
 
 type Props = {
   title: string;

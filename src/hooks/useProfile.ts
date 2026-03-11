@@ -34,3 +34,27 @@ export const useUpdateProfile = () => {
     },
   });
 };
+
+export const useUpdateTravelPreference = (onSuccess: (data: any) => void, onError: (error: any) => void)=>{
+    return useMutation({
+      mutationFn: ({endpoint, payload}: {endpoint: "/home" | "/office", payload: any})=>ProfileService.updateTravelPreference(endpoint, payload),
+      onSuccess,
+      onError,
+    });
+}
+
+export const useUpdateOfficeTimings = (onSuccess: (data: any) => void, onError: (error: any) => void)=>{
+    return useMutation({
+      mutationFn: ({payload}: {payload: any})=>ProfileService.updateOfficeTimings("office-timings", payload),
+      onSuccess,
+      onError,
+    });
+}
+
+export const useDeleteProfile = (onSuccess: (data: any) => void, onError: (error: any) => void)=>{
+    return useMutation({
+      mutationFn: ProfileService.deleteProfile,
+      onSuccess,
+      onError,
+    });
+}
