@@ -9,11 +9,7 @@ export const useStyles = (colors: ColorsType) =>
       padding: 16,
       borderWidth: 1,
       borderColor: colors.border_3,
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.05,
-      shadowRadius: 10,
-      elevation: 2,
+      elevation: 0.5,
     },
     header: {
       flexDirection: 'row',
@@ -88,12 +84,12 @@ export const useStyles = (colors: ColorsType) =>
     },
     viewTicketBtn: {
       flex: 1,
-      backgroundColor: '#FFBE18', // Yellow/Gold as per screenshot
+      backgroundColor: colors.secondary,
       borderRadius: 8,
-      height: 44,
+      height: 40,
       justifyContent: 'center',
       alignItems: 'center',
-      elevation: 2,
+      elevation: 1,
     },
     viewTicketBtnText: {
       color: colors.contentPrimary,
@@ -103,11 +99,13 @@ export const useStyles = (colors: ColorsType) =>
       flex: 1,
       backgroundColor: colors.background_primary,
       borderRadius: 8,
-      height: 44,
+      height: 40,
       justifyContent: 'center',
       alignItems: 'center',
       borderWidth: 1,
-      borderColor: colors.contentPrimary,
+      borderColor: colors.border_4,
+      elevation: 1,
+
     },
     trackRideBtnText: {
       color: colors.contentPrimary,

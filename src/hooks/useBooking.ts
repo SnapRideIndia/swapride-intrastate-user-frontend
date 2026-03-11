@@ -90,3 +90,20 @@ export const useMyBookings = (type?: string, limit = 10) => {
     initialPageParam: 0,
   });
 };
+ 
+export const useTrackRide = (bookingId: string) => {
+  return useQuery({
+    queryKey: ['track-ride', bookingId],
+    queryFn: () => BookingService.trackRide(bookingId),
+    enabled: !!bookingId,
+    refetchInterval: 10000, // Refetch every 10 seconds for real-time feel
+  });
+};
+
+export const useDriverDetails = (driverId: string) => {
+  return useQuery({
+    queryKey: ['driver-details', driverId],
+    queryFn: () => BookingService.getDriverDetails(driverId),
+    enabled: !!driverId,
+  });
+};

@@ -124,6 +124,28 @@ class BookingService {
 
     return res.data;
   };
+ 
+  trackRide = async (bookingId: string): Promise<any> => {
+    const url = API_ENDPOINTS.BOOKINGS.TRACK_RIDE(bookingId);
+    const res = await fetchData<any>(url);
+ 
+    if (!res.success || !res.data) {
+      handleErrorResponse(res);
+    }
+ 
+    return res.data;
+  };
+
+  getDriverDetails = async (driverId: string): Promise<any> => {
+    const url = API_ENDPOINTS.DRIVERS.GET_DETAILS(driverId);
+    const res = await fetchData<any>(url);
+
+    if (!res.success || !res.data) {
+      handleErrorResponse(res);
+    }
+
+    return res.data;
+  };
 }
 
 export default new BookingService();

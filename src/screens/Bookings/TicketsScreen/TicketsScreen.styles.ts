@@ -5,7 +5,7 @@ export const useStyles = (colors: ColorsType) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: colors.background_lightBlue,
+      backgroundColor: colors.background_primary,
     },
     contentContainerStyle: {
       flexGrow: 1,

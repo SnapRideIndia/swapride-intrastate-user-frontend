@@ -8,21 +8,28 @@ import { Seperator } from '../../../common/Seperator/Seperator';
 import { Point } from '../Point/Point';
 
 export interface PointData {
+  id?: string;
   time: string;
   title: string;
   description: string;
+  images?: any[];
 }
 
 export interface RideDetailsProps {
   pickupData: PointData;
   dropoffData: PointData;
-  onViewAllStops?: () => void;
+  onViewAllStops?: (defaultOpenStopId?: string) => void;
 }
 
 const RideDetails: React.FC<RideDetailsProps> = ({ pickupData, dropoffData, onViewAllStops }) => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const [activeTab, setActiveTab] = useState<'pickup' | 'dropoff'>('pickup');
+
+  const handleViewAllStops = () => {
+    const stopId = activeTab === 'pickup' ? pickupData.id : dropoffData.id;
+    onViewAllStops?.(stopId);
+  };
 
   return (
     <View style={styles.container}>
@@ -63,7 +70,7 @@ const RideDetails: React.FC<RideDetailsProps> = ({ pickupData, dropoffData, onVi
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity onPress={onViewAllStops} style={styles.viewAllStopsContainer}>
+        <TouchableOpacity onPress={handleViewAllStops} style={styles.viewAllStopsContainer}>
           <Text variant="bold" style={[styles.primaryFont, styles.viewAllStopsText]}>
             View all stops
           </Text>
@@ -80,14 +87,16 @@ const RideDetails: React.FC<RideDetailsProps> = ({ pickupData, dropoffData, onVi
             time={pickupData.time}
             title={pickupData.title}
             description={pickupData.description}
-            onDirectionPress={() => console.log('Direction pressed')}
+            images={pickupData.images}
+            onDirectionPress={() => {}}
           />
         ) : (
           <Point
             time={dropoffData.time}
             title={dropoffData.title}
             description={dropoffData.description}
-            onDirectionPress={() => console.log('Direction pressed')}
+            images={dropoffData.images}
+            onDirectionPress={() => {}}
           />
         )}
       </View>
