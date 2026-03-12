@@ -54,6 +54,8 @@ const FareDetails: React.FC<FareDetailsProps> = ({
           </View>
         )}
 
+        {/* Swapride Wallet row temporarily hidden */}
+        {/*
         <View style={styles.row}>
           <View>
             <Text style={styles.label}>Swapride Wallet</Text>
@@ -63,6 +65,7 @@ const FareDetails: React.FC<FareDetailsProps> = ({
             - ₹0
           </Text>
         </View>
+        */}
 
         {appliedCoupon ? (
           <AppliedCoupon code={appliedCoupon.code} savings={appliedCoupon.savings} onRemove={onRemovePromo} />

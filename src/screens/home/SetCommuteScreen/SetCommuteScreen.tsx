@@ -10,10 +10,8 @@ import { SwPickupDropInputCard } from '../../../components/common/SwPickupDropIn
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { ImageSource } from '../../../constants/images';
 import PrimaryButton from '../../../components/common/SwButton/PrimaryButton/PrimaryButton';
-import {
-  SwLocationSearchBottomSheet,
-  SwLocationSearchItem,
-} from '../../../components/common/SwLocationSearchBottomSheet/SwLocationSearchBottomSheet';
+import { SwLocationSearchBottomSheet } from '../../../components/common/SwLocationSearchBottomSheet/SwLocationSearchBottomSheet';
+import type { SwLocationSearchItem } from '../../../types/placeAutofill.types';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch } from '../../../store';
 import type { RootState } from '../../../store';
@@ -21,7 +19,7 @@ import { setCurrentCoords } from '../../../slice/profileSlice';
 import useGetLocation from '../../../hooks/permissions/geoLocation';
 import uuid from 'react-native-uuid';
 import type { ICoords } from '../../../types/coords.types';
-import { usePlaceAutocomplete, useRecentSearch, useReverseGeocode, useSavedLocations, useSearchTrips } from '../../../hooks/useSearch';
+import { usePlaceAutocomplete, useRecentSearch, useReverseGeocode, useSavedLocations } from '../../../hooks/useSearch';
 import DatePicker from 'react-native-date-picker';
 import { format, isToday } from 'date-fns';
 import { ScreenNames } from '../../../navigation/constant';
@@ -68,20 +66,6 @@ const SetCommuteScreen = () => {
   const [timePickerDate, setTimePickerDate] = useState<Date>(new Date());
   const [tripDate] = useState<Date>(new Date());
 
-  const onSuccessTrips = useCallback(
-    (data: any) => {
-      dispatch(setCommuteData(data));
-      navigation.navigate(ScreenNames.BUS_SELECTION_SCREEN as never);
-    },
-    [dispatch, navigation],
-  );
-
-  const onErrorTrips = useCallback((_error: any) => {
-    // Error handled by hook or generic toast
-  }, []);
-
-  const { mutate: searchTrips, isPending: isSearchingTrips } = useSearchTrips(onSuccessTrips, onErrorTrips);
-
   const getSessionToken = useCallback(() => {
     if (!sessionTokenRef.current) {
       sessionTokenRef.current = String(uuid.v4());
@@ -91,6 +75,8 @@ const SetCommuteScreen = () => {
 
   const [savedAddresses, setSavedAddresses] = useState<SwLocationSearchItem[]>([]);
   const [recentSearches, setRecentSearches] = useState<SwLocationSearchItem[]>([]);
+  const [isSavedAndRecentLoading, setSavedAndRecentLoading] = useState(false);
+  const [isSearchResultsLoading, setSearchResultsLoading] = useState(false);
 
   const loadSavedAndRecent = useCallback(
     async (type: 'pickup' | 'drop') => {
@@ -101,6 +87,8 @@ const SetCommuteScreen = () => {
       } catch (e) {
         setSavedAddresses([]);
         setRecentSearches([]);
+      } finally {
+        setSavedAndRecentLoading(false);
       }
     },
     [getRecentSearchItems, getSavedLocationItems],
@@ -199,6 +187,7 @@ const SetCommuteScreen = () => {
     const q = locationQuery.trim();
     if (!q || q.length < 2) {
       setSearchResults([]);
+      setSearchResultsLoading(false);
       if (autocompleteTimeoutRef.current) {
         clearTimeout(autocompleteTimeoutRef.current);
         autocompleteTimeoutRef.current = null;
@@ -214,15 +203,19 @@ const SetCommuteScreen = () => {
     }
 
     autocompleteTimeoutRef.current = setTimeout(() => {
+      setSearchResultsLoading(true);
       (async () => {
         try {
           const items = await getPlaceAutocompleteItems(q, token);
-          // Ignore stale responses (user typed again).
           if (requestId !== autocompleteRequestIdRef.current) return;
           setSearchResults(items ?? []);
         } catch (e) {
           if (requestId !== autocompleteRequestIdRef.current) return;
           setSearchResults([]);
+        } finally {
+          if (requestId === autocompleteRequestIdRef.current) {
+            setSearchResultsLoading(false);
+          }
         }
       })();
     }, 400);
@@ -240,7 +233,9 @@ const SetCommuteScreen = () => {
       setActiveLocationField(field);
       setLocationQuery('');
       setSearchResults([]);
+      setSearchResultsLoading(false);
       sessionTokenRef.current = null;
+      setSavedAndRecentLoading(true);
       loadSavedAndRecent(field);
       locationSheetRef.current?.present();
     },
@@ -266,19 +261,9 @@ const SetCommuteScreen = () => {
     const dropoffLat = dropItem!.latitude!;
     const dropoffLng = dropItem!.longitude!;
 
-    let userLat = currentCoords?.latitude;
-    let userLng = currentCoords?.longitude;
-
-    if (typeof userLat !== 'number' || typeof userLng !== 'number') {
-      const position = await getCurrentLocation();
-      if (position?.coords) {
-        dispatch(setCurrentCoords(position.coords as unknown as ICoords));
-        userLat = position.coords.latitude;
-        userLng = position.coords.longitude;
-      }
-    }
-
-    if (typeof userLat !== 'number' || typeof userLng !== 'number') return;
+    // For testing: force user location to Hitech City coords.
+    let userLat = 17.4489;
+    let userLng = 78.3832;
 
     const officeTimings = `${getTimeDisplayValue(officeStartTime)} - ${getTimeDisplayValue(officeEndTime)}`;
 
@@ -299,20 +284,16 @@ const SetCommuteScreen = () => {
       },
     };
 
-    const searchParams = {
-      ...searchBaseParams,
-      tripDate: format(tripDate, 'yyyy-MM-dd'),
-      officeTimings,
-    };
-
     dispatch(
       setCommuteSearchContext({
         dateTabs,
         activeDateIndex: 0,
         searchBaseParams,
+        officeTimings,
       }),
     );
-    searchTrips(searchParams);
+    dispatch(setCommuteData(null));
+    navigation.navigate(ScreenNames.BUS_SELECTION_SCREEN as never);
   }, [
     canSubmit,
     currentCoords,
@@ -323,7 +304,6 @@ const SetCommuteScreen = () => {
     officeEndTime,
     officeStartTime,
     pickupItem,
-    searchTrips,
     tripDate,
     dateTabs,
   ]);
@@ -342,7 +322,6 @@ const SetCommuteScreen = () => {
         <Text variant="semi-bold" style={styles.title}>
           Tell us about your commute !
         </Text>
-
         <View style={styles.card}>
           <SwPickupDropInputCard
             pickupInputProps={{
@@ -380,12 +359,12 @@ const SetCommuteScreen = () => {
           </View>
 
           <View style={styles.btnContainer}>
-            <PrimaryButton
-              title={isSearchingTrips ? 'Submitting...' : 'Submit'}
+          <PrimaryButton
+            title="Submit"
               btnStyle={styles.btnStyle}
               textStyle={styles.textStyle}
               onPress={handleSubmit}
-              disabled={!canSubmit || isSearchingTrips}
+            disabled={!canSubmit}
             />
           </View>
         </View>
@@ -396,6 +375,9 @@ const SetCommuteScreen = () => {
           query={locationQuery}
           onChangeQuery={setLocationQuery}
           searchResults={searchResults}
+          isSearchResultsLoading={isSearchResultsLoading}
+          isSavedAddressesLoading={isSavedAndRecentLoading}
+          isRecentSearchesLoading={isSavedAndRecentLoading}
           showUseCurrentLocation
           onPressUseCurrentLocation={handleUseCurrentLocation}
           savedAddresses={savedAddresses}

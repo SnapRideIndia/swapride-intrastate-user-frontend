@@ -1,5 +1,5 @@
-import React, { useRef, useMemo, useState, useCallback } from 'react';
-import { View, ScrollView, ActivityIndicator, Alert } from 'react-native';
+import React, { useRef, useMemo, useState, useCallback, useEffect } from 'react';
+import { View, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../../theme/ThemeProvider';
 import { useStyles } from './ConfirmBookingDetails.styles';
@@ -20,26 +20,59 @@ import { useBookingDetails, useApplyCoupon, useRemoveCoupon } from '../../../hoo
 import { useBalance } from '../../../hooks/useWallet';
 import { LegDetail } from '../../../types/booking.types';
 import { format } from 'date-fns';
+import ConfirmBookingDetailsSkeleton from './ConfirmBookingDetailsSkeleton';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../../../store';
 
-const mapLegToSummary = (leg: LegDetail, type: 'outbound' | 'return') => ({
-  type,
-  tripId: leg.tripId,
-  bookingId: leg.bookingId,
-  date: format(leg.tripDate ? new Date(leg.tripDate) : new Date(), 'eeee, do MMM'),
-  pickup: {
-    time: leg.pickup.arrivalTime,
-    title: leg.pickup.name,
-    description: leg.pickup.address,
-    walkText: leg.pickup.distanceText || '',
-  },
-  dropoff: {
-    time: leg.dropoff.arrivalTime,
-    title: leg.dropoff.name,
-    description: leg.dropoff.address,
-    walkText: '',
-  },
-  seat: leg.assignedSeats.map(s => s.seatNumber).join(', '),
-});
+const mapLegToSummary = (leg: LegDetail, type: 'outbound' | 'return') => {
+  const tripDateObj = leg.tripDate ? new Date(leg.tripDate) : new Date();
+  const pickupTimeObj = leg.pickup.arrivalTime ? new Date(leg.pickup.arrivalTime) : null;
+  const dropoffTimeObj = leg.dropoff.arrivalTime ? new Date(leg.dropoff.arrivalTime) : null;
+
+  const pickupDistanceText = leg.pickup.distanceText || '';
+  const pickupWalkDurationText = leg.pickup.walkDurationText || '';
+
+  const dropoffDistanceText = leg.dropoff.distanceText || '';
+  const dropoffWalkDurationText = leg.dropoff.walkDurationText || '';
+
+  let pickupWalkText = '';
+  if (pickupDistanceText && pickupWalkDurationText) {
+    pickupWalkText = `${pickupDistanceText} • ${pickupWalkDurationText} walk`;
+  } else if (pickupDistanceText) {
+    pickupWalkText = pickupDistanceText;
+  } else if (pickupWalkDurationText) {
+    pickupWalkText = `${pickupWalkDurationText} walk`;
+  }
+
+  let dropoffWalkText = '';
+  if (dropoffDistanceText && dropoffWalkDurationText) {
+    dropoffWalkText = `${dropoffDistanceText} • ${dropoffWalkDurationText} walk`;
+  } else if (dropoffDistanceText) {
+    dropoffWalkText = dropoffDistanceText;
+  } else if (dropoffWalkDurationText) {
+    dropoffWalkText = `${dropoffWalkDurationText} walk`;
+  }
+
+  return {
+    type,
+    tripId: leg.tripId,
+    bookingId: leg.bookingId,
+    date: format(tripDateObj, 'eeee, do MMM'),
+    pickup: {
+      time: pickupTimeObj ? format(pickupTimeObj, 'hh:mm a') : leg.pickup.arrivalTime,
+      title: leg.pickup.name,
+      description: leg.pickup.address,
+      walkText: pickupWalkText,
+    },
+    dropoff: {
+      time: dropoffTimeObj ? format(dropoffTimeObj, 'hh:mm a') : leg.dropoff.arrivalTime,
+      title: leg.dropoff.name,
+      description: leg.dropoff.address,
+      walkText: dropoffWalkText,
+    },
+    seat: leg.assignedSeats.map(s => s.seatNumber).join(', '),
+  };
+};
 
 const ConfirmBookingDetails = () => {
   const { colors } = useTheme();
@@ -47,9 +80,19 @@ const ConfirmBookingDetails = () => {
   const navigation = useNavigation<any>();
   const route = useRoute<RouteProp<RootStackParamList, typeof ScreenNames.CONFIRM_BOOKING_DETAILS>>();
   const { bookingId } = route.params;
+  const { searchBaseParams } = useSelector((store: RootState) => store.commute);
+  const userLat = searchBaseParams?.userLocation?.latitude;
+  const userLng = searchBaseParams?.userLocation?.longitude;
 
-  const { data: booking, isLoading, isError, error, refetch } = useBookingDetails(bookingId);
+  const { data: booking, isLoading, isError, error, refetch } = useBookingDetails(bookingId, userLat, userLng);
   const { data: balanceData } = useBalance();
+
+  useEffect(() => {
+    if (booking) {
+      // Debug: confirm booking details API response
+      console.log('ConfirmBookingDetails booking response:', booking);
+    }
+  }, [booking]);
 
   useFocusEffect(
     useCallback(() => {
@@ -130,19 +173,29 @@ const ConfirmBookingDetails = () => {
 
   if (isLoading) {
     return (
-      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
-        <ActivityIndicator size="large" color={colors.primary} />
+      <View style={styles.container}>
+        <PrimaryHeader title="Confirm Booking Details" />
+        <ConfirmBookingDetailsSkeleton />
       </View>
     );
   }
 
   if (isError || !booking) {
     return (
-      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center', padding: 20 }]}>
-        <Text variant="semi-bold" style={{ textAlign: 'center', marginBottom: 20 }}>
-          {(error as any)?.message || 'Failed to load booking details'}
-        </Text>
-        <PrimaryButton title="Go Back" onPress={() => navigation.goBack()} />
+      <View style={styles.container}>
+        <PrimaryHeader title="Confirm Booking Details" />
+        <View style={styles.errorWrapper}>
+          <View style={[styles.whiteSection, styles.errorCard]}>
+            <Text variant="semi-bold" style={styles.errorMessage}>
+              {'This booking is no longer available (likely timed out). Please start a new booking.'}
+            </Text>
+            <PrimaryButton
+              title="Go Back"
+              onPress={() => navigation.navigate(ScreenNames.FIND_COMMUTE)}
+              btnStyle={styles.fullWidthButton}
+            />
+          </View>
+        </View>
       </View>
     );
   }
@@ -165,6 +218,7 @@ const ConfirmBookingDetails = () => {
               }
             />
           )}
+
           {returnSummary && (
             <TripSummaryCard
               {...returnSummary}

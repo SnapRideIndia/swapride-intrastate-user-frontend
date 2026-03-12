@@ -25,10 +25,39 @@ const SwMapView: React.FC<SwMapViewProps> = ({
   const mapRef = React.useRef<MapView>(null);
 
   React.useEffect(() => {
-    if (initialRegion && mapRef.current) {
+    if (!mapRef.current) return;
+
+    const points: Coordinate[] = [];
+
+    if (coordinates && coordinates.length > 0) {
+      points.push(...coordinates);
+    }
+
+    if (startCoordinate?.latitude && startCoordinate?.longitude) {
+      points.push(startCoordinate);
+    }
+
+    if (endCoordinate?.latitude && endCoordinate?.longitude) {
+      points.push(endCoordinate);
+    }
+
+    if (stops && stops.length > 0) {
+      stops.forEach(stop => {
+        if (stop.latitude && stop.longitude) {
+          points.push(stop);
+        }
+      });
+    }
+
+    if (points.length >= 2) {
+      mapRef.current.fitToCoordinates(points, {
+        edgePadding: { top: 80, right: 40, bottom: 80, left: 40 },
+        animated: true,
+      });
+    } else if (initialRegion) {
       mapRef.current.animateToRegion(initialRegion, 1000);
     }
-  }, [initialRegion]);
+  }, [coordinates, startCoordinate, endCoordinate, stops, initialRegion]);
 
   return (
     <View style={[styles.container, style]}>

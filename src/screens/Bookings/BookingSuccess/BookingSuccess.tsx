@@ -51,8 +51,11 @@ const BookingSuccess = ({ navigation }: any) => {
           onPress={() =>
             navigation.dispatch(
               CommonActions.reset({
-                index: 0,
-                routes: [{ name: ScreenNames.DASHBOARD_SCREEN }],
+                index: 1,
+                routes: [
+                  { name: ScreenNames.DASHBOARD_SCREEN },
+                  { name: ScreenNames.TRACK_RIDE_SCREEN, params: { ticketId: bookingId } },
+                ],
               }),
             )
           }

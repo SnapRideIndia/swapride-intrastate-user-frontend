@@ -59,8 +59,8 @@ export const useStyles = (colors: ColorsType) =>
       color: colors.contentPrimary,
     },
     badgeAndDeviderContainer: {
-      maxHeight: 110,
       alignItems: 'center',
+      justifyContent: 'space-between',
     },
     devider: {
       // height: 59,
@@ -69,16 +69,20 @@ export const useStyles = (colors: ColorsType) =>
       borderStyle: 'dashed',
     },
     placeContainer: {
-      gap: 15,
+      gap: 12,
       flex: 1,
     },
-    place: {
-      flex: 1,
-    },
+    place: {},
     walkAndTimeContainer: {
       flexDirection: 'row',
       alignItems: 'center',
       gap: 5,
+    },
+    walkAndDirectionRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginTop: 6,
     },
     walkIcon: {
       width: 7.04,
@@ -269,5 +273,19 @@ export const useStyles = (colors: ColorsType) =>
       height: 100,
       borderRadius: 10,
       backgroundColor: 'gray',
+    },
+    directionButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+    },
+    directionIcon: {
+      width: 16,
+      height: 16,
+      tintColor: colors.primary,
+    },
+    directionText: {
+      fontSize: 13,
+      color: colors.primary,
     },
   });

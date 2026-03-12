@@ -19,6 +19,7 @@ export type SearchTripsParams = {
   preferredTime?: string;
   pickupPointId?: string;
   dropoffPointId?: string;
+  officeTimings?: string;
 };
 
 export type SearchTripsBaseParams = Omit<SearchTripsParams, 'tripDate'>;

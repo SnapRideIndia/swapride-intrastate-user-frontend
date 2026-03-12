@@ -22,6 +22,30 @@ export const useStyles = (colors: ColorsType) =>
       marginBottom: 18,
       paddingBottom: 24,
     },
+    errorWrapper: {
+      flex: 1,
+      justifyContent: 'center',
+      padding: 20,
+    },
+    errorCard: {
+      borderRadius: 20,
+      padding: 20,
+      marginHorizontal: 4,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.08,
+      shadowRadius: 6,
+    },
+    errorMessage: {
+      textAlign: 'center',
+      marginBottom: 16,
+      fontSize: 14,
+    },
+    fullWidthButton: {
+      width: '100%',
+      borderRadius: 12,
+      height: 48,
+    },
     policyRow: {
       paddingHorizontal: 20,
       paddingVertical: 16,

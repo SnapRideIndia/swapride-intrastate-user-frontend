@@ -8,11 +8,7 @@ export const useStyles = (colors: ColorsType) =>
       borderRadius: 24,
       overflow: 'hidden',
       marginBottom: 20,
-      elevation: 2,
-      shadowColor: colors.background_black,
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 4,
+    elevation: 1,
     },
     header: {
       flexDirection: 'row',

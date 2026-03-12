@@ -14,13 +14,13 @@ import { ImageSource } from '../../../constants/images';
 import { SwText as Text } from '../SwText/SwText';
 import { useStyles } from './SwLocationSearchBottomSheet.styles';
 import { SwLocationSearchItem } from '../../../types/placeAutofill.types';
+import { LocationSearchRowSkeleton } from '../../domain/locationSearch';
 
 type Props = {
   title: string;
   query: string;
   onChangeQuery: (text: string) => void;
 
-  // Autocomplete search results shown as dropdown suggestions
   searchResults?: SwLocationSearchItem[];
 
   showUseCurrentLocation?: boolean;
@@ -29,11 +29,18 @@ type Props = {
   savedAddresses?: SwLocationSearchItem[];
   recentSearches?: SwLocationSearchItem[];
 
+  isSearchResultsLoading?: boolean;
+  isSavedAddressesLoading?: boolean;
+  isRecentSearchesLoading?: boolean;
+
   onPressItem?: (item: SwLocationSearchItem) => void;
   onClose?: () => void;
   hideBackdrop?: boolean;
   onChange?: (index: number) => void;
 };
+
+const SEARCH_RESULTS_SKELETON_COUNT = 4;
+const SAVED_RECENT_SKELETON_COUNT = 3;
 
 export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
   (
@@ -46,6 +53,9 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
       onPressUseCurrentLocation,
       savedAddresses = [],
       recentSearches = [],
+      isSearchResultsLoading = false,
+      isSavedAddressesLoading = false,
+      isRecentSearchesLoading = false,
       onPressItem,
       onClose,
       hideBackdrop = false,
@@ -61,6 +71,8 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
     const snapPoints = useMemo(() => [screenHeight * 0.85], [screenHeight]);
     const animationConfigs = useMemo(() => ({ duration: 380, easing: Easing.out(Easing.cubic) }), []);
     const isDropdownOpen = !!query && searchResults.length > 0;
+    const showSearchResultsShimmer = !!query && isSearchResultsLoading;
+    const showSavedAndRecentSection = !isDropdownOpen && !isSearchResultsLoading;
 
     const renderBackdrop = useCallback(
       (props: BottomSheetBackdropProps) => (
@@ -74,7 +86,7 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
     }, [onClose]);
 
     const handleClosePress = useCallback(() => {
-      // @ts-ignore - BottomSheetModal ref
+      // @ts-expect-error BottomSheetModal ref type
       ref?.current?.dismiss?.();
     }, [ref]);
 
@@ -86,11 +98,9 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
         enableDynamicSizing={false}
         enablePanDownToClose
         animationConfigs={animationConfigs}
-        // Keep keyboard open while results render.
         keyboardBehavior="padding"
         keyboardBlurBehavior="none"
         android_keyboardInputMode="adjustResize"
-        // Avoid content pan gesture stealing input focus/scroll.
         enableContentPanningGesture={false}
         onDismiss={handleDismiss}
         onChange={onChange}
@@ -99,10 +109,7 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
         handleIndicatorStyle={styles.handleIndicator}
       >
         <BottomSheetScrollView
-          contentContainerStyle={[
-            styles.content,
-            // { paddingBottom: Math.max(insets.bottom, 20) },
-          ]}
+          contentContainerStyle={styles.content}
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="none"
         >
@@ -120,7 +127,6 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
             </TouchableOpacity>
           </View>
 
-          {/* Search input with inline results */}
           <View>
             <View style={styles.searchContainer}>
               <Image source={ImageSource.searhIcon} style={styles.searchIcon} />
@@ -136,7 +142,16 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
               />
             </View>
 
-            {!!query && searchResults.length > 0 && (
+            {showSearchResultsShimmer && (
+              <View style={styles.dropdownContainer}>
+                {Array.from({ length: SEARCH_RESULTS_SKELETON_COUNT }).map((_, i) => (
+                  <View key={i} style={styles.dropdownItem}>
+                    <LocationSearchRowSkeleton iconSize={36} showSubtitle />
+                  </View>
+                ))}
+              </View>
+            )}
+            {!!query && !isSearchResultsLoading && searchResults.length > 0 && (
               <View style={styles.dropdownContainer}>
                 {searchResults.map((item, index) => (
                   <TouchableOpacity
@@ -164,7 +179,7 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
             )}
           </View>
 
-          {!isDropdownOpen && (
+          {showSavedAndRecentSection && (
             <>
               {showUseCurrentLocation && (
                 <TouchableOpacity onPress={onPressUseCurrentLocation} activeOpacity={0.85} style={styles.useCurrentLocationRow}>
@@ -177,45 +192,57 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
                 </TouchableOpacity>
               )}
 
-              {/* <View style={styles.divider} /> */}
-
               <Text variant="semi-bold" style={styles.sectionTitle}>
                 Saved Addresses
               </Text>
-              {savedAddresses.length === 0 && <Text style={styles.emptyStateText}>No saved addresses yet</Text>}
-              {savedAddresses.map((item, idx) => (
-                <View key={item.id}>
-                  <TouchableOpacity activeOpacity={0.85} onPress={() => onPressItem?.(item)} style={styles.listRow}>
-                    <View style={styles.listIconWrap}>
-                      <Image source={item.iconSource ?? ImageSource.Home} style={styles.listIcon} />
-                    </View>
-                    <View style={styles.listTextWrap}>
-                      <Text variant="medium" style={styles.listTitle}>
-                        {item.title}
-                      </Text>
-                      {!!item.subtitle && <Text style={styles.listSubtitle}>{item.subtitle}</Text>}
-                    </View>
-                  </TouchableOpacity>
-                </View>
-              ))}
+              {isSavedAddressesLoading &&
+                Array.from({ length: SAVED_RECENT_SKELETON_COUNT }).map((_, i) => (
+                  <LocationSearchRowSkeleton key={i} iconSize={45} showSubtitle />
+                ))}
+              {!isSavedAddressesLoading && savedAddresses.length === 0 && (
+                <Text style={styles.emptyStateText}>No saved addresses yet</Text>
+              )}
+              {!isSavedAddressesLoading &&
+                savedAddresses.map((item) => (
+                  <View key={item.id}>
+                    <TouchableOpacity activeOpacity={0.85} onPress={() => onPressItem?.(item)} style={styles.listRow}>
+                      <View style={styles.listIconWrap}>
+                        <Image source={item.iconSource ?? ImageSource.Home} style={styles.listIcon} />
+                      </View>
+                      <View style={styles.listTextWrap}>
+                        <Text variant="medium" style={styles.listTitle}>
+                          {item.title}
+                        </Text>
+                        {!!item.subtitle && <Text style={styles.listSubtitle}>{item.subtitle}</Text>}
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                ))}
 
               <Text style={styles.sectionTitle}>Recent Searches</Text>
-              {recentSearches.length === 0 && <Text style={styles.emptyStateText}>No recent searches yet</Text>}
-              {recentSearches.map((item, idx) => (
-                <View key={item.id}>
-                  <TouchableOpacity activeOpacity={0.85} onPress={() => onPressItem?.(item)} style={styles.listRow}>
-                    <View style={styles.listIconWrap}>
-                      <Image source={item.iconSource ?? ImageSource.clock} style={styles.listIcon} />
-                    </View>
-                    <View style={styles.listTextWrap}>
-                      <Text variant="semi-bold" style={styles.listTitle}>
-                        {item.title}
-                      </Text>
-                      {!!item.subtitle && <Text style={styles.listSubtitle}>{item.subtitle}</Text>}
-                    </View>
-                  </TouchableOpacity>
-                </View>
-              ))}
+              {isRecentSearchesLoading &&
+                Array.from({ length: SAVED_RECENT_SKELETON_COUNT }).map((_, i) => (
+                  <LocationSearchRowSkeleton key={i} iconSize={45} showSubtitle />
+                ))}
+              {!isRecentSearchesLoading && recentSearches.length === 0 && (
+                <Text style={styles.emptyStateText}>No recent searches yet</Text>
+              )}
+              {!isRecentSearchesLoading &&
+                recentSearches.map((item) => (
+                  <View key={item.id}>
+                    <TouchableOpacity activeOpacity={0.85} onPress={() => onPressItem?.(item)} style={styles.listRow}>
+                      <View style={styles.listIconWrap}>
+                        <Image source={item.iconSource ?? ImageSource.clock} style={styles.listIcon} />
+                      </View>
+                      <View style={styles.listTextWrap}>
+                        <Text variant="semi-bold" style={styles.listTitle}>
+                          {item.title}
+                        </Text>
+                        {!!item.subtitle && <Text style={styles.listSubtitle}>{item.subtitle}</Text>}
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                ))}
             </>
           )}
         </BottomSheetScrollView>

@@ -9,13 +9,15 @@ export interface ICommuteState {
   dateTabs: CommuteDateTab[];
   activeDateIndex: number;
   searchBaseParams: SearchTripsBaseParams | null;
+  officeTimings?: string | null;
 }
 
 const initialState: ICommuteState = {
-   commuteData: null,
-   dateTabs: [],
-   activeDateIndex: 0,
-   searchBaseParams: null,
+  commuteData: null,
+  dateTabs: [],
+  activeDateIndex: 0,
+  searchBaseParams: null,
+  officeTimings: null,
 };
 const commuteSlice = createSlice({
     name: 'commute',
@@ -30,11 +32,13 @@ const commuteSlice = createSlice({
             dateTabs: CommuteDateTab[];
             activeDateIndex: number;
             searchBaseParams: SearchTripsBaseParams;
+            officeTimings?: string | null;
           }>,
         ) => {
           state.dateTabs = action.payload.dateTabs;
           state.activeDateIndex = action.payload.activeDateIndex;
           state.searchBaseParams = action.payload.searchBaseParams;
+          state.officeTimings = action.payload.officeTimings ?? null;
         },
         setActiveDateIndex: (state, action: PayloadAction<number>) => {
           state.activeDateIndex = action.payload;
