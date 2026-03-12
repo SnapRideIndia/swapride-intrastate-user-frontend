@@ -7,12 +7,15 @@ import { ImageSource } from '../../../../constants/images';
 import { SwText as Text } from '../../../common/SwText/SwText';
 import { useNavigation } from '@react-navigation/native';
 import { ScreenNames } from '../../../../navigation/constant';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../../store';
 
 const HomeScreenHeader = () => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const navigation = useNavigation();
   const drawer = navigation.getParent();
+  const {profileData} = useSelector((store: RootState)=>store.profile);
 
   const openDrawer = () => {
     if (drawer && 'openDrawer' in drawer) {
@@ -36,7 +39,7 @@ const HomeScreenHeader = () => {
       </View>
       <View style={[styles.innerContainer, { marginTop: 18, marginBottom: 14 }]}>
         <Text variant="medium" style={styles.greeting}>
-          Good morning Ritwik,
+          Good morning {profileData?.fullName.split(" ")[0]},
         </Text>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Image source={ImageSource.weather} style={styles.weatherIcon} />
