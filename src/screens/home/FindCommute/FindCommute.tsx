@@ -269,9 +269,19 @@ const FindCommute = () => {
     const dropoffLat = dropItem!.latitude!;
     const dropoffLng = dropItem!.longitude!;
 
-    // For testing: force user location to Hitech City coords.
-    let userLat = 17.4489;
-    let userLng = 78.3832;
+    let userLat = currentCoords?.latitude;
+    let userLng = currentCoords?.longitude;
+
+    if (typeof userLat !== 'number' || typeof userLng !== 'number') {
+      const position = await getCurrentLocation();
+      if (position?.coords) {
+        dispatch(setCurrentCoords(position.coords as unknown as ICoords));
+        userLat = position.coords.latitude;
+        userLng = position.coords.longitude;
+      }
+    }
+
+    if (typeof userLat !== 'number' || typeof userLng !== 'number') return;
 
     const payloadBase = {
       pickup: {

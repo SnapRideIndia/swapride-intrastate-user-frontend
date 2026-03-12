@@ -27,6 +27,9 @@ import PaymentOptions from '../../screens/Bookings/PaymentOptions/PaymentOptions
 import BookingSuccess from '../../screens/Bookings/BookingSuccess/BookingSuccess';
 import SeatSelection from '../../screens/Bookings/SeatSelection/SeatSelection';
 import TicketsScreen from '../../screens/Bookings/TicketsScreen/TicketsScreen';
+import SelfBoardScannerScreen from '../../screens/Boarding/SelfBoardScanner/SelfBoardScannerScreen';
+import SelfBoardSuccessScreen from '../../screens/Boarding/SelfBoardSuccess/SelfBoardSuccessScreen';
+import SelfBoardErrorScreen from '../../screens/Boarding/SelfBoardError/SelfBoardErrorScreen';
 import SplashScreen from '../../screens/splash/SplashScreen';
 import Dummy from '../../screens/dummy/Dummy';
 
@@ -100,6 +103,9 @@ const AppNavigation = () => {
         <Stack.Screen name={ScreenNames.SEAT_SELECTION as never} component={SeatSelection} />
         <Stack.Screen name={ScreenNames.TICKETS_SCREEN as never} component={TicketsScreen} />
         <Stack.Screen name={ScreenNames.SPLASH_SCREEN as never} component={SplashScreen} />
+        <Stack.Screen name={ScreenNames.SELF_BOARD_SCANNER as never} component={SelfBoardScannerScreen} />
+        <Stack.Screen name={ScreenNames.SELF_BOARD_SUCCESS as never} component={SelfBoardSuccessScreen} />
+        <Stack.Screen name={ScreenNames.SELF_BOARD_ERROR as never} component={SelfBoardErrorScreen} />
         <Stack.Screen name={ScreenNames.DUMMY as never} component={Dummy} />
       </Stack.Navigator>
     </NavigationContainer>

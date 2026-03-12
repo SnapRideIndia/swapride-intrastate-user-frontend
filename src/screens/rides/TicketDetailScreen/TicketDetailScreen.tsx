@@ -4,7 +4,7 @@ import { useTheme } from '../../../theme/ThemeProvider';
 import { useStyles } from './TicketDetailScreen.styles';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import PrimaryHeader from '../../../components/common/SwHeader/PrimaryHeader/PrimaryHeader';
-import { RouteProp } from '@react-navigation/native';
+import { RouteProp, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../../../navigation/types';
 import { ScreenNames } from '../../../navigation/constant';
 import { TicketCard } from '../../../components/domain/rides/TicketCard/TicketCard';
@@ -17,6 +17,7 @@ const TicketDetailScreen = ({ route }: { route: RouteProp<RootStackParamList, ty
   const { ticketId } = route.params || {};
   const { colors } = useTheme();
   const styles = useStyles(colors);
+  const navigation = useNavigation<any>();
 
   const { data: ticketData, isLoading, error } = useTicketDetail(ticketId);
 
@@ -65,7 +66,7 @@ const TicketDetailScreen = ({ route }: { route: RouteProp<RootStackParamList, ty
 
         <PrimaryButton
           title="Scan Bus QR"
-          onPress={() => console.log('Scan Bus QR')}
+          onPress={() => navigation.navigate(ScreenNames.SELF_BOARD_SCANNER, { ticketId })}
           btnStyle={styles.scanButton}
           renderRightIcon={() => <Image source={ImageSource.scan} style={styles.scanIcon} />}
         />

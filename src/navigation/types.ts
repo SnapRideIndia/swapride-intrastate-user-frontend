@@ -17,6 +17,9 @@ export type RootStackParamList = {
   [ScreenNames.BOOKING_OPTIONS]: { outbound: { result: ICommute; timing: Timing } };
   [ScreenNames.PAYMENT_OPTIONS]: { bookingId: string; returnBookingId?: string; totalAmount: number };
   [ScreenNames.BOOKING_SUCCESS]: { bookingId: string };
+  [ScreenNames.SELF_BOARD_SCANNER]: { ticketId: string };
+  [ScreenNames.SELF_BOARD_SUCCESS]: { ticketId: string; boardingInfo?: any };
+  [ScreenNames.SELF_BOARD_ERROR]: { ticketId: string; reasonCode?: string; message?: string };
   [ScreenNames.SEAT_SELECTION]: { tripId: string; bookingId: string; initialSeatNumber?: string; returnBookingId?: string };
   [ScreenNames.BUS_SELECTION_SCREEN]:
     | { isReturnLeg?: boolean; outboundBookingId?: string; outbound?: { result: ICommute; timing: Timing } }
