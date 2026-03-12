@@ -5,7 +5,7 @@ import { useStyles } from './Register.styles';
 import { SwTextInput as TextInput } from '../../../common/SwTextInput/SwTextInput';
 import { ImageSource } from '../../../../constants/images';
 import { SwText as Text } from '../../../common/SwText/SwText';
-import { useLogin, useRegisterUser } from '../../../../hooks/useAuth';
+import { usePhoneLogin, useRegisterUser } from '../../../../hooks/useAuth';
 import PrimaryButton from '../../../common/SwButton/PrimaryButton/PrimaryButton';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../../store';
@@ -14,6 +14,7 @@ import { storage } from '../../../../utils/store';
 import { StorageKeys } from '../../../../constants/storage/storageKeys';
 import { useNavigation } from '@react-navigation/native';
 import { ScreenNames } from '../../../../navigation/constant';
+import { validateEmail, validatePassword } from '../../../../utils/validation';
 
 const Register = () => {
   const [userCred, setUserCred] = useState({
@@ -24,12 +25,15 @@ const Register = () => {
   });
   const { colors } = useTheme();
   const styles = useStyles(colors);
-  const { verificationId } = useSelector((store: RootState) => store.auth);
+  const { verificationId, isNewUser } = useSelector((store: RootState) => store.auth);
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
+  const [errors, setErrors] = useState<{ name?: string; email?: string; password?: string }>({});
+
   const handleChange = (key: string, value: string) => {
     setUserCred(prev => ({ ...prev, [key]: value }));
+    setErrors(prev => ({ ...prev, [key]: undefined }));
   };
 
   const onSuccessRegistartion = async (data: any) => {
@@ -37,7 +41,7 @@ const Register = () => {
     dispatch(setRefreshToken(data.refreshToken));
     storage.set(StorageKeys.ACCESS_TOKEN, data.accessToken);
     storage.set(StorageKeys.REFRESH_TOKEN, data.refreshToken);
-    navigation.navigate(ScreenNames.DASHBOARD_SCREEN as never);
+    (navigation as any).navigate(ScreenNames.SET_PROFILE_SCREEN as never, { isFromRegister: true});
   };
 
   const onErrorRegistration = (error: any) => {
@@ -56,6 +60,21 @@ const Register = () => {
 
   const handlePressButton = () => {
     console.log('this is usercred ===>', userCred);
+
+    const newErrors: { name?: string; email?: string; password?: string } = {};
+    if (!userCred.name.trim()) {
+      newErrors.name = 'Full name is required';
+    }
+    const emailError = validateEmail(userCred.email);
+    const passwordError = validatePassword(userCred.password);
+    if (emailError) newErrors.email = emailError;
+    if (passwordError) newErrors.password = passwordError;
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
     try {
       const payload = {
         verificationId: verificationId,
@@ -77,15 +96,29 @@ const Register = () => {
   return (
     <>
       <View style={styles.container}>
-        <TextInput title={'Full Name'} isPhno={false} onChangeText={text => handleChange('name', text)} />
+        <TextInput
+          title={'Full Name'}
+          isPhno={false}
+          value={userCred.name}
+          onChangeText={text => handleChange('name', text)}
+          errorText={errors.name}
+        />
         <TextInput
           title={'Email Address'}
           isPhno={false}
           renderRightIcon={handleRenderRightIcon}
+          value={userCred.email}
           onChangeText={text => handleChange('email', text)}
+          errorText={errors.email}
         />
         <View>
-          <TextInput title={'Set Password'} isPhno={false} onChangeText={text => handleChange('password', text)} />
+          <TextInput
+            title={'Set Password'}
+            isPhno={false}
+            value={userCred.password}
+            onChangeText={text => handleChange('password', text)}
+            errorText={errors.password}
+          />
          <TouchableOpacity onPress={handlePressForgotPassword}>
            <Text style={styles.forgotPassword} variant="bold">
             Forgot Password?

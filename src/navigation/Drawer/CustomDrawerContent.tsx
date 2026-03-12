@@ -14,7 +14,7 @@ import { setLogout } from '../../slice/authSlice';
 import { storage } from '../../utils/store';
 import { StorageKeys } from '../../constants/storage/storageKeys';
 import { useLogout } from '../../hooks/useAuth';
-import { setProfileData } from '../../slice/profileSlice';
+import { setCurrentCoords, setProfileData } from '../../slice/profileSlice';
 
 const drawerItems = [
   {
@@ -77,6 +77,8 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
   const handlePressLogout = () => {
     try {
       dispatch(setLogout());
+      dispatch(setProfileData(null));
+      dispatch(setCurrentCoords(null))
       storage.set(StorageKeys.ACCESS_TOKEN, '');
       storage.set(StorageKeys.REFRESH_TOKEN, '');
       navigation.navigate(ScreenNames.LOGIN_SCREEN as never);

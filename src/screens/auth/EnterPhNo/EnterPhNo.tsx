@@ -12,6 +12,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import Register from '../../../components/domain/login/Register/Register';
 import EnterPassword from '../../../components/domain/login/EnterPassword/EnterPassword';
+import ResetPassword from '../../../components/domain/login/ResetPassword/ResetPassword';
 
 const EnterPhNo = () => {
   const { colors } = useTheme();
@@ -43,6 +44,7 @@ const EnterPhNo = () => {
         {step === 1 && <EnterOtp />}
         {step === 2 && <Register />}
         {step === 3 && <EnterPassword />}
+        {step === 4 && <ResetPassword />}
       </KeyboardAwareScrollView>
     </SafeAreaView>
   );

@@ -10,9 +10,10 @@ interface IInputProps extends TextInputProps {
   renderRightIcon?: () => ReactNode;
   renderTitleIcon?: () => ReactNode;
   variant?: 'default' | 'rounded';
+  errorText?: string;
 }
 
-export const SwTextInput = ({ variant = 'default', ...props }: IInputProps) => {
+export const SwTextInput = ({ variant = 'default', errorText, ...props }: IInputProps) => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
   return (
@@ -25,11 +26,23 @@ export const SwTextInput = ({ variant = 'default', ...props }: IInputProps) => {
           </Text>
         </View>
       ) : null}
-      <View style={[styles.inputInnerContainer, variant === 'rounded' && styles.roundedContainer, props.isPhno && styles.phNoStyle]}>
+      <View
+        style={[
+          styles.inputInnerContainer,
+          variant === 'rounded' && styles.roundedContainer,
+          props.isPhno && styles.phNoStyle,
+          !!errorText && styles.inputErrorBorder,
+        ]}
+      >
         {props.isPhno && <Text>+91 | </Text>}
         <TextInput style={styles.inputStyle} placeholderTextColor={props.placeholderTextColor || colors.contenttertiary} {...props} />
         {props.renderRightIcon?.()}
       </View>
+      {errorText ? (
+        <Text variant="medium" style={styles.errorText}>
+          {errorText}
+        </Text>
+      ) : null}
     </View>
   );
 };

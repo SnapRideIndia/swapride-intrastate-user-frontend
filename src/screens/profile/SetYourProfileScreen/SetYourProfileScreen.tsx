@@ -13,17 +13,18 @@ import { ImageSource } from '../../../constants/images';
 import PrimaryHeader from '../../../components/common/SwHeader/PrimaryHeader/PrimaryHeader';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { ImagePickerBottomSheet } from '../../../components/common/ImagePickerBottomSheet';
-import { useUpdateProfile, useFetchCurrentProfile, useUpdateTravelPreference, useUpdateOfficeTimings } from '../../../hooks/useProfile';
+import { useUpdateProfile, useFetchCurrentProfile, useUpdateTravelPreference, useUpdateOfficeTimings, useFetchTravelPreferences } from '../../../hooks/useProfile';
 import type { ProfileObj } from '../../../services/ProfileService';
 import { useStyles } from './SetYourProfileScreen.styles';
 import type { RootStackParamList } from '../../../navigation/types';
-import { format } from 'date-fns';
+import { format, parse } from 'date-fns';
 import {
   SwLocationSearchBottomSheet,
 } from '../../../components/common/SwLocationSearchBottomSheet/SwLocationSearchBottomSheet';
 import { usePlaceAutocomplete, useRecentSearch, useSavedLocations } from '../../../hooks/useSearch';
 import { SwLocationSearchItem } from '../../../types/placeAutofill.types';
 import { showToast } from '../../../utils/showToast';
+import { ScreenNames } from '../../../navigation/constant';
 
 const INITIAL_PROFILE: ProfileObj = {
   fullName: '',
@@ -49,7 +50,7 @@ const SetYourProfileScreen = () => {
   const styles = useStyles(colors);
   const navigation = useNavigation();
   const route = useRoute<SetProfileRouteProp>();
-  const { isFromOtp } = route.params ?? {};
+  const { isFromRegister } = route.params ?? {};
 
   const [profileObj, setProfileObj] = useState<ProfileObj>(INITIAL_PROFILE);
   const [homeAddress, setHomeAddress] = useState<SwLocationSearchItem | null>(null);
@@ -89,6 +90,7 @@ const SetYourProfileScreen = () => {
   const { getSavedLocationItems } = useSavedLocations();
 
   const { data: currentProfile } = useFetchCurrentProfile();
+  const { data: travelPreferences } = useFetchTravelPreferences();
   const { mutate: updateProfileApi, isPending } = useUpdateProfile();
 
   const onSuccessfulUpdateTravelPreference = (data: any) => {
@@ -107,6 +109,8 @@ const SetYourProfileScreen = () => {
     console.log("This is the response of error in office timings update ===>", error.message);
   }
 
+  console.log("this is currentProfile inside setyour profile ===>", currentProfile)
+
   const { mutate: updateTravelPreference } = useUpdateTravelPreference(onSuccessfulUpdateTravelPreference, onErrorUpdateTravelPreference);
   const { mutate: updateOfficeTimings } = useUpdateOfficeTimings(onSuccessfulUpdateOfficeTimings, onErrorUpdateOfficeTimings);
 
@@ -121,7 +125,6 @@ const SetYourProfileScreen = () => {
   }, [navigation]);
 
   useEffect(() => {
-    // if (!isFromOtp || !currentProfile || hasPrefilled.current) return;
     hasPrefilled.current = true;
     const p = currentProfile as Record<string, unknown>;
     setProfileObj({
@@ -135,7 +138,47 @@ const SetYourProfileScreen = () => {
     if (p?.profileUrl) {
       setProfileImage(p?.profileUrl as string);
     }
-  }, [isFromOtp, currentProfile]);
+  }, [isFromRegister, currentProfile]);
+
+  // Prefill travel preferences (home/office address + office timings) when editing from View Profile
+  useEffect(() => {
+    if (!travelPreferences) {
+      return;
+    }
+
+    // Home address
+    if (travelPreferences.home?.address) {
+      setHomeAddress({
+        id: 'home',
+        title: travelPreferences.home.address,
+      });
+    }
+
+    // Office address
+    if (travelPreferences.office?.address) {
+      setOfficeAddress({
+        id: 'office',
+        title: travelPreferences.office.address,
+      });
+    }
+
+    // Office timings: string like "09:00 AM - 05:00 PM"
+    if (travelPreferences.officeTimings) {
+      const [startStr, endStr] = travelPreferences.officeTimings.split('-').map(s => s.trim());
+      if (startStr) {
+        const parsedStart = parse(startStr, 'hh:mm a', new Date());
+        if (!isNaN(parsedStart.getTime())) {
+          setOfficeStartTime(parsedStart);
+        }
+      }
+      if (endStr) {
+        const parsedEnd = parse(endStr, 'hh:mm a', new Date());
+        if (!isNaN(parsedEnd.getTime())) {
+          setOfficeEndTime(parsedEnd);
+        }
+      }
+    }
+  }, [travelPreferences]);
 
   const updateProfile = (field: keyof ProfileObj, value: string) => {
     setProfileObj(prev => ({ ...prev, [field]: value }));
@@ -302,7 +345,7 @@ const SetYourProfileScreen = () => {
   }, [locationQuery, getPlaceAutocompleteItems]);
 
   const handleSave = () => {
-    if (!isFromOtp) {
+    if (!isFromRegister) {
       if (!homeAddress || !officeAddress) {
         showToast("error", "Please provide home address and office address", '', 1500);
         return;
@@ -310,14 +353,7 @@ const SetYourProfileScreen = () => {
         showToast("error", "Please provide office start time and office end time ", '', 1500);
         return;
       }
-      updateProfileApi(
-        { profileObj, profileImageUri: profileImage },
-        {
-          onSuccess: () => {
-            navigation.goBack();
-          },
-        },
-      );
+
       if (homeAddress) {
         updateTravelPreference({
           endpoint: "/home",
@@ -346,6 +382,14 @@ const SetYourProfileScreen = () => {
         })
       }
     }
+    updateProfileApi(
+      { profileObj, profileImageUri: profileImage },
+      {
+        onSuccess: () => {
+         navigation.navigate(ScreenNames.DASHBOARD_SCREEN as never);
+        },
+      },
+    );
   };
 
   return (
@@ -455,9 +499,9 @@ const SetYourProfileScreen = () => {
             <View style={{ flex: 1 }} />
           </View>
         </View>
-        {!isFromOtp && <View style={[styles.devider, { marginTop: 18 }]} />}
+        {!isFromRegister && <View style={[styles.devider, { marginTop: 18 }]} />}
 
-        {!isFromOtp && (
+        {!isFromRegister && (
           <View style={styles.inputContainer}>
             <View style={{ gap: 10 }}>
               <Text variant="semi-bold" style={styles.sectionTitle}>

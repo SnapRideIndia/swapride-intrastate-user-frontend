@@ -172,4 +172,8 @@ export const useStyles = (colors: ColorsType) =>
     btnWrapper: {
       flex: 1,
     },
+    circleStyle: {
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
   });

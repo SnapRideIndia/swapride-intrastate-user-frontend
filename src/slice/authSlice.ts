@@ -5,6 +5,7 @@ export enum AuthStep {
   Step1 = 1,
   Step2 = 2,
   step3 = 3,
+  setp4 = 4,
 }
 
 export interface IAuth {
@@ -14,6 +15,7 @@ export interface IAuth {
   phNo: string;
   verificationId: string;
   isNewUser: boolean;
+  isForgotPassword: boolean
 }
 
 const initialState: IAuth = {
@@ -23,6 +25,7 @@ const initialState: IAuth = {
   phNo: '',
   verificationId: '',
   isNewUser: false,
+  isForgotPassword: false,
 };
 const authSlice = createSlice({
   name: 'auth',
@@ -53,8 +56,11 @@ const authSlice = createSlice({
     setIsNewUser: (state, action) => {
       state.isNewUser = action.payload;
     },
+    setIsForgotPassword: (state, action)=>{
+      state.isForgotPassword = action.payload
+    }
   },
 });
 
-export const { setAccessToken, setRefreshToken, setAuthStep, setPhno, setVerificationId, setLogout, setIsNewUser } = authSlice.actions;
+export const { setAccessToken, setRefreshToken, setAuthStep, setPhno, setVerificationId, setLogout, setIsNewUser, setIsForgotPassword } = authSlice.actions;
 export default authSlice.reducer;

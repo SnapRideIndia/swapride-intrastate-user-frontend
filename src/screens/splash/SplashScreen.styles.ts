@@ -15,5 +15,16 @@ export const useStyles = (colors: ColorsType) =>
         width: 177,
         height: 106,
         color: colors.primaryLight
+      },
+      cloud:{
+        width: 27.75,
+        height: 14.8
+      },
+      customCloud:{
+        marginRight: 20
+      },
+      metro:{
+        width: 177,
+        height: 106
       }
   });

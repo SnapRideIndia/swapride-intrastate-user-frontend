@@ -31,7 +31,16 @@ const SplashScreen = () => {
             <Image source={ImageSource.splashLogo} style={styles.spalshLogo}/>
         </View>
         <View style={{flex:1, justifyContent: "center", alignItems: "center"}}>
-            
+            <View style={{alignSelf: 'flex-end'}}>
+                <Image source={ImageSource.cloud} style={[styles.cloud, styles.customCloud]}/>
+            </View>
+            <View style={{alignSelf: 'flex-end'}}>
+                <Image source={ImageSource.cloud} style={[styles.cloud]}/>
+            </View>
+        </View>
+
+        <View style={{marginBottom: 50, marginLeft: 30}}>
+          <Image source={ImageSource.metroSplash} style={styles.metro}/>
         </View>
     </SafeAreaView>
   )

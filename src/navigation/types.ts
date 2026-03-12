@@ -9,7 +9,7 @@ export type RootStackParamList = {
   [ScreenNames.TRACK_RIDE_SCREEN]: { ticketId: string };
   [ScreenNames.TICKET_DETAIL_SCREEN]: { ticketId: string };
   [ScreenNames.MAIN_SCREEN]: undefined;
-  [ScreenNames.SET_PROFILE_SCREEN]: { isFromOtp?: boolean } | undefined;
+  [ScreenNames.SET_PROFILE_SCREEN]: { isFromRegister?: boolean } | undefined;
   [ScreenNames.HOME_SCREEN]: undefined;
   [ScreenNames.WALLET_SCREEN]: undefined;
   [ScreenNames.HISTORY_SCREEN]: undefined;

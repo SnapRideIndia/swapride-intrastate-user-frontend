@@ -1,10 +1,13 @@
 import { StyleSheet } from 'react-native';
 import { ColorsType } from '../../../constants/ui/colors/colors.types';
 import { getFontFamilyByFW } from '../SwText/SwText';
+import { commonColors } from '../../../constants/ui/colors';
 
 export const useStyles = (colors: ColorsType) =>
   StyleSheet.create({
-    inputOuterContainer: {},
+    inputOuterContainer: {
+      marginBottom: 4,
+    },
     iconWithTitle: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -16,6 +19,9 @@ export const useStyles = (colors: ColorsType) =>
       alignItems: 'center',
       borderBottomWidth: 1,
       borderColor: colors.border_3,
+    },
+    inputErrorBorder: {
+      borderColor: commonColors.error,
     },
     roundedContainer: {
       borderWidth: 1,
@@ -36,5 +42,10 @@ export const useStyles = (colors: ColorsType) =>
     title: {
       fontSize: 14,
       color: colors.primary,
+    },
+    errorText: {
+      marginTop: 4,
+      fontSize: 12,
+      color: commonColors.error,
     },
   });

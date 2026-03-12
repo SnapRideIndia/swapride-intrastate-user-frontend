@@ -5,9 +5,17 @@ import { storage } from "../utils/store";
 import { StorageKeys } from "../constants/storage/storageKeys";
 import { setAccessToken, setRefreshToken } from "../slice/authSlice";
 
-export const useLogin = (onSuccess: (data: any) => void, onError: (error: any) => void) => {
+export const usePhoneLogin = (onSuccess: (data: any) => void, onError: (error: any) => void) => {
   return useMutation({
     mutationFn: AuthService.sendOTP,
+    onSuccess,
+    onError,
+  });
+};
+
+export const useEmailLogin = (onSuccess: (data: any) => void, onError: (error: any) => void) => {
+  return useMutation({
+    mutationFn: AuthService.emailLogin,
     onSuccess,
     onError,
   });
@@ -38,6 +46,14 @@ export const useLogout = (
         onSuccess,
         onError
     });
+};
+
+export const useResetpassword = (onSuccess: (data: any) => void, onError: (error: any) => void) => {
+  return useMutation({
+    mutationFn: AuthService.resetPassword,
+    onSuccess,
+    onError,
+  });
 };
 
 /**

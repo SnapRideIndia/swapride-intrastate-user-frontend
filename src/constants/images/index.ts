@@ -80,6 +80,8 @@ razorpay: require('.././../assets/images/razorpay.png'),
 
 // splash
   splashLogo: require('.././../assets/images/splashLogo.png'),
-  metroGIF: require('.././../assets/images/metro.gif'),
-  metroLottie: require('../../assets/images/metro.gif'),
+  // metroGIF: require('.././../assets/images/metro.gif'),
+  // metroLottie: require('../../assets/images/metro.gif'),
+  cloud:  require('../../assets/images/cloud.png'),
+  metroSplash:  require('../../assets/images/metro.png'),
 }

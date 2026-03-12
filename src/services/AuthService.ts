@@ -7,12 +7,26 @@ class AuthService {
     const url = `${this.baseUrl}/send-otp`;
     const res = await postData(url, payload);
 
+    console.log("this is login payload ===>", payload)
+
     console.log('this is the login api response ===>', res);
     if (!res.success || !res.data) {
       handleErrorResponse(res);
     }
 
     return res.data.data;
+  };
+
+    emailLogin = async (payload: any) => {
+    const url = `${this.baseUrl}/login`;
+    const res = await postData(url, payload);
+
+    console.log('this is the email login api response ===>', res);
+    if (!res.success || !res.data) {
+      handleErrorResponse(res);
+    }
+
+    return res.data;
   };
 
   verifyOTP = async (payload: any) => {
@@ -50,6 +64,20 @@ class AuthService {
 
     return res.data;
   };
+
+    resetPassword = async (payload: any) => {
+    const url = `${this.baseUrl}/reset-password`;
+    const res = await postData(url, payload);
+
+    console.log("this is reset password response ===>", res);
+
+    if (!res.success || !res.data) {
+      handleErrorResponse(res);
+    }
+
+    return res.data;
+  };
+
 
   /**
    * Refresh access token using refresh token (for sliding session).

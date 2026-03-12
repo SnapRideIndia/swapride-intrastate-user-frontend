@@ -63,8 +63,8 @@ const AppNavigation = () => {
   useEffect(() => {
     // Keep Redux in sync with storage for the rest of the app
     const token = storage.getString(StorageKeys.ACCESS_TOKEN);
-    const isNewUser = storage.getBoolean(StorageKeys.IS_NEW_USER);
-    dispatch(setIsNewUser(isNewUser));
+    // const isNewUser = storage.getBoolean(StorageKeys.IS_NEW_USER);
+    // dispatch(setIsNewUser(isNewUser));
     dispatch(setAccessToken(token ?? ''));
 
     // ()=>{

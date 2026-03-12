@@ -12,6 +12,7 @@ export const useStyles = (colors: ColorsType) =>
       width: 18,
       height: 20,
       marginTop: 5,
+      tintColor: "#2B6D1C"
     },
     checkBoxAndConditionContainer: {
       flexDirection: 'row',

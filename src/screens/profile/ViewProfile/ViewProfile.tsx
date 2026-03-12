@@ -1,9 +1,9 @@
-import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Image, ImageSourcePropType, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import React, { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../../theme/ThemeProvider';
 import { useStyles } from './ViewProfile.styles';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import ProfileHeader from '../../../components/domain/profile/Header/ProfileHeader/ProfileHeader';
 import { SwText as Text } from '../../../components/common/SwText/SwText';
 import { ImageSource } from '../../../constants/images';
@@ -24,6 +24,8 @@ import { useDispatch } from 'react-redux';
 import { storage } from '../../../utils/store';
 import { StorageKeys } from '../../../constants/storage/storageKeys';
 import { ScreenNames } from '../../../navigation/constant';
+import { setCurrentCoords, setProfileData } from '../../../slice/profileSlice';
+import { Switch } from 'react-native-switch';
 
 const ViewProfile = () => {
   const [phNo, setPhNo] = useState('');
@@ -87,6 +89,8 @@ const ViewProfile = () => {
 
   const handlePressLogout = () => {
     try {
+      dispatch(setProfileData(null));
+      dispatch(setCurrentCoords(null))
       dispatch(setLogout());
       storage.set(StorageKeys.ACCESS_TOKEN, '');
       storage.set(StorageKeys.REFRESH_TOKEN, '');
@@ -98,6 +102,10 @@ const ViewProfile = () => {
     }
   };
 
+  useFocusEffect(React.useCallback(() => {
+    refetchTravelPreference();
+  }, []))
+
 
   useEffect(() => {
     const renderHeader = () => <ProfileHeader profileData={profileData} />;
@@ -105,7 +113,6 @@ const ViewProfile = () => {
       headerShown: true,
       header: renderHeader,
     });
-    refetchTravelPreference();
   }, [navigation, profileData]);
 
   const homeAddress = travelPreferences?.home?.address ?? 'Not set';
@@ -149,12 +156,12 @@ const ViewProfile = () => {
           </Text>
 
           <View style={styles.travelPreferenceCardsContainer}>
-            <CommunicationPreferenceCard />
-            <CommunicationPreferenceCard />
-            <CommunicationPreferenceCard />
+            <CommunicationPreferenceCard title='Bus chat notifications' iconUri={ImageSource.bellOutline} />
+            <CommunicationPreferenceCard title='Reaching destination alerts' iconUri={ImageSource.falg} />
+            <CommunicationPreferenceCard title='Whatsapp communications' iconUri={ImageSource.whatsapp} />
           </View>
         </View>
-        <PrimaryButton title={'Logout'} btnStyle={styles.btnStyle} onPress={handlePressLogout}/>
+        <PrimaryButton title={'Logout'} btnStyle={styles.btnStyle} onPress={handlePressLogout} />
         <PrimaryButton
           title={'Delete Account'}
           onPress={openDeleteAccountSheet}
@@ -247,13 +254,37 @@ const TravelPreferenceCard = ({
   );
 };
 
-const CommunicationPreferenceCard = () => {
+const CommunicationPreferenceCard = ({ iconUri, title }: { iconUri: ImageSourcePropType, title: string }) => {
+  const [isEnabled, setIsEnabled] = useState(false);
   const { colors } = useTheme();
   const styles = useStyles(colors);
+
+  const handleToggleSwitch = () => {
+    setIsEnabled((prev) => !prev);
+  }
   return (
     <View style={styles.addressContainer}>
-      <Image source={ImageSource.Home} style={styles.cardIcon} />
-      <Text style={styles.cardText}>Bus chat notification</Text>
+      <Image source={iconUri} style={styles.cardIcon} />
+      <Text style={styles.cardText}>{title}</Text>
+      <View style={styles.spacer} />
+
+      <Switch
+        value={isEnabled}
+        onValueChange={handleToggleSwitch}
+        circleSize={20}
+        barHeight={22}
+        backgroundInactive={colors.contentDisabled}
+        backgroundActive={colors.primary}
+        renderActiveText={false}
+        renderInActiveText={false}
+        changeValueImmediately
+        circleBorderWidth={2}
+        innerCircleStyle={styles.circleStyle}
+        outerCircleStyle={styles.circleStyle}
+        circleBorderActiveColor={colors.primary}
+        circleBorderInactiveColor={colors.contentDisabled}
+      />
+
     </View>
   );
 };

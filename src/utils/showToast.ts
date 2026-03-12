@@ -7,8 +7,10 @@ export const showToast = (type: ToastType, message: string, subMessage: string =
     type,
     text1: message,
     text2: subMessage,
-    position: 'top',
+    position: 'bottom',
     visibilityTime: duration,
     autoHide: true,
+    // Disable the leading icon to avoid fallback text glyphs
+    icon: null,
   });
 };

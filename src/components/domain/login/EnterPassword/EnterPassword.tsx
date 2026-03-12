@@ -1,57 +1,129 @@
-import { Image, StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import React, { useState } from 'react';
 import { useTheme } from '../../../../theme/ThemeProvider';
 import { SwTextInput as TextInput } from '../../../common/SwTextInput/SwTextInput';
 import { ImageSource } from '../../../../constants/images';
 import { SwText as Text } from '../../../common/SwText/SwText';
-import { useLogin, useRegisterUser } from '../../../../hooks/useAuth';
 import PrimaryButton from '../../../common/SwButton/PrimaryButton/PrimaryButton';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../../store';
-import { AuthStep, setAccessToken, setAuthStep, setRefreshToken } from '../../../../slice/authSlice';
-import { storage } from '../../../../utils/store';
-import { StorageKeys } from '../../../../constants/storage/storageKeys';
+import { AuthStep, setAccessToken, setAuthStep, setIsForgotPassword, setIsNewUser, setRefreshToken, setVerificationId } from '../../../../slice/authSlice';
 import { useNavigation } from '@react-navigation/native';
 import { ScreenNames } from '../../../../navigation/constant';
 import { useStyles } from './EnterPassword.styles';
+import { useEmailLogin } from '../../../../hooks/useAuth';
+import { showToast } from '../../../../utils/showToast';
+import { storage } from '../../../../utils/store';
+import { StorageKeys } from '../../../../constants/storage/storageKeys';
+import { validateEmailOrPhone, validatePassword } from '../../../../utils/validation';
 
 const EnterPassword = () => {
   const [userCred, setUserCred] = useState({
     email: '',
     password: '',
   });
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [showPassword, setShowPassword] = useState(false);
   const { colors } = useTheme();
   const styles = useStyles(colors);
-  const { verificationId } = useSelector((store: RootState) => store.auth);
+  // const { isNewUser } = useSelector((store: RootState) => store.auth);
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
-  const handleChange = (key: string, value: string) => {
-    setUserCred(prev => ({ ...prev, [key]: value }));
+  const onSuccessLogin = (data: any) => {
+     if (data && data?.isNewUser) {
+          showToast('success', '', data?.message ?? "Please register here!", 1500);
+          dispatch(setAuthStep(2));
+          dispatch(setVerificationId(data?.verificationId));
+          dispatch(setIsNewUser(true));
+          storage.set(StorageKeys.IS_NEW_USER, true);
+        } else {
+          dispatch(setAccessToken(data.accessToken));
+          dispatch(setRefreshToken(data.refreshToken));
+          storage.set(StorageKeys.ACCESS_TOKEN, data.accessToken);
+          storage.set(StorageKeys.REFRESH_TOKEN, data.refreshToken);
+          showToast('success', '', data.message ?? "Login Successful!", 3000);
+          if (data.isNewUser) {
+            (navigation as any).navigate(ScreenNames.SET_PROFILE_SCREEN as never, {
+              isFromRegister: true,
+            });
+          } else {
+            navigation.navigate(ScreenNames.DASHBOARD_SCREEN as never);
+          }
+        }
   };
 
-  const handlePressButton = () => {};
+  const onErrorLogin = (error: any) => {
+    showToast("error", error?.message, "", 1500)
+  };
+
+  const { mutate: login } = useEmailLogin(onSuccessLogin, onErrorLogin)
+
+  const handleChange = (key: string, value: string) => {
+    setUserCred(prev => ({ ...prev, [key]: value }));
+    setErrors(prev => ({ ...prev, [key]: undefined }));
+  };
+
+  const handlePressButton = () => {
+    const emailError = validateEmailOrPhone(userCred.email);
+    const passwordError = validatePassword(userCred.password);
+
+    const newErrors: { email?: string; password?: string } = {};
+    if (emailError) newErrors.email = emailError;
+    if (passwordError) newErrors.password = passwordError;
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    try {
+      const payload = {
+        identifier: userCred.email,
+        password: userCred.password,
+      }
+      login(payload)
+    } catch (error) {
+
+    }
+  };
 
   const handlePressPhno = () => {
     console.log('Pressing phno ===>');
     dispatch(setAuthStep(AuthStep.Step0));
   };
 
+  const handlePressForgotPassword = ()=>{
+    dispatch(setAuthStep(AuthStep.Step0));
+    dispatch(setIsForgotPassword(true));
+  }
+
   const handleRenderRightIcon = () => {
-    return <Image source={ImageSource.eyeOff} style={styles.eyeOff} />;
+    return <TouchableOpacity onPress={() => setShowPassword(prev => !prev)}>
+      <Image source={ImageSource.eyeOff} style={styles.eyeOff} />
+    </TouchableOpacity>;
   };
   return (
     <>
       <View style={styles.container}>
-        <TextInput title={'Email Address'} isPhno={false} onChangeText={text => handleChange('email', text)} />
+        <TextInput
+          title={'Email Address Or Phone Number'}
+          isPhno={false}
+          value={userCred.email}
+          onChangeText={text => handleChange('email', text)}
+          errorText={errors.email}
+        />
         <View>
           <TextInput
             title={'Password'}
             isPhno={false}
             renderRightIcon={handleRenderRightIcon}
+            value={userCred.password}
             onChangeText={text => handleChange('password', text)}
+            secureTextEntry={!showPassword}
+            errorText={errors.password}
           />
-          <Text style={styles.forgotPassword}>Forgot Password?</Text>
+          <Text style={styles.forgotPassword} onPress={handlePressForgotPassword}>Forgot Password?</Text>
         </View>
 
         <View style={styles.spacer} />
