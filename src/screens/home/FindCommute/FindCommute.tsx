@@ -6,10 +6,8 @@ import PrimaryHeader from '../../../components/common/SwHeader/PrimaryHeader/Pri
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { SwText as Text } from '../../../components/common/SwText/SwText';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import {
-  SwLocationSearchBottomSheet,
-  SwLocationSearchItem,
-} from '../../../components/common/SwLocationSearchBottomSheet/SwLocationSearchBottomSheet';
+import { SwLocationSearchBottomSheet } from '../../../components/common/SwLocationSearchBottomSheet/SwLocationSearchBottomSheet';
+import type { SwLocationSearchItem } from '../../../types/placeAutofill.types';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch } from '../../../store';
 import type { RootState } from '../../../store';
@@ -17,7 +15,7 @@ import { setCurrentCoords } from '../../../slice/profileSlice';
 import useGetLocation from '../../../hooks/permissions/geoLocation';
 import uuid from 'react-native-uuid';
 import type { ICoords } from '../../../types/coords.types';
-import { usePlaceAutocomplete, useRecentSearch, useReverseGeocode, useSavedLocations, useSearchTrips } from '../../../hooks/useSearch';
+import { usePlaceAutocomplete, useRecentSearch, useReverseGeocode, useSavedLocations } from '../../../hooks/useSearch';
 import DatePicker from 'react-native-date-picker';
 import { format, isToday } from 'date-fns';
 import { ScreenNames } from '../../../navigation/constant';
@@ -89,19 +87,7 @@ const FindCommute = () => {
   const [dateTabs, setDateTabs] = useState<CommuteDateTab[]>(defaultDateTabs);
   const [activeDateIndex, setActiveDateIndexLocal] = useState(0);
 
-  const onSuccessTrips = useCallback(
-    (data: any) => {
-      dispatch(setCommuteData(data));
-      navigation.navigate(ScreenNames.BUS_SELECTION_SCREEN as never);
-    },
-    [dispatch, navigation],
-  );
-
-  const onErrorTrips = useCallback((_error: any) => {
-    // Error handled by hook or global toast
-  }, []);
-
-  const { mutate: searchTrips, isPending: isSearchingTrips } = useSearchTrips(onSuccessTrips, onErrorTrips);
+  const onErrorTrips = useCallback((_error: any) => {}, []);
 
   const getSessionToken = useCallback(() => {
     if (!sessionTokenRef.current) {
@@ -112,6 +98,8 @@ const FindCommute = () => {
 
   const [savedAddresses, setSavedAddresses] = useState<SwLocationSearchItem[]>([]);
   const [recentSearches, setRecentSearches] = useState<SwLocationSearchItem[]>([]);
+  const [isSavedAndRecentLoading, setSavedAndRecentLoading] = useState(false);
+  const [isSearchResultsLoading, setSearchResultsLoading] = useState(false);
 
   const loadSavedAndRecent = useCallback(
     async (type: 'pickup' | 'drop') => {
@@ -122,6 +110,8 @@ const FindCommute = () => {
       } catch (e) {
         setSavedAddresses([]);
         setRecentSearches([]);
+      } finally {
+        setSavedAndRecentLoading(false);
       }
     },
     [getRecentSearchItems, getSavedLocationItems],
@@ -214,6 +204,7 @@ const FindCommute = () => {
     const q = locationQuery.trim();
     if (!q || q.length < 2) {
       setSearchResults([]);
+      setSearchResultsLoading(false);
       if (autocompleteTimeoutRef.current) {
         clearTimeout(autocompleteTimeoutRef.current);
         autocompleteTimeoutRef.current = null;
@@ -229,15 +220,19 @@ const FindCommute = () => {
     }
 
     autocompleteTimeoutRef.current = setTimeout(() => {
+      setSearchResultsLoading(true);
       (async () => {
         try {
           const items = await getPlaceAutocompleteItems(q, token);
-          // Ignore stale responses (user typed again).
           if (requestId !== autocompleteRequestIdRef.current) return;
           setSearchResults(items ?? []);
         } catch (e) {
           if (requestId !== autocompleteRequestIdRef.current) return;
           setSearchResults([]);
+        } finally {
+          if (requestId === autocompleteRequestIdRef.current) {
+            setSearchResultsLoading(false);
+          }
         }
       })();
     }, 400);
@@ -255,7 +250,9 @@ const FindCommute = () => {
       setActiveLocationField(field);
       setLocationQuery('');
       setSearchResults([]);
+      setSearchResultsLoading(false);
       sessionTokenRef.current = null;
+      setSavedAndRecentLoading(true);
       loadSavedAndRecent(field);
       locationSheetRef.current?.present();
     },
@@ -313,10 +310,8 @@ const FindCommute = () => {
       }),
     );
 
-    searchTrips({
-      ...payloadBase,
-      tripDate,
-    });
+    dispatch(setCommuteData(null));
+    navigation.navigate(ScreenNames.BUS_SELECTION_SCREEN as never);
   }, [
     canSubmit,
     currentCoords?.latitude,
@@ -327,7 +322,6 @@ const FindCommute = () => {
     dropItem,
     getCurrentLocation,
     pickupItem,
-    searchTrips,
     toDateKey,
   ]);
 
@@ -355,7 +349,7 @@ const FindCommute = () => {
           onPressDateTab={handlePressDateTab}
           onPressCalendar={openCalendar}
           onSubmit={handleSubmit}
-          isSearching={isSearchingTrips}
+          isSearching={false}
           canSubmit={canSubmit}
         />
 
@@ -365,6 +359,9 @@ const FindCommute = () => {
           query={locationQuery}
           onChangeQuery={setLocationQuery}
           searchResults={searchResults}
+          isSearchResultsLoading={isSearchResultsLoading}
+          isSavedAddressesLoading={isSavedAndRecentLoading}
+          isRecentSearchesLoading={isSavedAndRecentLoading}
           showUseCurrentLocation
           onPressUseCurrentLocation={handleUseCurrentLocation}
           savedAddresses={savedAddresses}

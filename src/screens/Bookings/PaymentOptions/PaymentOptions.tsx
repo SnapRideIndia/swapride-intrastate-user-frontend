@@ -114,6 +114,9 @@ const PaymentOptions = () => {
   };
 
   const handleAddMoney = () => {
+    if (isTopUpPending || !topUpAmount) {
+      return;
+    }
     console.log('Initiate Top-Up Request Amount ===>', topUpAmount);
     initiateTopUp(topUpAmount);
   };
@@ -135,7 +138,7 @@ const PaymentOptions = () => {
               insufficientBalance ? (
                 <View style={styles.addMoneyBtnContainer}>
                   <PrimaryButton
-                    title={isTopUpPending ? '...' : `Add ₹${topUpAmount}`}
+                    title={`Add ₹${topUpAmount}`}
                     onPress={handleAddMoney}
                     btnStyle={styles.addMoneyBtn}
                     textStyle={styles.addMoneyBtnText}

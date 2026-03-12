@@ -1,10 +1,11 @@
-import React, { useCallback, useMemo } from 'react';
-import { Image, Linking, ScrollView, TouchableOpacity, View } from 'react-native';
+import React, { useCallback, useMemo, useState } from 'react';
+import { Image, Linking, ScrollView, TouchableOpacity, View, StyleSheet } from 'react-native';
 import Animated, { FadeIn, FadeOut, LinearTransition } from 'react-native-reanimated';
 import { useTheme } from '../../../../theme/ThemeProvider';
 import { SwText as Text } from '../../../common/SwText/SwText';
 import { ImageSource } from '../../../../constants/images';
 import { useStyles } from './RouteAccordionItem.styles';
+import { ShimmerBox } from '../../../common/Shimmer';
 
 export type RouteStepKind = 'normal' | 'walk' | 'pickup' | 'dropoff';
 
@@ -42,6 +43,8 @@ const RouteAccordionItem = React.memo(({ step, isOpen, isFirst, isLast, onToggle
   }, [step.latitude, step.longitude]);
 
   const hasBody = Boolean(step.description || step.previewCardsCount || (step.images && step.images.length > 0));
+
+  const [loadedImages, setLoadedImages] = useState<Record<string | number, boolean>>({});
 
   const chevronStyle = useMemo(() => [styles.chevron, isOpen && styles.chevronOpen], [isOpen, styles.chevron, styles.chevronOpen]);
 
@@ -102,11 +105,22 @@ const RouteAccordionItem = React.memo(({ step, isOpen, isFirst, isLast, onToggle
                 contentContainerStyle={styles.previewRow}
                 style={styles.previewRow}
               >
-                {step.images.map((img, idx) => (
-                  <View key={img.id || idx} style={styles.previewCard}>
-                    <Image source={{ uri: img.imageUrl }} style={{ width: '100%', height: '100%', borderRadius: 10 }} />
+              {step.images.map((img, idx) => {
+                const key = img.id || idx;
+                const isLoaded = loadedImages[key];
+                return (
+                  <View key={key} style={styles.previewCard}>
+                    {!isLoaded && <ShimmerBox width="100%" height="100%" borderRadius={10} />}
+                    <Image
+                      source={{ uri: img.imageUrl }}
+                      style={[StyleSheet.absoluteFillObject, { borderRadius: 10 }]}
+                      onLoadEnd={() =>
+                        setLoadedImages(prev => (prev[key] ? prev : { ...prev, [key]: true }))
+                      }
+                    />
                   </View>
-                ))}
+                );
+              })}
               </ScrollView>
             ) : step.previewCardsCount ? (
               <ScrollView

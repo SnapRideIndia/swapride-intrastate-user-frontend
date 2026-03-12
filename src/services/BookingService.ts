@@ -146,6 +146,17 @@ class BookingService {
 
     return res.data;
   };
+
+  selfBoard = async (qrToken: string, latitude: number, longitude: number): Promise<any> => {
+    const url = API_ENDPOINTS.BOOKINGS.SELF_BOARD;
+    const res = await postData<any>(url, { qrToken, latitude, longitude });
+
+    if (!res.success || !res.data) {
+      handleErrorResponse(res);
+    }
+
+    return res.data;
+  };
 }
 
 export default new BookingService();

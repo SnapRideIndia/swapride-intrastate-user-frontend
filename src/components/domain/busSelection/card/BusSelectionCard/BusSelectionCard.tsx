@@ -1,4 +1,4 @@
-import { Image, ScrollView, TouchableOpacity, View } from 'react-native';
+import { Image, Linking, ScrollView, TouchableOpacity, View } from 'react-native';
 import React, { useCallback, useMemo, useState, useRef } from 'react';
 import { useTheme } from '../../../../../theme/ThemeProvider';
 import { useStyles } from './BusSelectionCard.styles';
@@ -35,6 +35,21 @@ const BusSelectionCard = ({ showLabel = false, data, onProceed }: IBusSelectionC
     () => data.timings?.find(t => t.tripId === selectedTripId) || data.timings?.[0],
     [data.timings, selectedTripId],
   );
+
+  const openDirections = useCallback((lat?: number, lng?: number) => {
+    if (typeof lat === 'number' && typeof lng === 'number') {
+      const url = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+      Linking.openURL(url);
+    }
+  }, []);
+
+  const handleOpenPickupDirections = useCallback(() => {
+    openDirections(data.pickup?.latitude, data.pickup?.longitude);
+  }, [openDirections, data.pickup?.latitude, data.pickup?.longitude]);
+
+  const handleOpenDropoffDirections = useCallback(() => {
+    openDirections(data.dropoff?.latitude, data.dropoff?.longitude);
+  }, [openDirections, data.dropoff?.latitude, data.dropoff?.longitude]);
 
   const handlePressBtn = () => {
     if (selectedTiming && onProceed) {
@@ -103,13 +118,27 @@ const BusSelectionCard = ({ showLabel = false, data, onProceed }: IBusSelectionC
               <Text variant="medium" style={styles.placeSubtitle}>
                 {data.pickup?.address}
               </Text>
-              <TouchableOpacity style={styles.walkAndTimeContainer} onPress={() => setShowSourceStopImages(prev => !prev)}>
-                <Image source={ImageSource.walkIcon} style={styles.walkIcon} />
-                <Text variant="semi-bold" style={styles.placeSubtitle}>
-                  {data.pickup?.distanceText ?? '-'}
-                </Text>
-                <Image source={ImageSource.downArrow} style={styles.downArrow} />
-              </TouchableOpacity>
+              <View style={styles.walkAndDirectionRow}>
+                <TouchableOpacity style={styles.walkAndTimeContainer} onPress={() => setShowSourceStopImages(prev => !prev)}>
+                  <Image source={ImageSource.walkIcon} style={styles.walkIcon} />
+                  <Text variant="semi-bold" style={styles.placeSubtitle}>
+                    {data.pickup?.distanceText ?? '-'}
+                  </Text>
+                  <Image source={ImageSource.downArrow} style={styles.downArrow} />
+                </TouchableOpacity>
+                {showSourceStopImages && (
+                  <TouchableOpacity
+                    activeOpacity={0.85}
+                    style={styles.directionButton}
+                    onPress={handleOpenPickupDirections}
+                  >
+                    <Image source={ImageSource.direction} style={styles.directionIcon} />
+                    <Text variant="medium" style={styles.directionText}>
+                      Direction
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              </View>
 
               {showSourceStopImages && (
                 <>
@@ -143,13 +172,27 @@ const BusSelectionCard = ({ showLabel = false, data, onProceed }: IBusSelectionC
               <Text variant="medium" style={styles.placeSubtitle}>
                 {data.dropoff?.address}
               </Text>
-              <TouchableOpacity style={styles.walkAndTimeContainer} onPress={() => setShowDestinationImages(prev => !prev)}>
-                <Image source={ImageSource.walkIcon} style={styles.walkIcon} />
-                <Text variant="semi-bold" style={styles.placeSubtitle}>
-                  {data.dropoff?.distanceText ?? '-'}
-                </Text>
-                <Image source={ImageSource.downArrow} style={styles.downArrow} />
-              </TouchableOpacity>
+              <View style={styles.walkAndDirectionRow}>
+                <TouchableOpacity style={styles.walkAndTimeContainer} onPress={() => setShowDestinationImages(prev => !prev)}>
+                  <Image source={ImageSource.walkIcon} style={styles.walkIcon} />
+                  <Text variant="semi-bold" style={styles.placeSubtitle}>
+                    {data.dropoff?.distanceText ?? '-'}
+                  </Text>
+                  <Image source={ImageSource.downArrow} style={styles.downArrow} />
+                </TouchableOpacity>
+                {showDestinationImages && (
+                  <TouchableOpacity
+                    activeOpacity={0.85}
+                    style={styles.directionButton}
+                    onPress={handleOpenDropoffDirections}
+                  >
+                    <Image source={ImageSource.direction} style={styles.directionIcon} />
+                    <Text variant="medium" style={styles.directionText}>
+                      Direction
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              </View>
 
               {showDestinationImages && (
                 <>

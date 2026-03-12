@@ -21,6 +21,9 @@ export const ScreenNames = {
   BOOKING_OPTIONS: 'BookingOptionsScreen',
   PAYMENT_OPTIONS: 'PaymentOptionsScreen',
   BOOKING_SUCCESS: 'BookingSuccessScreen',
+  SELF_BOARD_SCANNER: 'SelfBoardScannerScreen',
+  SELF_BOARD_SUCCESS: 'SelfBoardSuccessScreen',
+  SELF_BOARD_ERROR: 'SelfBoardErrorScreen',
   SET_COMMUTE: 'SetCommuteScreen', // first commute
   FIND_COMMUTE: 'FindCommute', // second time
   SEAT_SELECTION: 'SeatSelectionScreen',

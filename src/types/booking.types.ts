@@ -51,11 +51,14 @@ export interface LegDetail {
     address: string;
     arrivalTime: string;
     distanceText: string | null;
+    walkDurationText?: string | null;
   };
   dropoff: {
     name: string;
     address: string;
     arrivalTime: string;
+    distanceText: string | null;
+    walkDurationText?: string | null;
   };
 }
 

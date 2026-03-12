@@ -15,20 +15,25 @@ export const useStyles = (colors: ColorsType) =>
       elevation: 6,
       zIndex: 10,
     },
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingRight: 8,
+    },
     tabsContentContainer: {
       paddingHorizontal: 16,
-      paddingRight: 24,
-      // paddingVertical: 12,
       paddingTop: 20,
       flexDirection: 'row',
       alignItems: 'center',
+    },
+    tabsScroll: {
+      flex: 1,
     },
     tabItem: {
       paddingTop: 8,
       paddingBottom: 10,
       paddingHorizontal: 12,
-      marginRight: 20,
-      minWidth: 60,
+      width: 110,
       alignItems: 'center',
       justifyContent: 'center',
     },
@@ -48,5 +53,14 @@ export const useStyles = (colors: ColorsType) =>
       height: 3,
       borderRadius: 2,
       backgroundColor: colors.primary,
+    },
+    calendarButton: {
+      paddingHorizontal: 8,
+      paddingTop: 16,
+      paddingBottom: 10,
+    },
+    calendarIcon: {
+      width: 20,
+      height: 20,
     },
   });

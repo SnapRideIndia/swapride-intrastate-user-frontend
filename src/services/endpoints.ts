@@ -8,6 +8,7 @@ export const API_ENDPOINTS = {
   BOOKINGS: {
     INITIATE: '/bookings/initiate',
     INITIATE_ROUND_TRIP: '/bookings/initiate-round-trip',
+    SELF_BOARD: '/bookings/self-board',
     CONFIRM: (id: string) => `/bookings/${id}/confirm`,
     APPLY_COUPON: (id: string) => `/bookings/${id}/apply-coupon`,
     REMOVE_COUPON: (id: string) => `/bookings/${id}/coupon`,

@@ -107,3 +107,15 @@ export const useDriverDetails = (driverId: string) => {
     enabled: !!driverId,
   });
 };
+
+export const useSelfBoard = (
+  onSuccess?: (data: any) => void,
+  onError?: (error: any) => void,
+) => {
+  return useMutation({
+    mutationFn: (data: { qrToken: string; latitude: number; longitude: number }) =>
+      BookingService.selfBoard(data.qrToken, data.latitude, data.longitude),
+    onSuccess,
+    onError,
+  });
+};

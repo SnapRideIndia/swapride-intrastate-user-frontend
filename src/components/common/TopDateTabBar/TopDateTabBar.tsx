@@ -1,8 +1,9 @@
 import React, { useEffect, useRef } from 'react';
-import { ScrollView, TouchableOpacity, View, LayoutChangeEvent } from 'react-native';
+import { ScrollView, TouchableOpacity, View, LayoutChangeEvent, Image } from 'react-native';
 import { useTheme } from '../../../theme/ThemeProvider';
 import { SwText as Text } from '../SwText/SwText';
 import { useStyles } from './TopDateTabBar.styles';
+import { ImageSource } from '../../../constants/images';
 
 type TopDateTab = {
   id: string;
@@ -14,9 +15,10 @@ type Props = {
   tabs: TopDateTab[];
   activeIndex: number;
   onTabPress: (index: number) => void;
+  onPressCalendar?: () => void;
 };
 
-const TopDateTabBar: React.FC<Props> = ({ tabs, activeIndex, onTabPress }) => {
+const TopDateTabBar: React.FC<Props> = ({ tabs, activeIndex, onTabPress, onPressCalendar }) => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const scrollRef = useRef<ScrollView | null>(null);
@@ -55,35 +57,44 @@ const TopDateTabBar: React.FC<Props> = ({ tabs, activeIndex, onTabPress }) => {
 
   return (
     <View style={styles.container}>
-      <ScrollView
-        ref={scrollRef}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.tabsContentContainer}
-        onLayout={onScrollViewLayout}
-      >
-        {tabs.map((tab, index) => {
-          const isActive = index === activeIndex;
-          return (
-            <TouchableOpacity
-              key={tab.id}
-              activeOpacity={0.7}
-              onPress={() => handleTabPress(index)}
-              onLayout={handleTabLayout(index)}
-              style={styles.tabItem}
-            >
+      <View style={styles.row}>
+        <ScrollView
+          ref={scrollRef}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.tabsContentContainer}
+          style={styles.tabsScroll}
+          onLayout={onScrollViewLayout}
+        >
+          {tabs.map((tab, index) => {
+            const isActive = index === activeIndex;
+            return (
+              <TouchableOpacity
+                key={tab.id}
+                activeOpacity={0.7}
+                onPress={() => handleTabPress(index)}
+                onLayout={handleTabLayout(index)}
+                style={styles.tabItem}
+              >
               <Text
                 variant={isActive ? 'semi-bold' : 'regular'}
                 style={[styles.tabTitle, isActive && styles.tabTitleActive]}
                 numberOfLines={1}
               >
-                {tab.title}
-              </Text>
-              {isActive && <View style={styles.indicator} />}
-            </TouchableOpacity>
-          );
-        })}
-      </ScrollView>
+                  {tab.title}
+                </Text>
+                {isActive && <View style={styles.indicator} />}
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
+
+        {onPressCalendar && (
+          <TouchableOpacity activeOpacity={0.8} onPress={onPressCalendar} style={styles.calendarButton}>
+            <Image source={ImageSource.calenderBlue} style={styles.calendarIcon} />
+          </TouchableOpacity>
+        )}
+      </View>
     </View>
   );
 };

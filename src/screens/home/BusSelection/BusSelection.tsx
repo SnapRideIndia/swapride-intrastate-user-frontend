@@ -9,6 +9,7 @@ import TopDateTabBar from '../../../components/common/TopDateTabBar/TopDateTabBa
 import { SwText as Text } from '../../../components/common/SwText/SwText';
 import { ImageSource } from '../../../constants/images';
 import BusSelectionCard from '../../../components/domain/busSelection/card/BusSelectionCard/BusSelectionCard';
+import BusSelectionCardSkeleton from '../../../components/domain/busSelection/card/BusSelectionCard/BusSelectionCardSkeleton';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import { setActiveDateIndex, setCommuteData, setCommuteSearchContext } from '../../../slice/commuteSlice';
@@ -18,10 +19,8 @@ import { format, isToday, addDays } from 'date-fns';
 import { FindCommuteCard } from '../../../components/domain/booking/FindCommuteCard/FindCommuteCard';
 import { SwTopModal } from '../../../components/common/SwTopModal/SwTopModal';
 import { ActivityIndicator, Alert } from 'react-native';
-import {
-  SwLocationSearchBottomSheet,
-  SwLocationSearchItem,
-} from '../../../components/common/SwLocationSearchBottomSheet/SwLocationSearchBottomSheet';
+import { SwLocationSearchBottomSheet } from '../../../components/common/SwLocationSearchBottomSheet/SwLocationSearchBottomSheet';
+import type { SwLocationSearchItem } from '../../../types/placeAutofill.types';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import uuid from 'react-native-uuid';
 import { useLocationSheetBackHandler } from '../../../hooks/useLocationSheetBackHandler';
@@ -44,6 +43,7 @@ const BusSelection = () => {
     dateTabs: storedTabs,
     activeDateIndex: storedActiveIndex,
     searchBaseParams,
+    officeTimings,
   } = useSelector((store: RootState) => store.commute);
 
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
@@ -104,6 +104,8 @@ const BusSelection = () => {
   const [searchResults, setSearchResults] = useState<SwLocationSearchItem[]>([]);
   const [savedAddresses, setSavedAddresses] = useState<SwLocationSearchItem[]>([]);
   const [recentSearches, setRecentSearches] = useState<SwLocationSearchItem[]>([]);
+  const [isSavedAndRecentLoading, setSavedAndRecentLoading] = useState(false);
+  const [isSearchResultsLoading, setSearchResultsLoading] = useState(false);
   const sessionTokenRef = useRef<string | null>(null);
 
   const { getPlaceAutocompleteItems } = usePlaceAutocomplete();
@@ -157,6 +159,8 @@ const BusSelection = () => {
       } catch (e) {
         setSavedAddresses([]);
         setRecentSearches([]);
+      } finally {
+        setSavedAndRecentLoading(false);
       }
     },
     [getRecentSearchItems, getSavedLocationItems],
@@ -167,6 +171,8 @@ const BusSelection = () => {
       setActiveLocationField(field);
       setLocationQuery('');
       setSearchResults([]);
+      setSearchResultsLoading(false);
+      setSavedAndRecentLoading(true);
       loadSavedAndRecent(field);
       locationSheetRef.current?.present();
     },
@@ -197,9 +203,13 @@ const BusSelection = () => {
   useEffect(() => {
     if (locationQuery.length > 2) {
       if (!sessionTokenRef.current) sessionTokenRef.current = String(uuid.v4());
-      getPlaceAutocompleteItems(locationQuery, sessionTokenRef.current).then(setSearchResults);
+      setSearchResultsLoading(true);
+      getPlaceAutocompleteItems(locationQuery, sessionTokenRef.current)
+        .then(setSearchResults)
+        .finally(() => setSearchResultsLoading(false));
     } else {
       setSearchResults([]);
+      setSearchResultsLoading(false);
     }
   }, [locationQuery, getPlaceAutocompleteItems]);
 
@@ -290,21 +300,42 @@ const BusSelection = () => {
         dateTabs: localDateTabs,
         activeDateIndex: activeTabIndex,
         searchBaseParams: baseParams,
+        officeTimings: officeTimings ?? null,
       }),
     );
 
     dispatch(setCommuteData(null));
     const tripDate = tabs[activeTabIndex].date;
-    const apiParams = {
+    const apiParams: any = {
       ...baseParams,
       tripDate,
     };
+    if (officeTimings) {
+      apiParams.officeTimings = officeTimings;
+    }
 
     searchTrips(apiParams);
     setIsEditModalVisible(false);
   };
 
   const tabs = localDateTabs;
+
+  useEffect(() => {
+    if (!searchBaseParams) return;
+    const tab = tabs[activeTabIndex] as any;
+    const tripDate = tab?.date;
+    if (!tripDate) return;
+    // Only trigger the initial fetch when we don't yet have data (null).
+    // This avoids repeatedly refetching when the API legitimately returns an empty list.
+    if (commuteData !== null) return;
+    if (isSearchingTrips) return;
+
+    const params: any = { ...searchBaseParams, tripDate };
+    if (officeTimings) {
+      params.officeTimings = officeTimings;
+    }
+    searchTrips(params);
+  }, [searchBaseParams, tabs, activeTabIndex, commuteData, isSearchingTrips, officeTimings, searchTrips]);
 
   const handleTabPress = useCallback(
     (index: number) => {
@@ -320,9 +351,13 @@ const BusSelection = () => {
 
       dispatch(setCommuteData(null));
 
-      searchTrips({ ...searchBaseParams, tripDate });
+      const params: any = { ...searchBaseParams, tripDate };
+      if (officeTimings) {
+        params.officeTimings = officeTimings;
+      }
+      searchTrips(params);
     },
-    [dispatch, searchBaseParams, searchTrips, tabs, isReturnLeg],
+    [dispatch, searchBaseParams, searchTrips, tabs, isReturnLeg, officeTimings],
   );
 
   useEffect(() => {
@@ -351,6 +386,8 @@ const BusSelection = () => {
     );
   }, [searchBaseParams, pickupLocation, dropLocation, styles]);
 
+  const showSkeletonCards = isSearchingTrips && (!commuteData || commuteData.length === 0);
+
   useEffect(() => {
     const renderHeader = () => <PrimaryHeader title={HeaderTitle} onEdit={() => setIsEditModalVisible(true)} />;
     navigation.setOptions({
@@ -361,14 +398,9 @@ const BusSelection = () => {
 
   return (
     <SafeAreaView edges={['bottom']} style={styles.container}>
-      <TopDateTabBar tabs={tabs} activeIndex={activeTabIndex} onTabPress={handleTabPress} />
-      {isSearchingTrips && (
-        <View style={{ paddingVertical: 10 }}>
-          <ActivityIndicator size="small" color={colors.primary} />
-        </View>
-      )}
+      <TopDateTabBar tabs={tabs} activeIndex={activeTabIndex} onTabPress={handleTabPress} onPressCalendar={openCalendar} />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.contentContainer}>
-        {commuteData && commuteData.length > 0 && (
+        {!showSkeletonCards && commuteData && commuteData.length > 0 && (
           <View style={styles.bannerCard}>
             <Text variant="semi-bold" style={styles.bannerText}>
               Showing nearest stops & bus timings on your route
@@ -377,7 +409,11 @@ const BusSelection = () => {
           </View>
         )}
 
-        {commuteData?.map((item, idx) => (
+        {showSkeletonCards &&
+          Array.from({ length: 3 }).map((_, idx) => <BusSelectionCardSkeleton key={`skeleton-${idx}`} />)}
+
+        {!showSkeletonCards &&
+          commuteData?.map((item, idx) => (
           <BusSelectionCard key={`${item.routeId}-${idx}`} showLabel={true} data={item} onProceed={timing => handleProceed(item, timing)} />
         ))}
 
@@ -421,6 +457,9 @@ const BusSelection = () => {
         query={locationQuery}
         onChangeQuery={setLocationQuery}
         searchResults={searchResults}
+        isSearchResultsLoading={isSearchResultsLoading}
+        isSavedAddressesLoading={isSavedAndRecentLoading}
+        isRecentSearchesLoading={isSavedAndRecentLoading}
         showUseCurrentLocation={false}
         savedAddresses={savedAddresses}
         recentSearches={recentSearches}

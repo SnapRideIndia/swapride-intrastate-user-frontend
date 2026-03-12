@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, ScrollView, ActivityIndicator, Alert } from 'react-native';
+import { View, ScrollView, Alert } from 'react-native';
 import { useTheme } from '../../../theme/ThemeProvider';
 import { useStyles } from './SeatSelection.styles';
 import PrimaryHeader from '../../../components/common/SwHeader/PrimaryHeader/PrimaryHeader';
@@ -10,6 +10,7 @@ import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../../../navigation/types';
 import { ScreenNames } from '../../../navigation/constant';
 import { useGetTripSeats, useChangeSeat } from '../../../hooks/useBooking';
+import SeatSelectionSkeleton from './SeatSelectionSkeleton';
 
 const SeatSelection = () => {
   const { colors } = useTheme();
@@ -37,16 +38,14 @@ const SeatSelection = () => {
   };
 
   const seats = seatData?.seats || [];
+  const showSkeleton = isLoading;
 
   return (
     <View style={styles.container}>
       <PrimaryHeader title="Select a seat" />
 
-      {isLoading ? (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={{ marginTop: 12 }}>Loading seat layout...</Text>
-        </View>
+      {showSkeleton ? (
+        <SeatSelectionSkeleton />
       ) : error ? (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
           <Text>Failed to load seat layout.</Text>
@@ -57,19 +56,23 @@ const SeatSelection = () => {
         </ScrollView>
       )}
 
-      <View style={styles.selectionContainer}>
-        <Text variant="medium" style={styles.selectionText}>
-          {selectedSeat ? `You have selected seat ${selectedSeat}!` : 'Please select a seat'}
-        </Text>
-      </View>
+      {!showSkeleton && (
+        <>
+          <View style={styles.selectionContainer}>
+            <Text variant="medium" style={styles.selectionText}>
+              {selectedSeat ? `You have selected seat ${selectedSeat}!` : 'Please select a seat'}
+            </Text>
+          </View>
 
-      <View style={styles.footer}>
-        <PrimaryButton
-          title={isChanging ? 'Saving...' : 'Confirm Seat'}
-          onPress={handleConfirm}
-          disabled={!selectedSeat || isChanging || isLoading}
-        />
-      </View>
+          <View style={styles.footer}>
+            <PrimaryButton
+              title={isChanging ? 'Saving...' : 'Confirm Seat'}
+              onPress={handleConfirm}
+              disabled={!selectedSeat || isChanging || isLoading}
+            />
+          </View>
+        </>
+      )}
     </View>
   );
 };

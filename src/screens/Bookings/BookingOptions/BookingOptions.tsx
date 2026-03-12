@@ -10,7 +10,6 @@ import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../../../navigation/types';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useInitiateBooking } from '../../../hooks/useBooking';
-import { useSearchTrips } from '../../../hooks/useSearch';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import { setCommuteSearchContext, setCommuteData } from '../../../slice/commuteSlice';
@@ -49,20 +48,6 @@ const BookingOptions = () => {
     initiateBooking(payload);
   };
 
-  const { mutate: searchTrips, isPending: isSearchingTrips } = useSearchTrips(
-    data => {
-      dispatch(setCommuteData(data));
-      navigation.navigate(ScreenNames.BUS_SELECTION_SCREEN, {
-        isReturnLeg: true,
-        outbound: outbound,
-      });
-    },
-    error => {
-      const errorMsg = Array.isArray(error?.message) ? error.message.join(', ') : error?.message || 'Unable to fetch return buses';
-      Alert.alert('Search Failed', errorMsg);
-    },
-  );
-
   const handleShowReturnBuses = (timeString?: string) => {
     if (!searchBaseParams) return;
 
@@ -97,10 +82,17 @@ const BookingOptions = () => {
 
     const tripDate = dateTabs[activeDateIndex]?.date;
 
-    searchTrips({
-      ...returnParams,
-      tripDate: tripDate,
-      ...(timeToPass && { preferredTime: timeToPass }),
+    dispatch(
+      setCommuteSearchContext({
+        dateTabs,
+        activeDateIndex,
+        searchBaseParams: returnParams,
+      }),
+    );
+
+    navigation.navigate(ScreenNames.BUS_SELECTION_SCREEN, {
+      isReturnLeg: true,
+      outbound: outbound,
     });
   };
 
