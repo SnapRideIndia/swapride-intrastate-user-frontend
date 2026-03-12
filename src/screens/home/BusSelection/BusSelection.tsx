@@ -59,11 +59,15 @@ const BusSelection = () => {
 
   const { mutate: searchTrips, isPending: isSearchingTrips } = useSearchTrips(
     (data: any) => {
+      // Successful response – store trips (can be empty array) and close edit modal
       dispatch(setCommuteData(data));
       setIsEditModalVisible(false);
     },
     (e: any) => {
-      const errorMsg = Array.isArray(e?.message) ? e.message.join(', ') : e?.message || 'Unable to fetch buses';
+      // On error, stop infinite refetch loop by marking commuteData as an empty list
+      // so the effect knows we've already attempted and can show an empty/failed state.
+      dispatch(setCommuteData([]));
+      console.warn('Search trips failed:', e?.message || e);
     },
   );
 
@@ -386,7 +390,9 @@ const BusSelection = () => {
     );
   }, [searchBaseParams, pickupLocation, dropLocation, styles]);
 
-  const showSkeletonCards = isSearchingTrips && (!commuteData || commuteData.length === 0);
+  const hasCommuteResults = Array.isArray(commuteData) && commuteData.length > 0;
+  // Show skeletons only while the API call is in-flight *before* we have any data (null state).
+  const showSkeletonCards = isSearchingTrips && commuteData === null;
 
   useEffect(() => {
     const renderHeader = () => <PrimaryHeader title={HeaderTitle} onEdit={() => setIsEditModalVisible(true)} />;
@@ -400,7 +406,7 @@ const BusSelection = () => {
     <SafeAreaView edges={['bottom']} style={styles.container}>
       <TopDateTabBar tabs={tabs} activeIndex={activeTabIndex} onTabPress={handleTabPress} onPressCalendar={openCalendar} />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.contentContainer}>
-        {!showSkeletonCards && commuteData && commuteData.length > 0 && (
+        {!showSkeletonCards && hasCommuteResults && (
           <View style={styles.bannerCard}>
             <Text variant="semi-bold" style={styles.bannerText}>
               Showing nearest stops & bus timings on your route
@@ -418,7 +424,6 @@ const BusSelection = () => {
         ))}
 
         {!isSearchingTrips && commuteData !== null && commuteData.length === 0 && <EmptyCommuteData />}
-        {!isSearchingTrips && commuteData === null && searchBaseParams && <EmptyCommuteData />}
       </ScrollView>
 
       <SwTopModal isVisible={isEditModalVisible} onClose={() => setIsEditModalVisible(false)} title="Search Bus">

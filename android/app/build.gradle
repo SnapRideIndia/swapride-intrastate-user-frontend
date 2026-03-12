@@ -3,31 +3,37 @@ apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 
 // Load GOOGLE_MAPS_API_KEY from .env at project root (not committed)
-def projectRoot = project.rootProject.projectDir.parentFile
-def envFile = projectRoot != null ? new File(projectRoot, ".env") : file("${rootDir}/../../.env")
-if (envFile == null || !envFile.exists()) {
-    envFile = file("${rootDir}/../../.env")
-}
+def projectRootDir = rootProject.projectDir?.parentFile
+def envFile = projectRootDir != null ? new File(projectRootDir, ".env") : file("${rootDir}/../.env")
 def googleMapsApiKey = ""
-if (envFile.exists()) {
+
+if (envFile != null && envFile.exists()) {
     envFile.readLines().each { line ->
         def trimmed = line.trim()
         if (trimmed.isEmpty() || trimmed.startsWith("#")) return
+
         def eq = trimmed.indexOf("=")
         if (eq <= 0) return
+
         def key = trimmed.substring(0, eq).trim()
         def value = trimmed.substring(eq + 1).trim()
+
         if (key == "GOOGLE_MAPS_API_KEY" && !value.isEmpty()) {
+            // Strip comments and quotes
             value = value.replaceAll(/#.*$/, "").trim()
             value = value.replaceAll(/^["']|["']$/, "")
-            if (!value.isEmpty()) googleMapsApiKey = value
+            if (!value.isEmpty()) {
+                googleMapsApiKey = value
+            }
         }
     }
 }
+
 if (!googleMapsApiKey) {
     logger.warn("GOOGLE_MAPS_API_KEY not found in .env. Copy .env.example to .env and add your key.")
 }
 
+// 
 /**
  * This is the configuration block to customize your React Native Android app.
  * By default you don't need to apply any configuration, just uncomment the lines you need.
