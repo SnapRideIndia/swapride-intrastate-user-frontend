@@ -3,6 +3,8 @@ export const ScreenNames = {
   HOME_SCREEN: 'HomeScreen',
   WALLET_SCREEN: 'WalletScreen',
   HISTORY_SCREEN: 'HistoryScreen',
+  TRANSACTION_HISTORY_SCREEN: 'TransactionHistoryScreen',
+  TRANSACTION_DETAIL_SCREEN: 'TransactionDetailScreen',
   SAVED_PLACES_SCREEN: 'SavedPlacesScreen',
   POLICY_SCREEN: 'PolicyScreen',
   RENT_A_BUS_SCREEN: 'RentABusScreen',

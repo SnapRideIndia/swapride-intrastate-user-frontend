@@ -11,17 +11,22 @@ import { BottomSheetModal as BottomSheetType } from '@gorhom/bottom-sheet';
 import { AddAmountSheet } from '../../../components/domain/wallet/sheets/AddAmountSheet/AddAmountSheet';
 import { ImageSource } from '../../../constants/images';
 import { useBalance, useInitiateTopUp, useTransactions } from '../../../hooks/useWallet';
+import { useNavigation } from '@react-navigation/native';
+import { ScreenNames } from '../../../navigation/constant';
 import { Transaction } from '../../../services/WalletService';
+import TransactionCardShimmer from '../../../components/domain/wallet/card/TransactionCard/TransactionCardShimmer';
+import { NoResults } from '../../../components/common/NoResults/NoResults';
 
 const WalletScreen = () => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const bottomSheetRef = useRef<BottomSheetType>(null);
+  const navigation = useNavigation<any>();
 
   // Balance
   const { data: balanceData, isLoading: balanceLoading, isError: balanceError, refetch: refetchBalance } = useBalance();
 
-  // Transactions (infinite)
+  // Transactions (infinite) - always show wallet transactions here
   const {
     data: txPages,
     isLoading: txLoading,
@@ -30,7 +35,8 @@ const WalletScreen = () => {
     hasNextPage,
     fetchNextPage,
     refetch: refetchTx,
-  } = useTransactions();
+  } = useTransactions({ filter: 'WALLET' });
+
 
   // Top-up mutation
   const { mutate: initiateTopUp, isPending: topUpLoading } = useInitiateTopUp({
@@ -67,12 +73,26 @@ const WalletScreen = () => {
     initiateTopUp(amount);
   };
 
+  const handleTransactionPress = useCallback(
+    (id: string) => {
+      navigation.navigate(ScreenNames.TRANSACTION_DETAIL_SCREEN as never, { transactionId: id } as never);
+    },
+    [navigation],
+  );
+
   // Renders
   const renderTransaction = useCallback(
     ({ item }: { item: Transaction }) => (
-      <TransactionCard key={item.id} type={item.type === 'CREDIT' ? 'Credit' : 'Debit'} amount={item.amount} date={item.date} />
+      <TouchableOpacity activeOpacity={1} onPress={() => handleTransactionPress(item.id)}>
+        <TransactionCard
+          key={item.id}
+          type={item.type === 'CREDIT' ? 'Credit' : 'Debit'}
+          amount={item.amount}
+          date={item.date}
+        />
+      </TouchableOpacity>
     ),
-    [],
+    [handleTransactionPress],
   );
 
   const renderHeader = () => (
@@ -89,7 +109,10 @@ const WalletScreen = () => {
         <Text variant="semi-bold" style={styles.transactionTitle}>
           Transaction History
         </Text>
-        <TouchableOpacity style={styles.seeAllContainer}>
+        <TouchableOpacity
+          style={styles.seeAllContainer}
+          onPress={() => navigation.navigate(ScreenNames.TRANSACTION_HISTORY_SCREEN)}
+        >
           <Text variant="semi-bold" style={styles.seeAllText}>
             See all
           </Text>
@@ -115,13 +138,21 @@ const WalletScreen = () => {
   };
 
   const renderEmpty = () => {
-    if (txLoading) return null;
+    if (txLoading) {
+      return (
+        <View style={styles.shimmerList}>
+          {[1, 2, 3].map(key => (
+            <TransactionCardShimmer key={key} />
+          ))}
+        </View>
+      );
+    }
     return (
-      <View style={styles.emptyContainer}>
-        <Text variant="regular" style={styles.emptyText}>
-          No transactions found.
-        </Text>
-      </View>
+      <NoResults
+        image={ImageSource.noTicketsFound}
+        title="No wallet transactions found"
+        subtitle="Your wallet transactions will appear here."
+      />
     );
   };
 
@@ -137,9 +168,11 @@ const WalletScreen = () => {
         ListEmptyComponent={renderEmpty}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.transactionContainer}
+        refreshControl={
+          <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} tintColor={colors.primary} />
+        }
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.4}
-        refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} tintColor={colors.primary} />}
       />
 
       <AddAmountSheet ref={bottomSheetRef} onContinue={handleContinueAddMoney} />

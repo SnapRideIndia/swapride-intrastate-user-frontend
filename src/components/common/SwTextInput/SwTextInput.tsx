@@ -1,4 +1,4 @@
-import { StyleSheet, TextInput, TextInputProps, View } from 'react-native';
+import { StyleSheet, TextInput, TextInputProps, View, ViewStyle, StyleProp } from 'react-native';
 import React, { ReactNode } from 'react';
 import { useTheme } from '../../../theme/ThemeProvider';
 import { useStyles } from './SwTextInput.styles';
@@ -8,9 +8,11 @@ interface IInputProps extends TextInputProps {
   title?: string;
   isPhno?: boolean;
   renderRightIcon?: () => ReactNode;
+  renderLeftIcon?: () => ReactNode;
   renderTitleIcon?: () => ReactNode;
   variant?: 'default' | 'rounded';
   errorText?: string;
+  inputContainerStyle?: StyleProp<ViewStyle>;
 }
 
 export const SwTextInput = ({ variant = 'default', errorText, ...props }: IInputProps) => {
@@ -32,8 +34,10 @@ export const SwTextInput = ({ variant = 'default', errorText, ...props }: IInput
           variant === 'rounded' && styles.roundedContainer,
           props.isPhno && styles.phNoStyle,
           !!errorText && styles.inputErrorBorder,
+          props.inputContainerStyle,
         ]}
       >
+        {props.renderLeftIcon?.()}
         {props.isPhno && <Text>+91 | </Text>}
         <TextInput style={styles.inputStyle} placeholderTextColor={props.placeholderTextColor || colors.contenttertiary} {...props} />
         {props.renderRightIcon?.()}

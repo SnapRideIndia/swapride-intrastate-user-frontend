@@ -29,6 +29,7 @@ export const API_ENDPOINTS = {
   WALLET: {
     BALANCE: '/wallet/balance',
     TRANSACTIONS: '/financials/transactions',
+    TRANSACTION_DETAIL: (id: string) => `/financials/transactions/${id}`,
     TOPUP_INITIATE: '/wallet/topup/initiate',
   },
 };

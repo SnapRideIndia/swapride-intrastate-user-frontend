@@ -13,6 +13,8 @@ export type RootStackParamList = {
   [ScreenNames.HOME_SCREEN]: undefined;
   [ScreenNames.WALLET_SCREEN]: undefined;
   [ScreenNames.HISTORY_SCREEN]: undefined;
+  [ScreenNames.TRANSACTION_HISTORY_SCREEN]: undefined;
+  [ScreenNames.TRANSACTION_DETAIL_SCREEN]: { transactionId: string };
   [ScreenNames.CONFIRM_BOOKING_DETAILS]: { bookingId: string };
   [ScreenNames.BOOKING_OPTIONS]: { outbound: { result: ICommute; timing: Timing } };
   [ScreenNames.PAYMENT_OPTIONS]: { bookingId: string; returnBookingId?: string; totalAmount: number };

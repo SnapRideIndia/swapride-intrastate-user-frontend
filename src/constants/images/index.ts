@@ -84,4 +84,7 @@ razorpay: require('.././../assets/images/razorpay.png'),
   // metroLottie: require('../../assets/images/metro.gif'),
   cloud:  require('../../assets/images/cloud.png'),
   metroSplash:  require('../../assets/images/metro.png'),
+
+  noTicketsFound: require('.././../assets/images/noTicketsFound.png'),
+  noNotificationsFound: require('.././../assets/images/noNotificationsFound.png'),
 }

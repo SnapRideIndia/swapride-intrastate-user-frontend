@@ -32,6 +32,8 @@ import SelfBoardSuccessScreen from '../../screens/Boarding/SelfBoardSuccess/Self
 import SelfBoardErrorScreen from '../../screens/Boarding/SelfBoardError/SelfBoardErrorScreen';
 import SplashScreen from '../../screens/splash/SplashScreen';
 import Dummy from '../../screens/dummy/Dummy';
+import TransactionHistoryScreen from '../../screens/transactions/TransactionHistoryScreen/TransactionHistoryScreen';
+import TransactionDetailScreen from '../../screens/transactions/TransactionDetailScreen/TransactionDetailScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -106,6 +108,8 @@ const AppNavigation = () => {
         <Stack.Screen name={ScreenNames.SELF_BOARD_SCANNER as never} component={SelfBoardScannerScreen} />
         <Stack.Screen name={ScreenNames.SELF_BOARD_SUCCESS as never} component={SelfBoardSuccessScreen} />
         <Stack.Screen name={ScreenNames.SELF_BOARD_ERROR as never} component={SelfBoardErrorScreen} />
+        <Stack.Screen name={ScreenNames.TRANSACTION_HISTORY_SCREEN as never} component={TransactionHistoryScreen} />
+        <Stack.Screen name={ScreenNames.TRANSACTION_DETAIL_SCREEN as never} component={TransactionDetailScreen} />
         <Stack.Screen name={ScreenNames.DUMMY as never} component={Dummy} />
       </Stack.Navigator>
     </NavigationContainer>

@@ -1,5 +1,5 @@
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import WalletService from '../services/WalletService';
+import WalletService, { TransactionsQueryArgs, TransactionDetail } from '../services/WalletService';
 import RazorpayService from '../services/RazorpayService';
 
 export const useBalance = () => {
@@ -9,10 +9,25 @@ export const useBalance = () => {
   });
 };
 
-export const useTransactions = (filter: string = 'WALLET') => {
+export const useTransactionDetail = (id: string) => {
+  return useQuery<TransactionDetail>({
+    queryKey: ['wallet-transaction-detail', id],
+    queryFn: () => WalletService.getTransactionDetail(id),
+    enabled: !!id,
+  });
+};
+
+type TransactionsFilters = Omit<TransactionsQueryArgs, 'offset' | 'limit'>;
+
+export const useTransactions = (filters: TransactionsFilters) => {
   return useInfiniteQuery({
-    queryKey: ['wallet-transactions', filter],
-    queryFn: ({ pageParam = 0 }) => WalletService.getTransactions(filter, pageParam as number),
+    queryKey: ['wallet-transactions', filters],
+    queryFn: ({ pageParam = 0 }) =>
+      WalletService.getTransactions({
+        ...filters,
+        offset: pageParam as number,
+        limit: 20,
+      }),
     initialPageParam: 0,
     getNextPageParam: lastPage => {
       if (lastPage.pagination.hasMore) {

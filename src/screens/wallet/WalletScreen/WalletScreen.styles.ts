@@ -67,4 +67,8 @@ export const useStyles = (colors: ColorsType) =>
       paddingVertical: 16,
       alignItems: 'center',
     },
+    shimmerList: {
+      paddingVertical: 16,
+      gap: 10,
+    },
   });
