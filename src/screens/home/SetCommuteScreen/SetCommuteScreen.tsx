@@ -5,6 +5,8 @@ import { useTheme } from '../../../theme/ThemeProvider';
 import { useStyles } from './SetCommuteScreen.styles';
 import PrimaryHeader from '../../../components/common/SwHeader/PrimaryHeader/PrimaryHeader';
 import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../../../navigation/types';
 import { SwText as Text } from '../../../components/common/SwText/SwText';
 import { SwPickupDropInputCard } from '../../../components/common/SwPickupDropInputCard/SwPickupDropInputCard';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
@@ -19,7 +21,7 @@ import { setCurrentCoords } from '../../../slice/profileSlice';
 import useGetLocation from '../../../hooks/permissions/geoLocation';
 import uuid from 'react-native-uuid';
 import type { ICoords } from '../../../types/coords.types';
-import { usePlaceAutocomplete, useRecentSearch, useReverseGeocode, useSavedLocations } from '../../../hooks/useSearch';
+import { usePlaceAutocomplete, useRecentSearch, useReverseGeocode, useSavedLocations, useSaveLocation } from '../../../hooks/useSearch';
 import DatePicker from 'react-native-date-picker';
 import { format, isToday } from 'date-fns';
 import { ScreenNames } from '../../../navigation/constant';
@@ -29,7 +31,7 @@ import type { CommuteDateTab } from '../../../types/commuteDates.types';
 const SetCommuteScreen = () => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const dispatch = useDispatch<AppDispatch>();
   const currentCoords = useSelector((state: RootState) => state.profile.currentCoords);
@@ -93,6 +95,10 @@ const SetCommuteScreen = () => {
     },
     [getRecentSearchItems, getSavedLocationItems],
   );
+  const refetchSaved = useCallback(() => {
+    if (activeLocationField) loadSavedAndRecent(activeLocationField);
+  }, [activeLocationField, loadSavedAndRecent]);
+  const { saveLocation } = useSaveLocation(refetchSaved);
 
   const formatTabTitle = useCallback((d: Date) => {
     if (isToday(d)) return 'Today';
@@ -282,11 +288,13 @@ const SetCommuteScreen = () => {
         latitude: pickupLat,
         longitude: pickupLng,
         address: pickupItem!.subtitle || pickupItem!.title,
+        placeName: pickupItem!.title || undefined,
       },
       dropoff: {
         latitude: dropoffLat,
         longitude: dropoffLng,
         address: dropItem!.subtitle || dropItem!.title,
+        placeName: dropItem!.title || undefined,
       },
       userLocation: {
         latitude: userLat,
@@ -393,6 +401,14 @@ const SetCommuteScreen = () => {
           savedAddresses={savedAddresses}
           recentSearches={recentSearches}
           onPressItem={handleSelectLocation}
+          onSaveLocation={saveLocation}
+          onSaveLocationPress={(item) => {
+            locationSheetRef.current?.dismiss();
+            navigation.navigate(ScreenNames.ADD_EDIT_LOCATION_SCREEN, {
+              mode: 'add',
+              prefilledLocation: { id: item.id, title: item.title, subtitle: item.subtitle, latitude: item.latitude, longitude: item.longitude },
+            });
+          }}
           onClose={() => {
             setLocationQuery('');
             setSearchResults([]);

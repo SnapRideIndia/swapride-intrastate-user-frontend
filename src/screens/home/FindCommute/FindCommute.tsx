@@ -4,6 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../../theme/ThemeProvider';
 import PrimaryHeader from '../../../components/common/SwHeader/PrimaryHeader/PrimaryHeader';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../../../navigation/types';
 import { SwText as Text } from '../../../components/common/SwText/SwText';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { SwLocationSearchBottomSheet } from '../../../components/common/SwLocationSearchBottomSheet/SwLocationSearchBottomSheet';
@@ -15,7 +17,7 @@ import { setCurrentCoords } from '../../../slice/profileSlice';
 import useGetLocation from '../../../hooks/permissions/geoLocation';
 import uuid from 'react-native-uuid';
 import type { ICoords } from '../../../types/coords.types';
-import { usePlaceAutocomplete, useRecentSearch, useReverseGeocode, useSavedLocations } from '../../../hooks/useSearch';
+import { usePlaceAutocomplete, useRecentSearch, useReverseGeocode, useSavedLocations, useSaveLocation } from '../../../hooks/useSearch';
 import DatePicker from 'react-native-date-picker';
 import { format, isToday } from 'date-fns';
 import { ScreenNames } from '../../../navigation/constant';
@@ -28,7 +30,7 @@ import { useLocationSheetBackHandler } from '../../../hooks/useLocationSheetBack
 const FindCommute = () => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const dispatch = useDispatch<AppDispatch>();
   const currentCoords = useSelector((state: RootState) => state.profile.currentCoords);
@@ -116,9 +118,12 @@ const FindCommute = () => {
     },
     [getRecentSearchItems, getSavedLocationItems],
   );
+  const refetchSaved = useCallback(() => {
+    if (activeLocationField) loadSavedAndRecent(activeLocationField);
+  }, [activeLocationField, loadSavedAndRecent]);
+  const { saveLocation } = useSaveLocation(refetchSaved);
 
   useEffect(() => {
-    // Initial render load (default active field = pickup)
     loadSavedAndRecent('pickup');
   }, [loadSavedAndRecent]);
 
@@ -287,12 +292,14 @@ const FindCommute = () => {
       pickup: {
         latitude: pickupLat,
         longitude: pickupLng,
-        address: pickupLocation,
+        address: pickupItem!.subtitle || pickupItem!.title,
+        placeName: pickupItem!.title || undefined,
       },
       dropoff: {
         latitude: dropoffLat,
         longitude: dropoffLng,
-        address: dropLocation,
+        address: dropItem!.subtitle || dropItem!.title,
+        placeName: dropItem!.title || undefined,
       },
       userLocation: {
         latitude: userLat,
@@ -367,6 +374,14 @@ const FindCommute = () => {
           savedAddresses={savedAddresses}
           recentSearches={recentSearches}
           onPressItem={handleSelectLocation}
+          onSaveLocation={saveLocation}
+          onSaveLocationPress={(item) => {
+            locationSheetRef.current?.dismiss();
+            navigation.navigate(ScreenNames.ADD_EDIT_LOCATION_SCREEN, {
+              mode: 'add',
+              prefilledLocation: { id: item.id, title: item.title, subtitle: item.subtitle, latitude: item.latitude, longitude: item.longitude },
+            });
+          }}
           onClose={() => {
             onSheetClose();
             setLocationQuery('');

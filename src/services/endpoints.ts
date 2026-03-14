@@ -21,7 +21,8 @@ export const API_ENDPOINTS = {
     TRACK_RIDE: (id: string) => `/bookings/track/${id}`,
   },
   USERS: {
-    SAVED_LOCATIONS: '/users/saved-locations',
+    SAVED_LOCATIONS: '/users/me/saved-locations',
+    TRAVEL_PREFERENCE_LOCATIONS: '/users/me/travel-preferences/locations',
   },
   DRIVERS: {
     GET_DETAILS: (id: string) => `/drivers/${id}/details`,
@@ -31,5 +32,10 @@ export const API_ENDPOINTS = {
     TRANSACTIONS: '/financials/transactions',
     TRANSACTION_DETAIL: (id: string) => `/financials/transactions/${id}`,
     TOPUP_INITIATE: '/wallet/topup/initiate',
+  },
+  SUGGESTIONS: {
+    CREATE: '/suggestions',
+    ME: '/suggestions/me',
+    DELETE: (id: string) => `/suggestions/${id}`,
   },
 };

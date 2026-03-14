@@ -3,9 +3,10 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { ImageSource } from '../constants/images';
 import SearchService from '../services/SearchService';
 import type { PlaceSuggestion } from '../services/SearchService';
-import type { SwLocationSearchItem } from '../components/common/SwLocationSearchBottomSheet/SwLocationSearchBottomSheet';
+import type { SwLocationSearchItem } from '../types/placeAutofill.types';
 import type { LocationFieldType } from '../types/search.types';
 import type { SearchTripsParams } from '../types/trips.types';
+import { showToast } from '../utils/showToast';
 
 const mapPlacesToSearchItems = (places: PlaceSuggestion[]): SwLocationSearchItem[] =>
   places.map(place => ({
@@ -39,14 +40,18 @@ export const useRecentSearch = () => {
   const getRecentSearchItems = useCallback(async (type: LocationFieldType) => {
     try {
       const results = await SearchService.recentSearches(type);
-      return (results || []).map(item => ({
-        id: item.id || Math.random().toString(),
-        title: item.address || 'Recent Location',
-        subtitle: item.address || '',
-        iconSource: ImageSource.clock,
-        latitude: item.latitude || 0,
-        longitude: item.longitude || 0,
-      }));
+      return (results || []).map(item => {
+        const address = item.address || '';
+        return {
+          id: item.id || Math.random().toString(),
+          title: (item.place_name ?? address) || 'Recent Location',
+          subtitle: address,
+          iconSource: ImageSource.clock,
+          latitude: item.latitude || 0,
+          longitude: item.longitude || 0,
+          isSaved: item.is_saved ?? false,
+        };
+      });
     } catch (e) {
       console.warn('Error in getRecentSearchItems:', e);
       return [];
@@ -56,15 +61,22 @@ export const useRecentSearch = () => {
   return { getRecentSearchItems };
 };
 
+function getSavedItemIcon(label: string) {
+  const lower = (label || '').toLowerCase().trim();
+  if (lower === 'home') return ImageSource.Home;
+  if (lower === 'work' || lower === 'office') return ImageSource.Work;
+  return ImageSource.mapPin;
+}
+
 export const useSavedLocations = () => {
-  const getSavedLocationItems = useCallback(async () => {
+  const getSavedLocationItems = useCallback(async (type?: LocationFieldType) => {
     try {
-      const results = await SearchService.savedLocations();
+      const results = await SearchService.getTravelPreferenceLocations(type);
       return (results || []).map((item: any) => ({
         id: item.id || Math.random().toString(),
         title: item.label || item.address || 'Saved Location',
         subtitle: item.address || '',
-        iconSource: item.label === 'Home' ? ImageSource.Home : ImageSource.Home, // TODO: Add Office icon if available
+        iconSource: getSavedItemIcon(item.label),
         latitude: item.latitude || 0,
         longitude: item.longitude || 0,
       }));
@@ -75,6 +87,31 @@ export const useSavedLocations = () => {
   }, []);
 
   return { getSavedLocationItems };
+};
+
+export const useSaveLocation = (onSaved?: () => void | Promise<void>) => {
+  const saveLocation = useCallback(
+    async (item: SwLocationSearchItem, label: string) => {
+      try {
+        const address = item.subtitle || item.title || '';
+        const lat = item.latitude ?? 0;
+        const lng = item.longitude ?? 0;
+        await SearchService.createSavedLocation({
+          label: label.trim(),
+          address,
+          latitude: lat,
+          longitude: lng,
+        });
+        showToast('success', 'Location saved', '', 2000);
+        await onSaved?.();
+      } catch (e: any) {
+        showToast('error', e?.message ?? 'Failed to save location', '', 2000);
+        throw e;
+      }
+    },
+    [onSaved],
+  );
+  return { saveLocation };
 };
 
 export const useSearchTrips = (onSuccess?: (data: any) => void, onError?: (error: any) => void) => {

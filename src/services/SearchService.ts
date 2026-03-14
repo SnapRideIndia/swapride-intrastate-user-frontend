@@ -1,4 +1,4 @@
-import { fetchData, postData, handleErrorResponse } from './ApiUtility';
+import { fetchData, postData, patchData, deleteData, handleErrorResponse } from './ApiUtility';
 import type { LocationFieldType, RecentSearchDto, SavedLocationDto } from '../types/search.types';
 import type { SearchTripsParams, SearchTripsResponseDto } from '../types/trips.types';
 import { API_ENDPOINTS } from './endpoints';
@@ -57,6 +57,7 @@ class SearchService {
     for (const t of getTypeCandidates(type)) {
       try {
         const res = await fetchData<RecentSearchDto[]>(url, { params: { type: t } });
+        console.log('Recent searches API response ===>', res?.data ?? res);
         if (!res.success || !res.data) {
           handleErrorResponse(res);
         }
@@ -69,16 +70,53 @@ class SearchService {
     return [];
   };
 
-  savedLocations = async () => {
-    const url = API_ENDPOINTS.USERS.SAVED_LOCATIONS;
-
-    const res = await fetchData<any>(url);
+  getTravelPreferenceLocations = async (type?: LocationFieldType) => {
+    const url = API_ENDPOINTS.USERS.TRAVEL_PREFERENCE_LOCATIONS;
+    const params = type ? { type: type === 'pickup' ? 'pickup' : 'dropoff' } : undefined;
+    const res = await fetchData<any>(url, { params });
+    console.log('Saved addresses (me/travel-preference) API response ===>', res?.data ?? res);
 
     if (!res.success || !res.data) {
       handleErrorResponse(res);
     }
 
     return res.data || [];
+  };
+
+  savedLocations = async () => {
+    const url = API_ENDPOINTS.USERS.SAVED_LOCATIONS;
+    const res = await fetchData<any>(url);
+    console.log('Saved locations list API response ===>', res?.data ?? res);
+    if (!res.success || !res.data) {
+      handleErrorResponse(res);
+    }
+    return res.data || [];
+  };
+
+  createSavedLocation = async (dto: { label: string; address: string; latitude: number; longitude: number }) => {
+    const url = API_ENDPOINTS.USERS.SAVED_LOCATIONS;
+    const res = await postData<SavedLocationDto>(url, dto);
+    if (!res.success || !res.data) {
+      handleErrorResponse(res);
+    }
+    return res.data;
+  };
+
+  updateSavedLocation = async (id: string, dto: { label: string; address: string; latitude: number; longitude: number }) => {
+    const url = `${API_ENDPOINTS.USERS.SAVED_LOCATIONS}/${id}`;
+    const res = await patchData<SavedLocationDto>(url, dto);
+    if (!res.success || !res.data) {
+      handleErrorResponse(res);
+    }
+    return res.data;
+  };
+
+  deleteSavedLocation = async (id: string) => {
+    const url = `${API_ENDPOINTS.USERS.SAVED_LOCATIONS}/${id}`;
+    const res = await deleteData(url);
+    if (!res.success) {
+      handleErrorResponse(res);
+    }
   };
 
   searchTrips = async (params: SearchTripsParams) => {

@@ -109,6 +109,12 @@ export const useStyles = (colors: ColorsType) =>
       gap: 10,
       paddingVertical: 10,
     },
+    listRowMain: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
+    },
     listIconWrap: {
       width: 45,
       height: 45,
@@ -134,6 +140,14 @@ export const useStyles = (colors: ColorsType) =>
     listSubtitle: {
       fontSize: 12,
       color: colors.contenttertiary,
+    },
+    listRowBookmarkWrap: {
+      alignSelf: 'center',
+      padding: 8,
+    },
+    listRowBookmarkIcon: {
+      width: 22,
+      height: 22,
     },
     rowSeparator: {
       height: StyleSheet.hairlineWidth,
@@ -179,5 +193,33 @@ export const useStyles = (colors: ColorsType) =>
       fontSize: 12,
       color: colors.contenttertiary,
       marginTop: 2,
+    },
+    // Save Location (used inside SwPopupModal content)
+    saveLocationFields: {
+      marginTop: 0,
+      gap: 2,
+    },
+    saveLocationFieldIcon: {
+      width: 18,
+      height: 18,
+      tintColor: colors.contentPrimary,
+    },
+    saveLocationFieldIconLocation: {
+      width: 16,
+      height: 18,
+      tintColor: colors.contentPrimary,
+    },
+    saveLocationButton: {
+      marginTop: 14,
+      alignSelf: 'stretch',
+      backgroundColor: colors.primaryLight,
+      elevation: 1,
+      height: 44,
+      shadowOpacity: 0,
+      shadowRadius: 0,
+      shadowOffset: { width: 0, height: 0 },
+    },
+    saveLocationButtonText: {
+      color: colors.primaryCtaText,
     },
   });

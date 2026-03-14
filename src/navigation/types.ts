@@ -6,6 +6,7 @@ export type RootStackParamList = {
   [ScreenNames.LOGIN_SCREEN]: undefined;
   [ScreenNames.VIEW_PROFILE]: undefined;
   [ScreenNames.SUGGEST_YOUR_STOPS]: undefined;
+  [ScreenNames.MY_SUGGESTIONS]: undefined;
   [ScreenNames.TRACK_RIDE_SCREEN]: { ticketId: string };
   [ScreenNames.TICKET_DETAIL_SCREEN]: { ticketId: string };
   [ScreenNames.MAIN_SCREEN]: undefined;
@@ -33,4 +34,10 @@ export type RootStackParamList = {
   [ScreenNames.POLICY_SCREEN]: undefined;
   [ScreenNames.RENT_A_BUS_SCREEN]: undefined;
   [ScreenNames.ACCOUNT_SETTING_SCREEN]: undefined;
+  [ScreenNames.SAVED_PLACES_SCREEN]: undefined;
+  [ScreenNames.ADD_EDIT_LOCATION_SCREEN]: {
+    mode: 'add' | 'edit';
+    prefilledLocation?: { id: string; title: string; subtitle?: string; latitude?: number; longitude?: number };
+    itemToEdit?: { id: string; label: string; address: string; latitude: number; longitude: number };
+  };
 };

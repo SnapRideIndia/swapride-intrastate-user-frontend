@@ -13,7 +13,7 @@ import BusSelectionCardSkeleton from '../../../components/domain/busSelection/ca
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import { setActiveDateIndex, setCommuteData, setCommuteSearchContext } from '../../../slice/commuteSlice';
-import { usePlaceAutocomplete, useRecentSearch, useSavedLocations, useSearchTrips } from '../../../hooks/useSearch';
+import { usePlaceAutocomplete, useRecentSearch, useSavedLocations, useSaveLocation, useSearchTrips } from '../../../hooks/useSearch';
 import { useInitiateRoundTrip } from '../../../hooks/useBooking';
 import { format, isToday, addDays } from 'date-fns';
 import { FindCommuteCard } from '../../../components/domain/booking/FindCommuteCard/FindCommuteCard';
@@ -48,8 +48,10 @@ const BusSelection = () => {
 
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
 
-  const [pickupLocation, setPickupLocation] = useState(searchBaseParams?.pickup?.address || '');
-  const [dropLocation, setDropLocation] = useState(searchBaseParams?.dropoff?.address || '');
+  const [pickupLocation, setPickupLocation] = useState(searchBaseParams?.pickup?.placeName || searchBaseParams?.pickup?.address || '');
+  const [dropLocation, setDropLocation] = useState(searchBaseParams?.dropoff?.placeName || searchBaseParams?.dropoff?.address || '');
+  const [pickupAddress, setPickupAddress] = useState(searchBaseParams?.pickup?.address || '');
+  const [dropoffAddress, setDropoffAddress] = useState(searchBaseParams?.dropoff?.address || '');
   const [pickupCoords, setPickupCoords] = useState(
     searchBaseParams ? { lat: searchBaseParams.pickup.latitude, lng: searchBaseParams.pickup.longitude } : null,
   );
@@ -74,19 +76,24 @@ const BusSelection = () => {
   const handleSwapLocations = useCallback(() => {
     const tempCoords = pickupCoords;
     const tempLocation = pickupLocation;
+    const tempAddress = pickupAddress;
 
     setPickupCoords(dropoffCoords);
     setPickupLocation(dropLocation);
+    setPickupAddress(dropoffAddress);
 
     setDropoffCoords(tempCoords);
     setDropLocation(tempLocation);
-  }, [pickupCoords, dropoffCoords, pickupLocation, dropLocation]);
+    setDropoffAddress(tempAddress);
+  }, [pickupCoords, dropoffCoords, pickupLocation, dropLocation, pickupAddress, dropoffAddress]);
 
   useEffect(() => {
     console.log('BusSelection searchBaseParams updated ===>', searchBaseParams);
     if (searchBaseParams) {
-      setPickupLocation(searchBaseParams.pickup.address || '');
-      setDropLocation(searchBaseParams.dropoff.address || '');
+      setPickupLocation(searchBaseParams.pickup.placeName || searchBaseParams.pickup.address || '');
+      setDropLocation(searchBaseParams.dropoff.placeName || searchBaseParams.dropoff.address || '');
+      setPickupAddress(searchBaseParams.pickup.address || '');
+      setDropoffAddress(searchBaseParams.dropoff.address || '');
       setPickupCoords({ lat: searchBaseParams.pickup.latitude, lng: searchBaseParams.pickup.longitude });
       setDropoffCoords({ lat: searchBaseParams.dropoff.latitude, lng: searchBaseParams.dropoff.longitude });
     }
@@ -169,6 +176,10 @@ const BusSelection = () => {
     },
     [getRecentSearchItems, getSavedLocationItems],
   );
+  const refetchSaved = useCallback(() => {
+    if (activeLocationField) loadSavedAndRecent(activeLocationField);
+  }, [activeLocationField, loadSavedAndRecent]);
+  const { saveLocation } = useSaveLocation(refetchSaved);
 
   const openLocationSheet = useCallback(
     (field: 'pickup' | 'drop') => {
@@ -188,14 +199,17 @@ const BusSelection = () => {
       const field = activeLocationField;
       if (!field) return;
 
-      const locationLabel = item.title;
+      const placeName = item.title;
+      const fullAddress = item.subtitle || item.title;
       const coords = { lat: item.latitude || 0, lng: item.longitude || 0 };
 
       if (field === 'pickup') {
-        setPickupLocation(locationLabel);
+        setPickupLocation(placeName);
+        setPickupAddress(fullAddress);
         setPickupCoords(coords);
       } else {
-        setDropLocation(locationLabel);
+        setDropLocation(placeName);
+        setDropoffAddress(fullAddress);
         setDropoffCoords(coords);
       }
 
@@ -286,12 +300,14 @@ const BusSelection = () => {
       pickup: {
         latitude: pickupCoords.lat,
         longitude: pickupCoords.lng,
-        address: pickupLocation,
+        address: pickupAddress || pickupLocation,
+        placeName: pickupLocation || undefined,
       },
       dropoff: {
         latitude: dropoffCoords.lat,
         longitude: dropoffCoords.lng,
-        address: dropLocation,
+        address: dropoffAddress || dropLocation,
+        placeName: dropLocation || undefined,
       },
       userLocation: {
         latitude: searchBaseParams?.userLocation?.latitude || 17.385,
@@ -371,11 +387,8 @@ const BusSelection = () => {
   }, [storedActiveIndex]);
 
   const HeaderTitle = useMemo(() => {
-    const pickupAddr = searchBaseParams?.pickup?.address || pickupLocation;
-    const dropoffAddr = searchBaseParams?.dropoff?.address || dropLocation;
-
-    const pickup = pickupAddr.split(',')[0] || 'Pickup';
-    const drop = dropoffAddr.split(',')[0] || 'Dropoff';
+    const pickup = searchBaseParams?.pickup?.placeName || pickupLocation || searchBaseParams?.pickup?.address?.split(',')[0] || 'Pickup';
+    const drop = searchBaseParams?.dropoff?.placeName || dropLocation || searchBaseParams?.dropoff?.address?.split(',')[0] || 'Dropoff';
 
     return (
       <View style={styles.headerTitleContainer}>
@@ -469,6 +482,14 @@ const BusSelection = () => {
         savedAddresses={savedAddresses}
         recentSearches={recentSearches}
         onPressItem={handleSelectLocation}
+        onSaveLocation={saveLocation}
+        onSaveLocationPress={(item) => {
+          locationSheetRef.current?.dismiss();
+          navigation.navigate(ScreenNames.ADD_EDIT_LOCATION_SCREEN, {
+            mode: 'add',
+            prefilledLocation: { id: item.id, title: item.title, subtitle: item.subtitle, latitude: item.latitude, longitude: item.longitude },
+          });
+        }}
         onChange={onSheetChange}
         onClose={() => {
           onSheetClose();

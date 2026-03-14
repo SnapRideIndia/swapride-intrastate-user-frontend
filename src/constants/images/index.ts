@@ -11,6 +11,7 @@ export const ImageSource = {
   greenCheckbox: require('.././../assets/images/greenCheckbox.png'),
   HistoryIcon: require('.././../assets/images/HistoryIcon.png'),
   Home: require('.././../assets/images/Home.png'),
+  Work: require('.././../assets/images/work.png'),
   homeIcon: require('.././../assets/images/homeIcon.png'),
   leftArrow: require('.././../assets/images/leftArrow.png'),
   menu: require('.././../assets/images/menu.png'),
@@ -73,18 +74,18 @@ export const ImageSource = {
   uncheckbox: require('.././../assets/images/uncheckbox.png'),
   camera: require('.././../assets/images/camera.png'),
 
-
   // Bookings
-offer: require('.././../assets/images/offer.png'),
-razorpay: require('.././../assets/images/razorpay.png'),
+  offer: require('.././../assets/images/offer.png'),
+  razorpay: require('.././../assets/images/razorpay.png'),
 
-// splash
+  // splash
   splashLogo: require('.././../assets/images/splashLogo.png'),
   // metroGIF: require('.././../assets/images/metro.gif'),
   // metroLottie: require('../../assets/images/metro.gif'),
-  cloud:  require('../../assets/images/cloud.png'),
-  metroSplash:  require('../../assets/images/metro.png'),
+  cloud: require('../../assets/images/cloud.png'),
+  metroSplash: require('../../assets/images/metro.png'),
 
   noTicketsFound: require('.././../assets/images/noTicketsFound.png'),
   noNotificationsFound: require('.././../assets/images/noNotificationsFound.png'),
-}
+  noSavedLocations: require('.././../assets/images/noSavedLocations.png'),
+};
