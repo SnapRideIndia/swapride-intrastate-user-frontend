@@ -8,6 +8,7 @@ import DrawerNavigator from '../Drawer';
 import EnterPhNo from '../../screens/auth/EnterPhNo/EnterPhNo';
 import ViewProfile from '../../screens/profile/ViewProfile/ViewProfile';
 import SuggestYourStops from '../../screens/profile/SuggestYourStops/SuggestYourStops';
+import MySuggestionsScreen from '../../screens/profile/MySuggestions/MySuggestionsScreen';
 import { storage } from '../../utils/store';
 import { StorageKeys } from '../../constants/storage/storageKeys';
 import { useDispatch } from 'react-redux';
@@ -32,6 +33,10 @@ import SelfBoardSuccessScreen from '../../screens/Boarding/SelfBoardSuccess/Self
 import SelfBoardErrorScreen from '../../screens/Boarding/SelfBoardError/SelfBoardErrorScreen';
 import SplashScreen from '../../screens/splash/SplashScreen';
 import Dummy from '../../screens/dummy/Dummy';
+import TransactionHistoryScreen from '../../screens/transactions/TransactionHistoryScreen/TransactionHistoryScreen';
+import TransactionDetailScreen from '../../screens/transactions/TransactionDetailScreen/TransactionDetailScreen';
+import SavedLocationsScreen from '../../screens/savedLocations/SavedLocationsScreen';
+import AddEditLocationScreen from '../../screens/addEditLocation/AddEditLocationScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -88,6 +93,7 @@ const AppNavigation = () => {
         <Stack.Screen name={ScreenNames.LOGIN_SCREEN} component={EnterPhNo} />
         <Stack.Screen name={ScreenNames.VIEW_PROFILE} component={ViewProfile} />
         <Stack.Screen name={ScreenNames.SUGGEST_YOUR_STOPS} component={SuggestYourStops} />
+        <Stack.Screen name={ScreenNames.MY_SUGGESTIONS} component={MySuggestionsScreen} />
         <Stack.Screen name={ScreenNames.BUS_SELECTION_SCREEN as never} component={BusSelection} />
         <Stack.Screen name={ScreenNames.TRACK_RIDE_SCREEN} component={TrackRideScreen} />
         <Stack.Screen name={ScreenNames.TICKET_DETAIL_SCREEN} component={TicketDetailScreen} />
@@ -106,6 +112,10 @@ const AppNavigation = () => {
         <Stack.Screen name={ScreenNames.SELF_BOARD_SCANNER as never} component={SelfBoardScannerScreen} />
         <Stack.Screen name={ScreenNames.SELF_BOARD_SUCCESS as never} component={SelfBoardSuccessScreen} />
         <Stack.Screen name={ScreenNames.SELF_BOARD_ERROR as never} component={SelfBoardErrorScreen} />
+        <Stack.Screen name={ScreenNames.TRANSACTION_HISTORY_SCREEN as never} component={TransactionHistoryScreen} />
+        <Stack.Screen name={ScreenNames.TRANSACTION_DETAIL_SCREEN as never} component={TransactionDetailScreen} />
+        <Stack.Screen name={ScreenNames.SAVED_PLACES_SCREEN as never} component={SavedLocationsScreen} />
+        <Stack.Screen name={ScreenNames.ADD_EDIT_LOCATION_SCREEN as never} component={AddEditLocationScreen} />
         <Stack.Screen name={ScreenNames.DUMMY as never} component={Dummy} />
       </Stack.Navigator>
     </NavigationContainer>

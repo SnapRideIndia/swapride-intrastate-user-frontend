@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { checkPermissionsHelper, getCurrentLocationHelper } from './helper';
 import { AppState } from 'react-native';
+import { checkPermissionsHelper, getCurrentLocationHelper, requestPermissionHelper } from './helper';
 import { AppDispatch } from '../../../store';
 import { setCurrentCoords } from '../../../slice/profileSlice';
 import { ICoords } from '../../../types/coords.types';
@@ -16,7 +16,7 @@ const useGetLocation = () => {
     return granted;
   };
   const requestPermission = async () => {
-    const granted = await checkPermissionsHelper();
+    const granted = await requestPermissionHelper();
     setIsLocationPermissionGranted(granted);
     return granted;
   };

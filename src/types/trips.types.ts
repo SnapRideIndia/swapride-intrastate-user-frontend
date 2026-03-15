@@ -5,11 +5,13 @@ export type SearchTripsParams = {
     latitude: number;
     longitude: number;
     address: string;
+    placeName?: string;
   };
   dropoff: {
     latitude: number;
     longitude: number;
     address: string;
+    placeName?: string;
   };
   userLocation: {
     latitude: number;

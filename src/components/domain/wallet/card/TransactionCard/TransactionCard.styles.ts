@@ -11,6 +11,7 @@ export const useStyles = (colors: ColorsType, transactionType: TransactionType) 
       borderRadius: 16,
       borderWidth: 1,
       borderColor: colors.border_3,
+      elevation: 1,
     },
 
     upperContainer: {

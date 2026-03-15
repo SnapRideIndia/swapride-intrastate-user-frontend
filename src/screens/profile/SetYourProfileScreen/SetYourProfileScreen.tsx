@@ -12,6 +12,7 @@ import PrimaryButton from '../../../components/common/SwButton/PrimaryButton/Pri
 import { ImageSource } from '../../../constants/images';
 import PrimaryHeader from '../../../components/common/SwHeader/PrimaryHeader/PrimaryHeader';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ImagePickerBottomSheet } from '../../../components/common/ImagePickerBottomSheet';
 import { useUpdateProfile, useFetchCurrentProfile, useUpdateTravelPreference, useUpdateOfficeTimings, useFetchTravelPreferences } from '../../../hooks/useProfile';
 import type { ProfileObj } from '../../../services/ProfileService';
@@ -21,7 +22,7 @@ import { format, parse } from 'date-fns';
 import {
   SwLocationSearchBottomSheet,
 } from '../../../components/common/SwLocationSearchBottomSheet/SwLocationSearchBottomSheet';
-import { usePlaceAutocomplete, useRecentSearch, useSavedLocations } from '../../../hooks/useSearch';
+import { usePlaceAutocomplete, useRecentSearch, useSavedLocations, useSaveLocation } from '../../../hooks/useSearch';
 import { SwLocationSearchItem } from '../../../types/placeAutofill.types';
 import { showToast } from '../../../utils/showToast';
 import { ScreenNames } from '../../../navigation/constant';
@@ -48,7 +49,7 @@ const apiDateToDisplay = (yyyyMmDd: string): string => {
 const SetYourProfileScreen = () => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const route = useRoute<SetProfileRouteProp>();
   const { isFromRegister } = route.params ?? {};
 
@@ -291,6 +292,7 @@ const SetYourProfileScreen = () => {
       setRecentSearches([]);
     }
   }, [getRecentSearchItems, getSavedLocationItems]);
+  const { saveLocation } = useSaveLocation(loadSavedAndRecent);
 
   const openLocationSheet = useCallback(
     (field: 'home' | 'office') => {
@@ -651,6 +653,14 @@ const SetYourProfileScreen = () => {
         savedAddresses={savedAddresses}
         recentSearches={recentSearches}
         onPressItem={handleSelectLocation}
+        onSaveLocation={saveLocation}
+        onSaveLocationPress={(item) => {
+          locationSheetRef.current?.dismiss();
+          navigation.navigate(ScreenNames.ADD_EDIT_LOCATION_SCREEN, {
+            mode: 'add',
+            prefilledLocation: { id: item.id, title: item.title, subtitle: item.subtitle, latitude: item.latitude, longitude: item.longitude },
+          });
+        }}
         onClose={() => {
           setLocationQuery('');
           setSearchResults([]);

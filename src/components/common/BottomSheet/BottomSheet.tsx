@@ -53,7 +53,7 @@ export const SwBottomSheet = forwardRef<BottomSheetModal, SwBottomSheetProps>(
         onDismiss={handleClose}
         onChange={onChange}
       >
-        <BottomSheetView style={{ paddingBottom: Math.max(insets.bottom, 20) }}>
+        <BottomSheetView style={{ paddingBottom: insets.bottom, flex: 1 }}>
           {title && (
             <>
               <View style={styles.header}>

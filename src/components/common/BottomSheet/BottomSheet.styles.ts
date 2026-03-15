@@ -4,9 +4,9 @@ import { ColorsType } from '../../../constants/ui/colors/colors.types';
 export const useStyles = (colors: ColorsType) =>
   StyleSheet.create({
     background: {
-      backgroundColor: colors.background_primary,
       borderTopLeftRadius: 24,
       borderTopRightRadius: 24,
+      backgroundColor: colors.background_primary,
     },
     handleIndicator: {
       backgroundColor: colors.border_3,
@@ -32,6 +32,9 @@ export const useStyles = (colors: ColorsType) =>
       tintColor: colors.contentPrimary,
     },
     content: {
+      height: "100%",
+      // backgroundColor:"red",
+      flex: 1,
       paddingHorizontal: 16,
     },
   });

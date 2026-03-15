@@ -59,11 +59,13 @@ const BookingOptions = () => {
         latitude: searchBaseParams.dropoff.latitude,
         longitude: searchBaseParams.dropoff.longitude,
         address: searchBaseParams.dropoff.address,
+        placeName: searchBaseParams.dropoff.placeName,
       },
       dropoff: {
         latitude: searchBaseParams.pickup.latitude,
         longitude: searchBaseParams.pickup.longitude,
         address: searchBaseParams.pickup.address,
+        placeName: searchBaseParams.pickup.placeName,
       },
       userLocation: {
         latitude: searchBaseParams.userLocation.latitude,

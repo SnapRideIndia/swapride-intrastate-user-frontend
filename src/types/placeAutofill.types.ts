@@ -17,4 +17,5 @@ export type SwLocationSearchItem = {
   iconSource?: ImageSourcePropType;
   latitude?: number;
   longitude?: number;
+  isSaved?: boolean;
 };

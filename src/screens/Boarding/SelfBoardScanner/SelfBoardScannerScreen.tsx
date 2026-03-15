@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View, Alert } from 'react-native';
+import { View, Alert, Linking, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import PrimaryHeader from '../../../components/common/SwHeader/PrimaryHeader/PrimaryHeader';
@@ -49,24 +49,16 @@ const SelfBoardScannerScreen: React.FC = () => {
   );
 
   const resolveLocation = useCallback(async (): Promise<ICoords | null> => {
-    if (currentCoords?.latitude && currentCoords?.longitude) {
-      return currentCoords as unknown as ICoords;
-    }
+    // Always attempt to get a fresh location when needed,
+    // instead of relying solely on cached coordinates. This ensures
+    // the OS will prompt for location permission if it was revoked.
     const position = await getCurrentLocation();
     if (position?.coords) {
       dispatch(setCurrentCoords(position.coords as unknown as ICoords));
       return position.coords as unknown as ICoords;
     }
-    return null;
+    return currentCoords ?? null;
   }, [currentCoords, dispatch, getCurrentLocation]);
-
-  // Proactively request location permission when the scanner opens,
-  // so both Camera and Location permissions are in place before scanning.
-  useEffect(() => {
-    resolveLocation().catch(() => {
-      // We silently ignore here; handleQrScanned will surface a clear error if location is still unavailable.
-    });
-  }, [resolveLocation]);
 
   const handleQrScanned = useCallback(
     async (token: string) => {
@@ -94,7 +86,32 @@ const SelfBoardScannerScreen: React.FC = () => {
       } catch (err: any) {
         isSubmittingRef.current = false;
         setHasScanned(false);
-        Alert.alert('Boarding Failed', err?.message || 'We could not access your location. Please try again.');
+
+        const message = err?.message || 'We could not access your location. Please try again.';
+
+        // If location permission is missing/denied, guide user to app settings
+        if (
+          message.toLowerCase().includes('location permission') ||
+          message.toLowerCase().includes('permission denied')
+        ) {
+          Alert.alert(
+            'Location permission needed',
+            Platform.OS === 'ios'
+              ? 'We need your location to confirm your boarding. Please enable Location in Settings for this app.'
+              : 'We need your location to confirm your boarding. Please enable Location permission in App settings.',
+            [
+              { text: 'Cancel', style: 'cancel' },
+              {
+                text: 'Open settings',
+                onPress: () => {
+                  Linking.openSettings().catch(() => {});
+                },
+              },
+            ],
+          );
+        } else {
+          Alert.alert('Boarding Failed', message);
+        }
       }
     },
     [hasScanned, resolveLocation, selfBoardMutate],

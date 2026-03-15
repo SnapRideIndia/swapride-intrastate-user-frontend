@@ -12,9 +12,12 @@ export const useStyles = (colors: ColorsType) =>
       flexDirection: 'row',
       alignItems: 'center',
       gap: 10,
+      minHeight: 24,
+      overflow: 'visible',
     },
     inputInnerContainer: {
       marginTop: 0,
+      minHeight: 44,
       flexDirection: 'row',
       alignItems: 'center',
       borderBottomWidth: 1,
@@ -37,7 +40,8 @@ export const useStyles = (colors: ColorsType) =>
     },
     inputStyle: {
       flex: 1,
-      height: 40,
+      minHeight: 40,
+      paddingVertical: 4,
     },
     title: {
       fontSize: 14,
