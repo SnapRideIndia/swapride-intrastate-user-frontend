@@ -18,10 +18,16 @@ export const useInitiateRoundTrip = (onSuccess?: (data: any) => void, onError?: 
   });
 };
 
-export const useBookingDetails = (bookingId: string, userLat?: number, userLng?: number) => {
+export const useBookingDetails = (
+  bookingId: string,
+  userLat?: number,
+  userLng?: number,
+  destLat?: number,
+  destLng?: number,
+) => {
   return useQuery({
-    queryKey: ['bookingDetails', bookingId, userLat, userLng],
-    queryFn: () => BookingService.getBookingDetails(bookingId, userLat, userLng),
+    queryKey: ['bookingDetails', bookingId, userLat, userLng, destLat, destLng],
+    queryFn: () => BookingService.getBookingDetails(bookingId, userLat, userLng, destLat, destLng),
     enabled: !!bookingId,
   });
 };

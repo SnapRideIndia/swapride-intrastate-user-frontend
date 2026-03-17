@@ -33,10 +33,16 @@ class BookingService {
     return res.data as RoundTripBookingResponse;
   };
 
-  getBookingDetails = async (id: string, userLat?: number, userLng?: number): Promise<BookingDetails> => {
+  getBookingDetails = async (
+    id: string,
+    userLat?: number,
+    userLng?: number,
+    destLat?: number,
+    destLng?: number,
+  ): Promise<BookingDetails> => {
     const url = API_ENDPOINTS.BOOKINGS.GET_DETAILS(id);
     const res = await fetchData<BookingDetails>(url, {
-      params: { userLat, userLng },
+      params: { userLat, userLng, destLat, destLng },
     });
 
     if (!res.success || !res.data) {

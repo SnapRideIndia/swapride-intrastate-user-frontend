@@ -29,29 +29,26 @@ const mapLegToSummary = (leg: LegDetail, type: 'outbound' | 'return') => {
   const pickupTimeObj = leg.pickup.arrivalTime ? new Date(leg.pickup.arrivalTime) : null;
   const dropoffTimeObj = leg.dropoff.arrivalTime ? new Date(leg.dropoff.arrivalTime) : null;
 
-  const pickupDistanceText = leg.pickup.distanceText || '';
-  const pickupWalkDurationText = leg.pickup.walkDurationText || '';
+  const pickupDistance = leg.pickup.distance || '';
+  const pickupTime = leg.pickup.travelTime || '';
+  const pickupType = leg.pickup.travelType || null;
 
-  const dropoffDistanceText = leg.dropoff.distanceText || '';
-  const dropoffWalkDurationText = leg.dropoff.walkDurationText || '';
+  const dropoffDistance = leg.dropoff.distance || '';
+  const dropoffTime = leg.dropoff.travelTime || '';
+  const dropoffType = leg.dropoff.travelType || null;
 
-  let pickupWalkText = '';
-  if (pickupDistanceText && pickupWalkDurationText) {
-    pickupWalkText = `${pickupDistanceText} • ${pickupWalkDurationText} walk`;
-  } else if (pickupDistanceText) {
-    pickupWalkText = pickupDistanceText;
-  } else if (pickupWalkDurationText) {
-    pickupWalkText = `${pickupWalkDurationText} walk`;
-  }
+  const pickupModeLabel = pickupType ? pickupType.toLowerCase() : '';
+  const dropoffModeLabel = dropoffType ? dropoffType.toLowerCase() : '';
 
-  let dropoffWalkText = '';
-  if (dropoffDistanceText && dropoffWalkDurationText) {
-    dropoffWalkText = `${dropoffDistanceText} • ${dropoffWalkDurationText} walk`;
-  } else if (dropoffDistanceText) {
-    dropoffWalkText = dropoffDistanceText;
-  } else if (dropoffWalkDurationText) {
-    dropoffWalkText = `${dropoffWalkDurationText} walk`;
-  }
+  const pickupWalkText =
+    pickupTime && pickupDistance
+      ? `${pickupTime} ${pickupModeLabel} (${pickupDistance})`
+      : pickupDistance || pickupTime || '';
+
+  const dropoffWalkText =
+    dropoffTime && dropoffDistance
+      ? `${dropoffTime} ${dropoffModeLabel} (${dropoffDistance})`
+      : dropoffDistance || dropoffTime || '';
 
   return {
     type,
@@ -63,12 +60,14 @@ const mapLegToSummary = (leg: LegDetail, type: 'outbound' | 'return') => {
       title: leg.pickup.name,
       description: leg.pickup.address,
       walkText: pickupWalkText,
+      travelType: leg.pickup.travelType,
     },
     dropoff: {
       time: dropoffTimeObj ? format(dropoffTimeObj, 'hh:mm a') : leg.dropoff.arrivalTime,
       title: leg.dropoff.name,
       description: leg.dropoff.address,
       walkText: dropoffWalkText,
+      travelType: leg.dropoff.travelType,
     },
     seat: leg.assignedSeats.map(s => s.seatNumber).join(', '),
   };
@@ -83,8 +82,10 @@ const ConfirmBookingDetails = () => {
   const { searchBaseParams } = useSelector((store: RootState) => store.commute);
   const userLat = searchBaseParams?.userLocation?.latitude;
   const userLng = searchBaseParams?.userLocation?.longitude;
+  const destLat = searchBaseParams?.dropoff?.latitude;
+  const destLng = searchBaseParams?.dropoff?.longitude;
 
-  const { data: booking, isLoading, isError, error, refetch } = useBookingDetails(bookingId, userLat, userLng);
+  const { data: booking, isLoading, isError, error, refetch } = useBookingDetails(bookingId, userLat, userLng, destLat, destLng);
   const { data: balanceData } = useBalance();
 
   useEffect(() => {

@@ -11,6 +11,7 @@ interface PointData {
   title: string;
   description: string;
   walkText: string;
+  travelType?: 'WALK' | 'DRIVE' | null;
 }
 
 export interface TripSummaryCardProps {
@@ -65,7 +66,11 @@ const TripSummaryCard: React.FC<TripSummaryCardProps> = ({ type, date, pickup, d
               </Text>
               <Text style={styles.pointDescription}>{pickup.description}</Text>
               <View style={styles.walkContainer}>
-                <Image source={ImageSource.walkIcon} style={styles.walkIcon} />
+                <Image
+                  source={pickup.travelType === 'DRIVE' ? ImageSource.car : ImageSource.walkIcon}
+                  style={styles.walkIcon}
+                  resizeMode="contain"
+                />
                 <Text variant="semi-bold" style={styles.walkText}>
                   {pickup.walkText}
                 </Text>
@@ -88,7 +93,11 @@ const TripSummaryCard: React.FC<TripSummaryCardProps> = ({ type, date, pickup, d
               </Text>
               <Text style={styles.pointDescription}>{dropoff.description}</Text>
               <View style={styles.walkContainer}>
-                <Image source={ImageSource.walkIcon} style={styles.walkIcon} />
+                <Image
+                  source={dropoff.travelType === 'DRIVE' ? ImageSource.car : ImageSource.walkIcon}
+                  style={styles.walkIcon}
+                  resizeMode="contain"
+                />
                 <Text variant="semi-bold" style={styles.walkText}>
                   {dropoff.walkText}
                 </Text>
