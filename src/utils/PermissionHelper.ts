@@ -1,5 +1,16 @@
 import { Platform, Alert } from 'react-native';
-import { check, request, checkMultiple, requestMultiple, RESULTS, openSettings, Permission, PERMISSIONS } from 'react-native-permissions';
+import {
+  check,
+  request,
+  checkMultiple,
+  requestMultiple,
+  RESULTS,
+  openSettings,
+  Permission,
+  PERMISSIONS,
+  checkNotifications,
+  requestNotifications,
+} from 'react-native-permissions';
 
 /**
  * Enum of supported permissions
@@ -51,9 +62,32 @@ const handleBlocked = (type: PermissionType) => {
 };
 
 /**
+ * Request notification permission using react-native-permissions notification API.
+ * Uses checkNotifications/requestNotifications (iOS & Android 13+).
+ */
+export const requestNotificationPermission = async (): Promise<'granted' | 'denied' | 'blocked'> => {
+  const { status } = await checkNotifications();
+  if (status === RESULTS.GRANTED) return 'granted';
+  if (status === RESULTS.BLOCKED) {
+    handleBlocked(PermissionType.NOTIFICATIONS);
+    return 'blocked';
+  }
+  const { status: requestStatus } = await requestNotifications([]);
+  if (requestStatus === RESULTS.GRANTED) return 'granted';
+  if (requestStatus === RESULTS.BLOCKED) {
+    handleBlocked(PermissionType.NOTIFICATIONS);
+    return 'blocked';
+  }
+  return 'denied';
+};
+
+/**
  * Request a single logical permission
  */
 export const requestSinglePermission = async (type: PermissionType): Promise<'granted' | 'denied' | 'blocked'> => {
+  if (type === PermissionType.NOTIFICATIONS) {
+    return requestNotificationPermission();
+  }
   const perms = PermissionMap[type];
   if (!perms) return 'denied';
 

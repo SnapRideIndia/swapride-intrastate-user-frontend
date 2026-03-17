@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { Linking, StyleSheet, View } from 'react-native';
 import React, { useEffect } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native'
@@ -37,22 +37,21 @@ import TransactionHistoryScreen from '../../screens/transactions/TransactionHist
 import TransactionDetailScreen from '../../screens/transactions/TransactionDetailScreen/TransactionDetailScreen';
 import SavedLocationsScreen from '../../screens/savedLocations/SavedLocationsScreen';
 import AddEditLocationScreen from '../../screens/addEditLocation/AddEditLocationScreen';
+import { requestNotificationPermission } from '../../utils/PermissionHelper';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-// const ScreenWrapper = ({ children }: { children: React.ReactNode }) => {
-//   const { reportError } = useErrorReporting({
-//     logToConsole: true,
-//     showAlert: false,
-//   });
-
-//   return <ErrorBoundary onError={reportError}>{children}</ErrorBoundary>;
-// };
-
 const AppNavigation = () => {
-  // const [showSplash, setShowSplash] = useState(false);
   const { colors } = useTheme();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    const res = requestNotificationPermission().catch(() => {
+      // Permission denied or blocked; user can enable later from settings
+      Linking.openSettings();
+    });
+    console.log("this is response of permission >>>", res)
+  }, []);
 
   const styles = StyleSheet.create({
     tabBarContainer: {
@@ -61,23 +60,9 @@ const AppNavigation = () => {
     },
   });
 
-  // CRITICAL: Read token synchronously from storage for initial route.
-  // initialRouteName only applies when Stack.Navigator first mounts - it does NOT
-  // react to later prop changes. Redux acc_token is empty on first render (before
-  // useEffect runs), so we must read from storage directly. MMKV getString is sync.
-  // const tokenFromStorage = storage.getString(StorageKeys.ACCESS_TOKEN);
-  // const initialRouteName = tokenFromStorage ? ScreenNames.DASHBOARD_SCREEN : ScreenNames.LOGIN_SCREEN;
-
   useEffect(() => {
-    // Keep Redux in sync with storage for the rest of the app
     const token = storage.getString(StorageKeys.ACCESS_TOKEN);
-    // const isNewUser = storage.getBoolean(StorageKeys.IS_NEW_USER);
-    // dispatch(setIsNewUser(isNewUser));
     dispatch(setAccessToken(token ?? ''));
-
-    // ()=>{
-    //   clearTimeout(timer);
-    // }
   }, [dispatch]);
 
   return (
