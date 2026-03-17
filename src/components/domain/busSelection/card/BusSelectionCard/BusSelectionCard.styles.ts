@@ -85,8 +85,9 @@ export const useStyles = (colors: ColorsType) =>
       marginTop: 6,
     },
     walkIcon: {
-      width: 7.04,
-      height: 12,
+      width: 12,
+      height: 18,
+      marginRight: 4,
     },
     downArrow: {
       width: 9,

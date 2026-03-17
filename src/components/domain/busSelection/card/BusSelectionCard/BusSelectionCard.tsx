@@ -81,7 +81,7 @@ const BusSelectionCard = ({ showLabel = false, data, onProceed }: IBusSelectionC
   return (
     <View style={styles.container}>
       {/* top pick section */}
-      {showLabel && (
+      {showLabel && data.nearestPoint && (
         <View style={styles.topPickHeader}>
           <View style={styles.topPickHeaderTitleContainer}>
             <Image source={ImageSource.starBadge} style={styles.starBadgeIcon} />
@@ -90,7 +90,9 @@ const BusSelectionCard = ({ showLabel = false, data, onProceed }: IBusSelectionC
               Top pick for you
             </Text>
           </View>
-          <Text style={styles.topPickDesc}>Yay! Your pickup is just {data.pickup?.distanceText || 'a short walk'} away</Text>
+          <Text style={styles.topPickDesc}>
+            {data.nearestPoint.proximityMessage}
+          </Text>
         </View>
       )}
       {/* bottom main card Section */}
@@ -120,9 +122,15 @@ const BusSelectionCard = ({ showLabel = false, data, onProceed }: IBusSelectionC
               </Text>
               <View style={styles.walkAndDirectionRow}>
                 <TouchableOpacity style={styles.walkAndTimeContainer} onPress={() => setShowSourceStopImages(prev => !prev)}>
-                  <Image source={ImageSource.walkIcon} style={styles.walkIcon} />
+                  <Image
+                    source={data.pickup?.travelType === 'WALK' ? ImageSource.walkIcon : ImageSource.car}
+                    style={styles.walkIcon}
+                    resizeMode="contain"
+                  />
                   <Text variant="semi-bold" style={styles.placeSubtitle}>
-                    {data.pickup?.distanceText ?? '-'}
+                    {data.pickup?.travelTime && data.pickup?.distance
+                      ? `${data.pickup.travelTime} ${data.pickup.travelType?.toLowerCase() ?? ''} (${data.pickup.distance})`
+                      : data.pickup?.distance ?? '-'}
                   </Text>
                   <Image source={ImageSource.downArrow} style={styles.downArrow} />
                 </TouchableOpacity>
@@ -174,9 +182,15 @@ const BusSelectionCard = ({ showLabel = false, data, onProceed }: IBusSelectionC
               </Text>
               <View style={styles.walkAndDirectionRow}>
                 <TouchableOpacity style={styles.walkAndTimeContainer} onPress={() => setShowDestinationImages(prev => !prev)}>
-                  <Image source={ImageSource.walkIcon} style={styles.walkIcon} />
+                  <Image
+                    source={data.dropoff?.travelType === 'WALK' ? ImageSource.walkIcon : ImageSource.car}
+                    style={styles.walkIcon}
+                    resizeMode="contain"
+                  />
                   <Text variant="semi-bold" style={styles.placeSubtitle}>
-                    {data.dropoff?.distanceText ?? '-'}
+                    {data.dropoff?.travelTime && data.dropoff?.distance
+                      ? `${data.dropoff.travelTime} ${data.dropoff.travelType?.toLowerCase() ?? ''} (${data.dropoff.distance})`
+                      : data.dropoff?.distance ?? '-'}
                   </Text>
                   <Image source={ImageSource.downArrow} style={styles.downArrow} />
                 </TouchableOpacity>

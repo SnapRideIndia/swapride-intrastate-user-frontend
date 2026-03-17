@@ -85,6 +85,7 @@ export const ImageSource = {
   cloud: require('../../assets/images/cloud.png'),
   metroSplash: require('../../assets/images/metro.png'),
 
+  car: require('.././../assets/images/car.png'),
   noTicketsFound: require('.././../assets/images/noTicketsFound.png'),
   noNotificationsFound: require('.././../assets/images/noNotificationsFound.png'),
   noSavedLocations: require('.././../assets/images/noSavedLocations.png'),

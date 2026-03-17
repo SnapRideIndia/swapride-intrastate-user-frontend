@@ -50,15 +50,17 @@ export interface LegDetail {
     name: string;
     address: string;
     arrivalTime: string;
-    distanceText: string | null;
-    walkDurationText?: string | null;
+    distance: string | null;
+    travelTime: string | null;
+    travelType: 'WALK' | 'DRIVE' | null;
   };
   dropoff: {
     name: string;
     address: string;
     arrivalTime: string;
-    distanceText: string | null;
-    walkDurationText?: string | null;
+    distance: string | null;
+    travelTime: string | null;
+    travelType: 'WALK' | 'DRIVE' | null;
   };
 }
 

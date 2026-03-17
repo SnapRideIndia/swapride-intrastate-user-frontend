@@ -8,6 +8,7 @@ export interface ICommute {
   dropoff: Dropoff
   timings: Timing[]
   allStops: AllStop[]
+  nearestPoint?: NearestPoint
 }
 
 export interface Pickup {
@@ -16,7 +17,9 @@ export interface Pickup {
   latitude: number
   longitude: number
   images: Image[]
-  distanceText: string
+  distance: string
+  travelTime: string
+  travelType: 'WALK' | 'DRIVE'
   pointId: string
 }
 
@@ -33,7 +36,9 @@ export interface Dropoff {
   latitude: number
   longitude: number
   images: Image2[]
-  distanceText: string
+  distance: string
+  travelTime: string
+  travelType: 'WALK' | 'DRIVE'
   pointId: string
 }
 
@@ -62,6 +67,14 @@ export interface AllStop {
   sequence: number
   pointId: string
   isUserSegment: boolean
+}
+
+export interface NearestPoint {
+  name: string
+  distance: string
+  travelTime: string
+  travelType: 'WALK' | 'DRIVE'
+  proximityMessage: string
 }
 
 export interface Image3 {
