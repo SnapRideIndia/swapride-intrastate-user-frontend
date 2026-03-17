@@ -42,7 +42,6 @@ const EnterPhno = () => {
   }
 
   const handlePressSendOtp = () => {
-    console.log('Submit button clicked ===>');
     const phError = validatePhone(authCred.phNo);
 
     const newErrors: { phNo?: string; refcode?: string } = {};
@@ -77,6 +76,7 @@ const EnterPhno = () => {
     setAuthCred(prev => ({ ...prev, [key]: value }));
     setErrors(prev => ({ ...prev, [key]: undefined }));
   };
+
 
   console.log('this is authCred ===>', authCred.phNo, authCred.refcode);
   return (

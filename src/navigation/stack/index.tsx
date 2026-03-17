@@ -1,4 +1,4 @@
-import { Linking, StyleSheet, View } from 'react-native';
+import { Alert, Linking, StyleSheet, View } from 'react-native';
 import React, { useEffect } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native'
@@ -37,8 +37,7 @@ import TransactionHistoryScreen from '../../screens/transactions/TransactionHist
 import TransactionDetailScreen from '../../screens/transactions/TransactionDetailScreen/TransactionDetailScreen';
 import SavedLocationsScreen from '../../screens/savedLocations/SavedLocationsScreen';
 import AddEditLocationScreen from '../../screens/addEditLocation/AddEditLocationScreen';
-import { requestNotificationPermission } from '../../utils/PermissionHelper';
-
+import messaging from '@react-native-firebase/messaging';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const AppNavigation = () => {
@@ -46,11 +45,11 @@ const AppNavigation = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const res = requestNotificationPermission().catch(() => {
-      // Permission denied or blocked; user can enable later from settings
-      Linking.openSettings();
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
     });
-    console.log("this is response of permission >>>", res)
+
+    return unsubscribe;
   }, []);
 
   const styles = StyleSheet.create({
@@ -59,6 +58,7 @@ const AppNavigation = () => {
       backgroundColor: colors.background_primary,
     },
   });
+
 
   useEffect(() => {
     const token = storage.getString(StorageKeys.ACCESS_TOKEN);
