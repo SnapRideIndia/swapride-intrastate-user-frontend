@@ -22,6 +22,7 @@ export const useStyles = (colors: ColorsType) =>
     cardHeader: {
       flexDirection: 'row',
       alignItems: 'center',
+      gap: 10
     },
     shuttelIcon: {
       width: 26,
@@ -38,13 +39,18 @@ export const useStyles = (colors: ColorsType) =>
     title: {
       fontSize: 18,
       color: colors.contentPrimary,
+      width: 150
     },
     subTitle: {
       fontSize: 13,
       color: colors.contentPrimary,
+      textAlign: 'left'
     },
     min: {
       fontSize: 13,
       color: colors.contentSecondary,
     },
+    unreadStyle:{
+      backgroundColor: "lightBlue"
+    }
   });

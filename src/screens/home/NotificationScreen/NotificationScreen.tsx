@@ -7,25 +7,35 @@ import PrimaryHeader from '../../../components/common/SwHeader/PrimaryHeader/Pri
 import { useNavigation } from '@react-navigation/native';
 import { ImageSource } from '../../../constants/images';
 import { SwText as Text } from '../../../components/common/SwText/SwText';
+import { useFetchNotificationList, useSingleNotificationRead } from '../../../hooks/useNotification';
+import { INotification } from '../../../types/notificationsList.types';
+import dayjs from "dayjs";
+import duration from "dayjs/plugin/duration";
+dayjs.extend(duration);
 
 const NotificationScreen = () => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const navigation = useNavigation();
 
+  const { data: notificationList, isLoading, isError, error, refetch } = useFetchNotificationList();
+  console.log("This is Notification List ===>", notificationList);
+
+
   useEffect(() => {
     const renderHeader = () => <PrimaryHeader title={'Notification'} />;
     navigation.setOptions({
-      headerShown: true,
+      headerShown: true,  
       header: renderHeader,
     });
   }, [navigation]);
 
+
   return (
     <SafeAreaView edges={['bottom']} style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.contentContainer}>
-        {[1, 2, 3, 4].map((item, _idx) => (
-          <NotificationCard />
+        {notificationList?.map((item, _idx) => (
+          <NotificationCard data={item} />
         ))}
       </ScrollView>
     </SafeAreaView>
@@ -34,13 +44,47 @@ const NotificationScreen = () => {
 
 export default NotificationScreen;
 
-const styles = StyleSheet.create({});
-
-const NotificationCard = () => {
+const NotificationCard = ({ data }: { data: INotification }) => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
+
+
+  const onSuccessNotificationRead = (data: any)=>{
+    console.log("This is read notification response data ===>", data);
+  };
+
+  const onErrorNotificationRead = (error: any)=>{
+    console.error("This is read notification error ===>", error?.toString())
+  };
+
+  const {mutate: readNotification} = useSingleNotificationRead(onSuccessNotificationRead, onErrorNotificationRead)
+
+const getTimeAgo = (createdAt: string) => {
+  const diff = dayjs.duration(dayjs().diff(dayjs(createdAt)));
+
+  const days = diff.days();
+  const hours = diff.hours();
+  const minutes = diff.minutes();
+
+  if (diff.asDays() >= 1) {
+    return `${Math.floor(diff.asDays())}d ${hours}h ago`;
+  } else if (diff.asHours() >= 1) {
+    return `${Math.floor(diff.asHours())}h ${minutes}m ago`;
+  } else {
+    return `${Math.floor(diff.asMinutes())}m ago`;
+  }
+};
+
+const handlePressNotficationCard = (id: string)=>{
+  try {
+    readNotification({id});
+  } catch (error) {
+    console.error("This is error >>>", id);
+  }
+}
+
   return (
-    <View style={styles.cardContainer}>
+    <TouchableOpacity style={[styles.cardContainer, !data.read && styles.unreadStyle]} onPress={()=>handlePressNotficationCard(data?.id)}>
       <View style={styles.cardHeader}>
         <View style={styles.iconContainer}>
           <Image source={ImageSource.shuttel} style={styles.shuttelIcon} />
@@ -55,39 +99,44 @@ const NotificationCard = () => {
             }}
           >
             <Text variant="semi-bold" style={styles.title}>
-              Pickup in 5 minutes
+              {data.title}
             </Text>
             <Text variant="semi-bold" style={styles.min}>
-              10 Min ago
+              {getTimeAgo(data?.createdAt)}
             </Text>
           </View>
           <Text variant="medium" style={styles.subTitle}>
-            Please wait at the Main Gate pickup point.
+            {data?.content}
           </Text>
         </View>
       </View>
-      <ScrollView
-        style={{ marginTop: 29 }}
-        contentContainerStyle={{
-          flexGrow: 1,
-          flexDirection: 'row',
-          gap: 10,
-          borderRadius: 15,
-        }}
-        showsHorizontalScrollIndicator={false}
-        horizontal
-      >
-        {[1, 2, 3, 4].map((item, index) => (
-          <View
-            style={{
-              width: 214,
-              height: 123,
-              backgroundColor: 'gray',
-              borderRadius: 15,
-            }}
-          />
-        ))}
-      </ScrollView>
-    </View>
+      {
+        data?.metadata?.images && <ScrollView
+          style={{ marginTop: 29 }}
+          contentContainerStyle={{
+            flexGrow: 1,
+            flexDirection: 'row',
+            gap: 10,
+            borderRadius: 15,
+          }}
+          showsHorizontalScrollIndicator={false}
+          horizontal
+        >
+          {data?.metadata?.images?.map((item, index) => (
+            <View
+              style={{
+                width: 214,
+                height: 123,
+                backgroundColor: 'gray',
+                borderRadius: 15,
+                overflow: "hidden"
+              }}
+            >
+              <Image source={{uri: item}} style={{width: "100%", height: "100%", resizeMode: "contain"}} />
+            </View>
+          ))}
+        </ScrollView>
+      }
+    </TouchableOpacity>
   );
 };

@@ -1,15 +1,13 @@
 import { handleErrorResponse, postData, refreshSession } from './ApiUtility';
 
 class AuthService {
+  
   baseUrl = '/users/auth';
 
   sendOTP = async (payload: any) => {
     const url = `${this.baseUrl}/send-otp`;
     const res = await postData(url, payload);
 
-    console.log("this is login payload ===>", payload)
-
-    console.log('this is the login api response ===>', res);
     if (!res.success || !res.data) {
       handleErrorResponse(res);
     }
@@ -21,7 +19,6 @@ class AuthService {
     const url = `${this.baseUrl}/login`;
     const res = await postData(url, payload);
 
-    console.log('this is the email login api response ===>', res);
     if (!res.success || !res.data) {
       handleErrorResponse(res);
     }
@@ -33,7 +30,6 @@ class AuthService {
     const url = `${this.baseUrl}/verify-otp`;
     const res = await postData(url, payload);
 
-    console.log('this is the login api response ===>', res);
     if (!res.success || !res.data) {
       handleErrorResponse(res);
     }
@@ -45,7 +41,6 @@ class AuthService {
     const url = `${this.baseUrl}/register`;
     const res = await postData(url, payload);
 
-    console.log('this is the register api response ===>', res);
     if (!res.success || !res.data) {
       handleErrorResponse(res);
     }
@@ -57,7 +52,6 @@ class AuthService {
     const url = `${this.baseUrl}/logout`;
     const res = await postData(url, payload);
 
-    console.log('this is the logout api response ===>', res);
     if (!res.success || !res.data) {
       handleErrorResponse(res);
     }
@@ -68,8 +62,6 @@ class AuthService {
     resetPassword = async (payload: any) => {
     const url = `${this.baseUrl}/reset-password`;
     const res = await postData(url, payload);
-
-    console.log("this is reset password response ===>", res);
 
     if (!res.success || !res.data) {
       handleErrorResponse(res);

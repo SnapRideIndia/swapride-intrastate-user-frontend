@@ -39,7 +39,7 @@ const HomeScreenHeader = () => {
       </View>
       <View style={[styles.innerContainer, { marginTop: 18, marginBottom: 14 }]}>
         <Text variant="medium" style={styles.greeting}>
-          Good morning {profileData?.fullName.split(" ")[0]},
+          Good morning {profileData?.fullName?.split(" ")[0]},
         </Text>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Image source={ImageSource.weather} style={styles.weatherIcon} />
