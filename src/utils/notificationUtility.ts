@@ -1,8 +1,37 @@
 import notifee, { AndroidImportance, EventType, Notification } from '@notifee/react-native';
 import messaging, { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
 import { requestNotificationPermission } from './PermissionHelper';
+import { setFcmToken } from '../slice/authSlice';
+import { store } from '../store';
+import { storage } from './store';
+import { StorageKeys } from '../constants/storage/storageKeys';
 
 export const DEFAULT_CHANNEL_ID = 'default';
+
+export const ensureFcmToken = async () => {
+  const existingToken =
+    store.getState().auth.fcm_token || storage.getString(StorageKeys.FCM_TOKEN) || '';
+
+  if (existingToken) {
+    if (!store.getState().auth.fcm_token) {
+      store.dispatch(setFcmToken(existingToken));
+    }
+    return existingToken;
+  }
+
+  try {
+    await messaging().registerDeviceForRemoteMessages();
+    const token = await messaging().getToken();
+    if (token) {
+      store.dispatch(setFcmToken(token));
+      storage.set(StorageKeys.FCM_TOKEN, token);
+    }
+    return token ?? '';
+  } catch (error) {
+    console.log('Error fetching FCM token:', error);
+    return '';
+  }
+};
 
 export const setupNotificationChannel = async () => {
   await notifee.createChannel({
@@ -35,13 +64,30 @@ export const displayLocalNotification = async ({ title, body, data }: DisplayNot
   });
 };
 
+const getRemoteMessageText = (remoteMessage: FirebaseMessagingTypes.RemoteMessage) => {
+  const titleFromNotification = remoteMessage.notification?.title;
+  const bodyFromNotification = remoteMessage.notification?.body;
+  const titleFromData = remoteMessage.data?.title;
+  const bodyFromData = remoteMessage.data?.body;
+
+  return {
+    title: titleFromNotification ?? titleFromData ?? 'Notification',
+    body: bodyFromNotification ?? bodyFromData ?? 'You have a new message',
+  };
+};
+
+export const displayRemoteMessageNotification = async (
+  remoteMessage: FirebaseMessagingTypes.RemoteMessage,
+) => {
+  const { title, body } = getRemoteMessageText(remoteMessage);
+  const data = (remoteMessage.data ?? {}) as Record<string, string>;
+
+  await displayLocalNotification({ title, body, data });
+};
+
 const registerMessagingForegroundHandler = () => {
   return messaging().onMessage(async (remoteMessage: FirebaseMessagingTypes.RemoteMessage) => {
-    const title = remoteMessage.notification?.title ?? 'Notification';
-    const body = remoteMessage.notification?.body ?? 'You have a new message';
-    const data = (remoteMessage.data ?? {}) as Record<string, string>;
-
-    await displayLocalNotification({ title, body, data });
+    await displayRemoteMessageNotification(remoteMessage);
   });
 };
 
@@ -77,8 +123,7 @@ export const initNotifications = async () => {
   }
 
   try {
-    await messaging().registerDeviceForRemoteMessages();
-    const token = await messaging().getToken();
+    const token = await ensureFcmToken();
     console.log('FCM token:', token);
   } catch (error) {
     console.log('Error registering for remote messages:', error);

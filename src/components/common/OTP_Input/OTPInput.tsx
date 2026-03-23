@@ -4,9 +4,6 @@ import { OtpInput, OtpInputRef } from 'react-native-otp-entry';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { useStyles } from './OTPInput.styles';
 import { useTheme } from '../../../theme/ThemeProvider';
-import { useVerifyOTP } from '../../../hooks/useAuth';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../store';
 
 export interface OTPInputRef {
   clearAll: () => void;

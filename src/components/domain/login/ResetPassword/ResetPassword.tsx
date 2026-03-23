@@ -1,18 +1,15 @@
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Image, View } from 'react-native';
 import React, { useState } from 'react';
 import { useTheme } from '../../../../theme/ThemeProvider';
 import { SwTextInput as TextInput } from '../../../common/SwTextInput/SwTextInput';
 import { ImageSource } from '../../../../constants/images';
-import { SwText as Text } from '../../../common/SwText/SwText';
-import { usePhoneLogin, useRegisterUser, useResetpassword } from '../../../../hooks/useAuth';
+
+import {  useResetpassword } from '../../../../hooks/useAuth';
 import PrimaryButton from '../../../common/SwButton/PrimaryButton/PrimaryButton';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../../store';
 import { AuthStep, setAccessToken, setAuthStep, setIsForgotPassword, setRefreshToken } from '../../../../slice/authSlice';
-import { storage } from '../../../../utils/store';
-import { StorageKeys } from '../../../../constants/storage/storageKeys';
-import { useNavigation } from '@react-navigation/native';
-import { ScreenNames } from '../../../../navigation/constant';
+
 import { useStyles } from './ResetPassword.styles';
 import { showToast } from '../../../../utils/showToast';
 import { validateConfirmPassword, validatePassword } from '../../../../utils/validation';

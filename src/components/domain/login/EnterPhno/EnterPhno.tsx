@@ -12,6 +12,7 @@ import { AuthStep, setAuthStep, setPhno } from '../../../../slice/authSlice';
 import { RootState } from '../../../../store';
 import { showToast } from '../../../../utils/showToast';
 import { validatePhone } from '../../../../utils/validation';
+import { ensureFcmToken } from '../../../../utils/notificationUtility';
 
 const EnterPhno = () => {
   const [authCred, setAuthCred] = useState({
@@ -41,7 +42,7 @@ const EnterPhno = () => {
     setIsCheck((prev)=>!prev);
   }
 
-  const handlePressSendOtp = () => {
+  const handlePressSendOtp = async () => {
     const phError = validatePhone(authCred.phNo);
 
     const newErrors: { phNo?: string; refcode?: string } = {};

@@ -11,7 +11,6 @@ import { ImageSource } from '../../../constants/images';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import { ScreenNames } from '../../../navigation/constant';
-import { handleInitialNotification, initNotifications } from '../../../utils/notificationUtility';
 
 const HomeScreen = () => {
   const { colors } = useTheme();
@@ -48,26 +47,6 @@ const HomeScreen = () => {
       header: renderHeader,
     });
   }, [navigation]);
-
-  useEffect(() => {
-    let unsubscribe: (() => void) | undefined;
-
-    (async () => {
-      try {
-        unsubscribe = await initNotifications();
-        const initialNotification = await handleInitialNotification();
-        console.log("this is initial Notification ===>", initialNotification);
-      } catch (error) {
-        console.error('Error during notifications bootstrap:', error);
-      }
-    })();
-
-    return () => {
-      if (unsubscribe) {
-        unsubscribe();
-      }
-    };
-  }, []);
 
   return (
     <SafeAreaView edges={['bottom']} style={styles.container}>

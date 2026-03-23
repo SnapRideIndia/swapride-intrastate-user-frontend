@@ -8,6 +8,24 @@ import { handleInitialNotification, initNotifications } from './utils/notificati
 const queryClient = new QueryClient();
 
 const App = () => {
+  useEffect(() => {
+    let unsubscribe: (() => void) | undefined;
+
+    (async () => {
+      try {
+        unsubscribe = await initNotifications();
+        await handleInitialNotification();
+      } catch (error) {
+        console.log('Error during notifications bootstrap:', error);
+      }
+    })();
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

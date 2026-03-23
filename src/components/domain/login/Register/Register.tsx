@@ -5,7 +5,7 @@ import { useStyles } from './Register.styles';
 import { SwTextInput as TextInput } from '../../../common/SwTextInput/SwTextInput';
 import { ImageSource } from '../../../../constants/images';
 import { SwText as Text } from '../../../common/SwText/SwText';
-import { usePhoneLogin, useRegisterUser } from '../../../../hooks/useAuth';
+import {  useRegisterUser } from '../../../../hooks/useAuth';
 import PrimaryButton from '../../../common/SwButton/PrimaryButton/PrimaryButton';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../../store';

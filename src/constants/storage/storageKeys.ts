@@ -4,4 +4,5 @@ export const StorageKeys = {
   REFRESH_TOKEN: 'refreshToken',
   VERIFICATION_ID: 'verificationId',
   IS_NEW_USER: 'isNewUser',
+  FCM_TOKEN: 'fcmToken',
 };

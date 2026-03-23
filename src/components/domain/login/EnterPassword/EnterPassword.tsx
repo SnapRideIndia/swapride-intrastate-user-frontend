@@ -1,4 +1,4 @@
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Image, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 import React, { useState } from 'react';
 import { useTheme } from '../../../../theme/ThemeProvider';
 import { SwTextInput as TextInput } from '../../../common/SwTextInput/SwTextInput';
@@ -16,6 +16,7 @@ import { showToast } from '../../../../utils/showToast';
 import { storage } from '../../../../utils/store';
 import { StorageKeys } from '../../../../constants/storage/storageKeys';
 import { validateEmailOrPhone, validatePassword } from '../../../../utils/validation';
+import { ensureFcmToken } from '../../../../utils/notificationUtility';
 
 const EnterPassword = () => {
   const [userCred, setUserCred] = useState({
@@ -26,31 +27,31 @@ const EnterPassword = () => {
   const [showPassword, setShowPassword] = useState(false);
   const { colors } = useTheme();
   const styles = useStyles(colors);
-  // const { isNewUser } = useSelector((store: RootState) => store.auth);
+  const { fcm_token } = useSelector((store: RootState) => store.auth);
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
   const onSuccessLogin = (data: any) => {
-     if (data && data?.isNewUser) {
-          showToast('success', '', data?.message ?? "Please register here!", 1500);
-          dispatch(setAuthStep(2));
-          dispatch(setVerificationId(data?.verificationId));
-          dispatch(setIsNewUser(true));
-          storage.set(StorageKeys.IS_NEW_USER, true);
-        } else {
-          dispatch(setAccessToken(data.accessToken));
-          dispatch(setRefreshToken(data.refreshToken));
-          storage.set(StorageKeys.ACCESS_TOKEN, data.accessToken);
-          storage.set(StorageKeys.REFRESH_TOKEN, data.refreshToken);
-          showToast('success', '', data.message ?? "Login Successful!", 3000);
-          if (data.isNewUser) {
-            (navigation as any).navigate(ScreenNames.SET_PROFILE_SCREEN as never, {
-              isFromRegister: true,
-            });
-          } else {
-            navigation.navigate(ScreenNames.DASHBOARD_SCREEN as never);
-          }
-        }
+    if (data && data?.isNewUser) {
+      showToast('success', '', data?.message ?? "Please register here!", 1500);
+      dispatch(setAuthStep(2));
+      dispatch(setVerificationId(data?.verificationId));
+      dispatch(setIsNewUser(true));
+      storage.set(StorageKeys.IS_NEW_USER, true);
+    } else {
+      dispatch(setAccessToken(data.accessToken));
+      dispatch(setRefreshToken(data.refreshToken));
+      storage.set(StorageKeys.ACCESS_TOKEN, data.accessToken);
+      storage.set(StorageKeys.REFRESH_TOKEN, data.refreshToken);
+      showToast('success', '', data.message ?? "Login Successful!", 3000);
+      if (data.isNewUser) {
+        (navigation as any).navigate(ScreenNames.SET_PROFILE_SCREEN as never, {
+          isFromRegister: true,
+        });
+      } else {
+        navigation.navigate(ScreenNames.DASHBOARD_SCREEN as never);
+      }
+    }
   };
 
   const onErrorLogin = (error: any) => {
@@ -64,7 +65,7 @@ const EnterPassword = () => {
     setErrors(prev => ({ ...prev, [key]: undefined }));
   };
 
-  const handlePressButton = () => {
+  const handlePressButton = async () => {
     const emailError = validateEmailOrPhone(userCred.email);
     const passwordError = validatePassword(userCred.password);
 
@@ -78,9 +79,12 @@ const EnterPassword = () => {
     }
 
     try {
+      const fcmToken = fcm_token || await ensureFcmToken();
       const payload = {
         identifier: userCred.email,
         password: userCred.password,
+        "fcmToken": fcmToken,
+        "deviceType": Platform.OS === "ios" ? "IOS" : "ANDROID"
       }
       login(payload)
     } catch (error) {
@@ -93,7 +97,7 @@ const EnterPassword = () => {
     dispatch(setAuthStep(AuthStep.Step0));
   };
 
-  const handlePressForgotPassword = ()=>{
+  const handlePressForgotPassword = () => {
     dispatch(setAuthStep(AuthStep.Step0));
     dispatch(setIsForgotPassword(true));
   }

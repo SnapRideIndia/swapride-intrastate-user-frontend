@@ -15,14 +15,16 @@ import { storage } from '../../../../utils/store';
 import { ScreenNames } from '../../../../navigation/constant';
 import { StorageKeys } from '../../../../constants/storage/storageKeys';
 import { useNavigation } from '@react-navigation/native';
+import { ensureFcmToken } from '../../../../utils/notificationUtility';
 
 const EnterOtp = () => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const { step } = useSelector((store: RootState) => store.auth);
   const dispatch = useDispatch();
-  const { phNo, isNewUser, isForgotPassword } = useSelector((store: RootState) => store.auth);
+  const { phNo, isNewUser, isForgotPassword, fcm_token } = useSelector((store: RootState) => store.auth);
   const navigation = useNavigation();
+  console.log("This is fcm_token: ", fcm_token)
 
   const onSuccessVerifyOTP = (data: any) => {
     console.log('This is data of Successful Verify OTP >>>', data);
@@ -77,20 +79,23 @@ const EnterOtp = () => {
     dispatch(setAuthStep(step > 0 ? step - 1 : step));
   };
 
-  const handlePressVerifyOtp = () => {
+  const handlePressVerifyOtp = async () => {
     try {
+      const fcmToken = fcm_token || await ensureFcmToken();
       const payload = {
         mobileNumber: phNo,
         otp: '543210',
+        "fcmToken": fcmToken,
         ...(isForgotPassword ? { type: "FORGOT_PASSWORD" } : {})
       };
+      console.log("This is verify otp payload ===>", payload)
       verifyOTP(payload);
     } catch (error) {
       console.error('this is Error of verifyOTP: ', error);
     }
   };
 
-  const handlePressResendOtp = () => {
+  const handlePressResendOtp = async () => {
     console.log('Submit button clicked ===>');
     try {
       const data = {

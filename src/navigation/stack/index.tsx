@@ -1,4 +1,4 @@
-import { Alert, Linking, StyleSheet, View } from 'react-native';
+import { Linking, StyleSheet, View } from 'react-native';
 import React, { useEffect } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native'
@@ -37,20 +37,11 @@ import TransactionHistoryScreen from '../../screens/transactions/TransactionHist
 import TransactionDetailScreen from '../../screens/transactions/TransactionDetailScreen/TransactionDetailScreen';
 import SavedLocationsScreen from '../../screens/savedLocations/SavedLocationsScreen';
 import AddEditLocationScreen from '../../screens/addEditLocation/AddEditLocationScreen';
-import messaging from '@react-native-firebase/messaging';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const AppNavigation = () => {
   const { colors } = useTheme();
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    const unsubscribe = messaging().onMessage(async remoteMessage => {
-      Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
-    });
-
-    return unsubscribe;
-  }, []);
 
   const styles = StyleSheet.create({
     tabBarContainer: {
