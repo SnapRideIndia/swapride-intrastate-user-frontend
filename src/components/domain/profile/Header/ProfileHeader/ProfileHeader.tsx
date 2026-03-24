@@ -1,4 +1,4 @@
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Image, TouchableOpacity, View } from 'react-native';
 import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../../../../theme/ThemeProvider';
@@ -49,7 +49,7 @@ const ProfileHeader = ({ profileData }: { profileData: any }) => {
           </Text>
         </View>
         <View style={styles.profileContainer}>
-          <Image source={{ uri: profileData?.profileUrl }} style={{ width: '100%', height: '100%', borderRadius: 100 }} />
+          <Image source={profileData.profileUrl ? { uri: profileData?.profileUrl }: ImageSource.userOutline} style={profileData.profileUrl ? { width: '100%', height: '100%', borderRadius: 100 }: {}} resizeMode="contain"/>
         </View>
       </View>
     </SafeAreaView>
@@ -57,5 +57,3 @@ const ProfileHeader = ({ profileData }: { profileData: any }) => {
 };
 
 export default ProfileHeader;
-
-const styles = StyleSheet.create({});

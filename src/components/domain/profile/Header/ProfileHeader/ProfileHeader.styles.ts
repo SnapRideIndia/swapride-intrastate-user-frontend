@@ -28,6 +28,9 @@ export const useStyles = (colors: ColorsType) =>
       height: 91,
       borderRadius: 91,
       overflow: 'hidden',
+      justifyContent: "center",
+      alignItems: "center",
+      borderWidth: 2
     },
     detailsSection: {
       flex: 1,

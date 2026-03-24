@@ -7,9 +7,9 @@ export const useFetchCurrentProfile = () => {
     queryFn: () => {
       return ProfileService.getCurrentUserProfile();
     },
-    enabled: true,
-    staleTime: 5 * 60 * 1000,
-    retry: 2,
+    // enabled: true,
+    // staleTime: 5 * 60 * 1000,
+    // retry: 2,
   });
 };
 
