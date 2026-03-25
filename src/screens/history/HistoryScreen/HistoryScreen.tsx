@@ -1,4 +1,4 @@
-import { FlatList, ActivityIndicator, View, RefreshControl } from 'react-native';
+import { FlatList, ActivityIndicator, View, RefreshControl, Image } from 'react-native';
 import React, { useEffect, useState, useCallback } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../../theme/ThemeProvider';
@@ -7,12 +7,20 @@ import PrimaryHeader from '../../../components/common/SwHeader/PrimaryHeader/Pri
 import { SwText as Text } from '../../../components/common/SwText/SwText';
 import { useMyBookings } from '../../../hooks/useBooking';
 import BookingCard from '../../../components/domain/booking/card/BookingCard/BookingCard';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../../navigation/types';
+import PrimaryButton from '../../../components/common/SwButton/PrimaryButton/PrimaryButton';
 import { format } from 'date-fns';
 import { MyBookingType } from '../../../types/booking.types';
+import { ImageSource } from '../../../constants/images';
+import { ScreenNames } from '../../../navigation/constant';
+import { NoResults } from '../../../components/common/NoResults/NoResults';
 
 const HistoryScreen = () => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const {
     data: bookings,
     isLoading,
@@ -35,16 +43,27 @@ const HistoryScreen = () => {
     if (bookings) {
       console.log('My Bookings Response ===>', bookings);
     }
-  }, [bookings]);
+    if (isError) {
+      console.error('My Bookings History Error ===>', error);
+    }
+  }, [bookings, isError, error]);
 
   if (isError) {
     return (
       <SafeAreaView edges={['bottom']} style={styles.container}>
-        <PrimaryHeader title="History" />
-        <View style={[styles.container, { justifyContent: 'center', alignItems: 'center', padding: 20 }]}>
-          <Text variant="semi-bold" style={{ textAlign: 'center', color: colors.contentSecondary }}>
-            {(error as any)?.message || 'Failed to load bookings'}
+        <PrimaryHeader title="History" onBackBtnPress={() => navigation.goBack()} />
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 32 }}>
+          <Text variant="semi-bold" style={{ textAlign: 'center', color: colors.contentPrimary, marginBottom: 8 }}>
+            Unable to load your history
           </Text>
+          <Text style={{ textAlign: 'center', color: colors.contenttertiary, marginBottom: 24 }}>
+            Something went wrong while fetching your past rides. Please try again.
+          </Text>
+          <PrimaryButton 
+            title="Retry" 
+            onPress={() => refetch()}
+            btnStyle={{ width: '100%', maxWidth: 200 }}
+          />
         </View>
       </SafeAreaView>
     );
@@ -82,11 +101,11 @@ const HistoryScreen = () => {
       );
     }
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 100 }}>
-        <Text variant="medium" style={{ color: colors.contenttertiary }}>
-          No bookings found
-        </Text>
-      </View>
+      <NoResults
+        image={ImageSource.noTicketsFound}
+        title="No History Yet"
+        subtitle="Your completed trips and cancellations will appear here once you start riding with us."
+      />
     );
   };
 

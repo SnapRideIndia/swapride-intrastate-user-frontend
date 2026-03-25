@@ -139,12 +139,9 @@ export const useStyles = (colors: ColorsType) =>
       height: 45,
       backgroundColor: colors.primaryLight,
       elevation: 1,
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: 0.1,
-      shadowRadius: 2,
     },
     viewMySuggestionsButtonText: {
-      color: '#FFFFFF',
+      color: colors.primaryCtaText,
+      
     },
   });

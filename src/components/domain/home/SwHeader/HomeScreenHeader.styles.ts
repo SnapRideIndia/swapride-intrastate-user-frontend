@@ -20,8 +20,8 @@ export const useStyles = (colors: ColorsType) =>
       color: colors.primaryCtaText,
     },
     weatherIcon: {
-      width: 20,
-      height: 20,
+      width: 28,
+      height: 28,
     },
     tempText: {
       fontSize: 16,

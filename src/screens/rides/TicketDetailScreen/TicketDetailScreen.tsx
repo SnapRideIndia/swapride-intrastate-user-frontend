@@ -73,7 +73,7 @@ const TicketDetailScreen = ({ route }: { route: RouteProp<RootStackParamList, ty
 
         <PrimaryButton
           title="View Bus Location"
-          onPress={() => console.log('View Bus Location')}
+          onPress={() => navigation.navigate(ScreenNames.TRACK_RIDE_SCREEN, { ticketId })}
           btnStyle={styles.locationButton}
           textStyle={styles.locationButtonText}
         />

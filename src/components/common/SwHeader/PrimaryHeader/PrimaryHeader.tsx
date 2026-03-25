@@ -13,9 +13,10 @@ interface IHeaderProps {
   onBackPress?: () => void;
   onBackBtnPress?: () => void;
   onEdit?: () => void;
+  renderRightIcon?: () => React.ReactNode;
 }
 
-const PrimaryHeader = ({ title, onBackBtnPress, onEdit }: IHeaderProps) => {
+const PrimaryHeader = ({ title, onBackBtnPress, onEdit, renderRightIcon }: IHeaderProps) => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const navigation = useNavigation();
@@ -40,6 +41,7 @@ const PrimaryHeader = ({ title, onBackBtnPress, onEdit }: IHeaderProps) => {
       </View>
 
       <View style={styles.iconContainer}>
+        {renderRightIcon?.()}
         {onEdit && (
           <TouchableOpacity onPress={onEdit}>
             <Image source={ImageSource.edit} style={styles.editIcon} />

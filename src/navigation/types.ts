@@ -33,6 +33,8 @@ export type RootStackParamList = {
   [ScreenNames.FIND_COMMUTE]: undefined;
   [ScreenNames.POLICY_SCREEN]: undefined;
   [ScreenNames.RENT_A_BUS_SCREEN]: undefined;
+  [ScreenNames.RENTAL_REQUESTS_SCREEN]: undefined;
+  [ScreenNames.RENTAL_DETAILS_SCREEN]: { rentalId: string };
   [ScreenNames.ACCOUNT_SETTING_SCREEN]: undefined;
   [ScreenNames.SAVED_PLACES_SCREEN]: undefined;
   [ScreenNames.ADD_EDIT_LOCATION_SCREEN]: {

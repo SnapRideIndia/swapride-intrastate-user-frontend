@@ -42,4 +42,11 @@ export const useStyles = (colors: ColorsType) =>
       borderBottomWidth: 1,
       borderBottomColor: colors.border_3,
     },
+    upcomingSection: {
+      gap: 16,
+    },
+    upcomingHeader: {
+      fontSize: 16,
+      color: colors.contentSecondary,
+    },
   });

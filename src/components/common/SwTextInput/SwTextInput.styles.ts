@@ -1,6 +1,5 @@
 import { StyleSheet } from 'react-native';
 import { ColorsType } from '../../../constants/ui/colors/colors.types';
-import { getFontFamilyByFW } from '../SwText/SwText';
 import { commonColors } from '../../../constants/ui/colors';
 
 export const useStyles = (colors: ColorsType) =>
@@ -45,7 +44,7 @@ export const useStyles = (colors: ColorsType) =>
     },
     title: {
       fontSize: 14,
-      color: colors.primary,
+      color: colors.contentPrimary,
     },
     errorText: {
       marginTop: 4,

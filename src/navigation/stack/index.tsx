@@ -1,4 +1,4 @@
-import { Linking, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import React, { useEffect } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native'
@@ -37,6 +37,10 @@ import TransactionHistoryScreen from '../../screens/transactions/TransactionHist
 import TransactionDetailScreen from '../../screens/transactions/TransactionDetailScreen/TransactionDetailScreen';
 import SavedLocationsScreen from '../../screens/savedLocations/SavedLocationsScreen';
 import AddEditLocationScreen from '../../screens/addEditLocation/AddEditLocationScreen';
+import RentBusScreen from '../../screens/rentals/RentBusScreen/RentBusScreen';
+import RentalRequestsScreen from '../../screens/rentals/RentalRequestsScreen/RentalRequestsScreen';
+import RentalDetailsScreen from '../../screens/rentals/RentalDetailsScreen/RentalDetailsScreen';
+
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const AppNavigation = () => {
@@ -92,6 +96,9 @@ const AppNavigation = () => {
         <Stack.Screen name={ScreenNames.TRANSACTION_DETAIL_SCREEN as never} component={TransactionDetailScreen} />
         <Stack.Screen name={ScreenNames.SAVED_PLACES_SCREEN as never} component={SavedLocationsScreen} />
         <Stack.Screen name={ScreenNames.ADD_EDIT_LOCATION_SCREEN as never} component={AddEditLocationScreen} />
+        <Stack.Screen name={ScreenNames.RENT_A_BUS_SCREEN as never} component={RentBusScreen} />
+        <Stack.Screen name={ScreenNames.RENTAL_REQUESTS_SCREEN as never} component={RentalRequestsScreen} />
+        <Stack.Screen name={ScreenNames.RENTAL_DETAILS_SCREEN as never} component={RentalDetailsScreen} />
         <Stack.Screen name={ScreenNames.DUMMY as never} component={Dummy} />
       </Stack.Navigator>
     </NavigationContainer>
