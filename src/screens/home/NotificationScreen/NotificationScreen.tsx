@@ -4,10 +4,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../../theme/ThemeProvider';
 import { useStyles } from './NotificationScreen.styles';
 import PrimaryHeader from '../../../components/common/SwHeader/PrimaryHeader/PrimaryHeader';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { ImageSource } from '../../../constants/images';
 import { SwText as Text } from '../../../components/common/SwText/SwText';
-import { useFetchNotificationList, useSingleNotificationRead } from '../../../hooks/useNotification';
+import { useFetchNotificationList, useMarkAllNotificationsRead, useSingleNotificationRead } from '../../../hooks/useNotification';
 import { INotification } from '../../../types/notificationsList.types';
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
@@ -20,6 +20,7 @@ const NotificationScreen = () => {
 
   const { data: notificationList, isLoading, isError, error, refetch } = useFetchNotificationList();
   console.log("This is Notification List ===>", notificationList);
+  const { mutate: markAllNotificationsRead } = useMarkAllNotificationsRead();
 
 
   useEffect(() => {
@@ -30,6 +31,11 @@ const NotificationScreen = () => {
     });
   }, [navigation]);
 
+  useFocusEffect(
+    React.useCallback(() => {
+      markAllNotificationsRead();
+    }, [markAllNotificationsRead]),
+  );
 
   return (
     <SafeAreaView edges={['bottom']} style={styles.container}>

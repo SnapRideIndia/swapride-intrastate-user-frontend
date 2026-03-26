@@ -10,7 +10,7 @@ import { SwText as Text } from '../../../components/common/SwText/SwText';
 import PrimaryButton from '../../../components/common/SwButton/PrimaryButton/PrimaryButton';
 import { SwPopupModal } from '../../../components/common/SwPopupModal';
 import SuggestionService from '../../../services/SuggestionService';
-import { showToast } from '../../../utils/showToast';
+import { showCustomToast } from '../../../utils/customToast';
 import type { RootStackParamList } from '../../../navigation/types';
 import type { StopSuggestionListItem } from '../../../types/suggestion.types';
 
@@ -115,9 +115,9 @@ export default function MySuggestionsScreen() {
       if (count === 0) {
         navigation.goBack();
       }
-      showToast('success', 'Suggestion removed', '', 2000);
+      showCustomToast('success', 'Suggestion removed', '', 2000);
     } catch (e: any) {
-      showToast('error', e?.message ?? 'Failed to delete suggestion', '', 2000);
+      showCustomToast('error', e?.message ?? 'Failed to delete suggestion', '', 2000);
     } finally {
       setIsDeleting(false);
     }
@@ -126,13 +126,13 @@ export default function MySuggestionsScreen() {
   const handleViewOnMap = useCallback((item: ListItem) => {
     const coords = getCoords(item);
     if (!coords) {
-      showToast('error', 'Location details not available for this suggestion', '', 2000);
+      showCustomToast('error', 'Location details not available for this suggestion', '', 2000);
       return;
     }
     const { pickupLat, pickupLng, dropoffLat, dropoffLng } = coords;
     const url = `https://www.google.com/maps/dir/?api=1&origin=${pickupLat},${pickupLng}&destination=${dropoffLat},${dropoffLng}`;
     Linking.openURL(url).catch(() => {
-      showToast('error', 'Unable to open maps', '', 2000);
+      showCustomToast('error', 'Unable to open maps', '', 2000);
     });
   }, []);
 

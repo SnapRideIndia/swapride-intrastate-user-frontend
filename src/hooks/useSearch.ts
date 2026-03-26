@@ -6,7 +6,7 @@ import type { PlaceSuggestion } from '../services/SearchService';
 import type { SwLocationSearchItem } from '../types/placeAutofill.types';
 import type { LocationFieldType } from '../types/search.types';
 import type { SearchTripsParams } from '../types/trips.types';
-import { showToast } from '../utils/showToast';
+import { showCustomToast } from '../utils/customToast';
 
 const mapPlacesToSearchItems = (places: PlaceSuggestion[]): SwLocationSearchItem[] =>
   places.map(place => ({
@@ -102,10 +102,10 @@ export const useSaveLocation = (onSaved?: () => void | Promise<void>) => {
           latitude: lat,
           longitude: lng,
         });
-        showToast('success', 'Location saved', '', 2000);
+        showCustomToast('success', 'Location saved', '', 2000);
         await onSaved?.();
       } catch (e: any) {
-        showToast('error', e?.message ?? 'Failed to save location', '', 2000);
+        showCustomToast('error', e?.message ?? 'Failed to save location', '', 2000);
         throw e;
       }
     },

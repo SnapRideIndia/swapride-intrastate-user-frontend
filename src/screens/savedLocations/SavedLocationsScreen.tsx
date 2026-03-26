@@ -14,7 +14,7 @@ import { ImageSource } from '../../constants/images';
 import SearchService from '../../services/SearchService';
 import type { SavedLocationDto } from '../../types/search.types';
 import { ScreenNames } from '../../navigation/constant';
-import { showToast } from '../../utils/showToast';
+import { showCustomToast } from '../../utils/customToast';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../navigation/types';
 
@@ -63,9 +63,9 @@ export default function SavedLocationsScreen() {
       await SearchService.deleteSavedLocation(itemToDelete.id);
       closeDeleteModal();
       loadList();
-      showToast('success', 'Location removed', '', 2000);
+      showCustomToast('success', 'Location removed', '', 2000);
     } catch (e: any) {
-      showToast('error', e?.message ?? 'Failed to delete location', '', 2000);
+      showCustomToast('error', e?.message ?? 'Failed to delete location', '', 2000);
     } finally {
       setIsDeleting(false);
     }

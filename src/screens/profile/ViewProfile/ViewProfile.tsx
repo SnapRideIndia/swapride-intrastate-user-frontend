@@ -18,17 +18,21 @@ import {
 } from '@gorhom/bottom-sheet';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { setLogout } from '../../../slice/authSlice';
-import { showToast } from '../../../utils/showToast';
+import { showCustomToast } from '../../../utils/customToast';
 import { useLogout } from '../../../hooks/useAuth';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { storage } from '../../../utils/store';
 import { StorageKeys } from '../../../constants/storage/storageKeys';
 import { ScreenNames } from '../../../navigation/constant';
 import { setCurrentCoords, setProfileData } from '../../../slice/profileSlice';
 import { Switch } from 'react-native-switch';
+import LogoutConfirmationModal from '../../../components/common/LogoutConfirmationModal';
+import { RootState } from '../../../store';
 
 const ViewProfile = () => {
   const [phNo, setPhNo] = useState('');
+  const [isLogoutModalVisible, setIsLogoutModalVisible] = useState(false);
+  const [isDeleteConfirmModalVisible, setIsDeleteConfirmModalVisible] = useState(false);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const insets = useSafeAreaInsets();
@@ -36,11 +40,12 @@ const ViewProfile = () => {
   const dispatch = useDispatch();
   const { data: profileData } = useFetchCurrentProfile();
   const { data: travelPreferences, isLoading: isTravelPreferencesLoading, refetch: refetchTravelPreference } = useFetchTravelPreferences();
+  const {fcm_token} = useSelector((store:RootState)=>store.auth)
 
   const onSuccessfulDeleteProfile = (data: any) => {
     console.log("This is the delete data response ===>", data);
     handleConfirmDelete();
-    handlePressLogout();
+    performLogout();
   }
   const onErrorDeleteProfile = (error: any) => {
     console.log("This is error in delete profile ===>", error);
@@ -75,19 +80,32 @@ const ViewProfile = () => {
     deleteAccountSheetRef.current?.dismiss();
   }, []);
 
-  const handlePressProceed = () => {
-    if (!phNo) {
-      showToast("error", "Please enter phone number associated with this account!", '', 1500);
-      return;
-    }
+  const handlePressDeleteAccount = () => {
+    openDeleteAccountSheet();
+  };
+
+  const handleCloseDeleteConfirmModal = () => {
+    setIsDeleteConfirmModalVisible(false);
+  };
+
+  const handleConfirmDeleteAccount = () => {
+    setIsDeleteConfirmModalVisible(false);
     try {
       deleteProfile();
     } catch (error) {
       console.log("Error in delete profile api >>>", error?.message);
     }
+  };
+
+  const handlePressProceed = () => {
+    if (!phNo) {
+      showCustomToast("error", "Please enter phone number associated with this account!", '', 1500);
+      return;
+    }
+    setIsDeleteConfirmModalVisible(true);
   }
 
-  const handlePressLogout = () => {
+  const performLogout = () => {
     try {
       dispatch(setProfileData(null));
       dispatch(setCurrentCoords(null))
@@ -96,10 +114,25 @@ const ViewProfile = () => {
       storage.set(StorageKeys.REFRESH_TOKEN, '');
       navigation.navigate(ScreenNames.LOGIN_SCREEN as never);
       // api calling
-      logout({});
+      logout({
+         fcmToken: fcm_token
+      });
     } catch (error) {
       console.error('Error of logout ===>', error?.toString());
     }
+  };
+
+  const handlePressLogout = () => {
+    setIsLogoutModalVisible(true);
+  };
+
+  const handleCloseLogoutModal = () => {
+    setIsLogoutModalVisible(false);
+  };
+
+  const handleConfirmLogout = () => {
+    setIsLogoutModalVisible(false);
+    performLogout();
   };
 
   useFocusEffect(React.useCallback(() => {
@@ -164,7 +197,7 @@ const ViewProfile = () => {
         <PrimaryButton title={'Logout'} btnStyle={styles.btnStyle} onPress={handlePressLogout} />
         <PrimaryButton
           title={'Delete Account'}
-          onPress={openDeleteAccountSheet}
+          onPress={handlePressDeleteAccount}
           btnStyle={styles.logoutbtn}
           renderLeftIcon={() => <Image source={ImageSource.delete} style={{ width: 16, height: 18 }} />}
           textStyle={styles.textStyle}
@@ -225,6 +258,20 @@ const ViewProfile = () => {
           </View>
         </BottomSheetView>
       </BottomSheetModal>
+      <LogoutConfirmationModal
+        isVisible={isLogoutModalVisible}
+        onCancel={handleCloseLogoutModal}
+        onConfirm={handleConfirmLogout}
+      />
+      <LogoutConfirmationModal
+        isVisible={isDeleteConfirmModalVisible}
+        onCancel={handleCloseDeleteConfirmModal}
+        onConfirm={handleConfirmDeleteAccount}
+        title="Confirm account deletion"
+        description="Are you sure you want to delete your account?"
+        confirmText="Delete"
+        cancelText="Cancel"
+      />
     </SafeAreaView>
   );
 };

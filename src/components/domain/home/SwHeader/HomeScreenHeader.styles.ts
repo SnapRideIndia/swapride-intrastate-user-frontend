@@ -41,4 +41,28 @@ export const useStyles = (colors: ColorsType) =>
       width: 27,
       height: 30,
     },
+    bellIconWrapper: {
+      position: 'relative',
+      padding: 2,
+    },
+    unreadBadge: {
+      position: 'absolute',
+      top: -6,
+      right: -8,
+      minWidth: 18,
+      height: 18,
+      borderRadius: 9,
+      paddingHorizontal: 4,
+      backgroundColor: '#E53935',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderWidth: 1,
+      borderColor: '#FFFFFF',
+    },
+    unreadBadgeText: {
+      fontSize: 10,
+      lineHeight: 12,
+      color: '#FFFFFF',
+      textAlign: 'center',
+    },
   });

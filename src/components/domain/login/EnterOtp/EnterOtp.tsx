@@ -10,7 +10,7 @@ import { RootState } from '../../../../store';
 import { AuthStep, setAccessToken, setAuthStep, setIsNewUser, setPhno, setRefreshToken, setVerificationId } from '../../../../slice/authSlice';
 import PrimaryButton from '../../../common/SwButton/PrimaryButton/PrimaryButton';
 import { usePhoneLogin, useVerifyOTP } from '../../../../hooks/useAuth';
-import { showToast } from '../../../../utils/showToast';
+import { showCustomToast } from '../../../../utils/customToast';
 import { storage } from '../../../../utils/store';
 import { ScreenNames } from '../../../../navigation/constant';
 import { StorageKeys } from '../../../../constants/storage/storageKeys';
@@ -34,7 +34,7 @@ const EnterOtp = () => {
       return;
     }
     else if (data && data?.isNewUser) {
-      showToast('success', '', data?.message ?? "OTP verified successfully!", 1500);
+      showCustomToast('success', '', data?.message ?? "OTP verified successfully!", 1500);
       dispatch(setAuthStep(2));
       dispatch(setIsNewUser(true));
       // storage.set(StorageKeys.IS_NEW_USER, true);
@@ -43,7 +43,7 @@ const EnterOtp = () => {
       dispatch(setRefreshToken(data.refreshToken));
       storage.set(StorageKeys.ACCESS_TOKEN, data.accessToken);
       storage.set(StorageKeys.REFRESH_TOKEN, data.refreshToken);
-      showToast('success', '', data.message ?? "OTP verified successfully!", 3000);
+      showCustomToast('success', '', data.message ?? "OTP verified successfully!", 3000);
       if (isNewUser) {
         // (navigation as any).navigate(ScreenNames.SET_PROFILE_SCREEN as never, {
         //   isFromOtp: true,
@@ -58,19 +58,19 @@ const EnterOtp = () => {
 
   const onErrorVerifyOTP = (error: any) => {
     console.log('This is Error of Verify OTP >>>', error);
-    showToast('error', '', data.message ?? "OTP verification failed!", 3000);
+    showCustomToast('error', '', data.message ?? "OTP verification failed!", 3000);
   };
 
   const { mutate: verifyOTP } = useVerifyOTP(onSuccessVerifyOTP, onErrorVerifyOTP);
 
   const onSuccessSendOTP = async (data: any) => {
     // dispatch(setAuthStep(step < 5 ? step + 1 : step));
-    showToast("success", data?.message ?? "OTP Sent!", '', 1500);
+    showCustomToast("success", data?.message ?? "OTP Sent!", '', 1500);
   };
 
   const onErrorSendOTP = async (error: any) => {
     // console.log('Error login data ===>', error);
-    showToast("error", data?.message ?? "Oops, Something went wrong!", '', 1500);
+    showCustomToast("error", data?.message ?? "Oops, Something went wrong!", '', 1500);
   };
 
   const { mutate: login } = usePhoneLogin(onSuccessSendOTP, onErrorSendOTP);
@@ -109,7 +109,7 @@ const EnterOtp = () => {
   };
 
   const handlePressGetOTPonCall = ()=>{
-    showToast("info","Feature is not available yet!", '', 1500);
+    showCustomToast("info","Feature is not available yet!", '', 1500);
 
   }
 

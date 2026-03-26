@@ -11,7 +11,7 @@ import { RootState } from '../../../../store';
 import { AuthStep, setAccessToken, setAuthStep, setIsForgotPassword, setRefreshToken } from '../../../../slice/authSlice';
 
 import { useStyles } from './ResetPassword.styles';
-import { showToast } from '../../../../utils/showToast';
+import { showCustomToast } from '../../../../utils/customToast';
 import { validateConfirmPassword, validatePassword } from '../../../../utils/validation';
 
 const ResetPassword = () => {
@@ -29,14 +29,14 @@ const ResetPassword = () => {
 
     const onSuccessResetPassword = (data: any)=>{
         console.log("this is reset password data ===>", data)
-        showToast("success", data?.message, "", 1500);
+        showCustomToast("success", data?.message, "", 1500);
         dispatch(setAuthStep(AuthStep.Step0));
         dispatch(setIsForgotPassword(false));
     }
 
     const onErrorResetPassword = (error: any)=>{
         console.log("This is reset password data error ===>", error?.toString());
-        showToast("error", error?.message, "", 1500);
+        showCustomToast("error", error?.message, "", 1500);
     }
 
     const {mutate: resetPassword} = useResetpassword(onSuccessResetPassword, onErrorResetPassword);

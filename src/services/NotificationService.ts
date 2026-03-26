@@ -8,13 +8,13 @@ class NotificationService {
   getNotificationStats = async () => {
     const url = `${this.baseUrl}/stats`;
     const res = await fetchData(url);
-    console.log('this is notification List response ===>', res);
+    console.log('this is notification stats response ===>', res);
 
     if (!res.success || !res.data) {
       handleErrorResponse(res);
     }
 
-    return res.data.data;
+    return res.data;
   };
 
 
@@ -69,6 +69,8 @@ class NotificationService {
 
     return res.data.data;
   };
+
+
 }
 
 export default new NotificationService();
