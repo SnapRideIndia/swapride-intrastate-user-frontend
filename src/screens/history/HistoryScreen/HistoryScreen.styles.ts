@@ -9,8 +9,8 @@ export const useStyles = (colors: ColorsType) =>
     },
     contentContainerStyle: {
       flexGrow: 1,
-      padding: 26,
-      paddingHorizontal: 16,
+      paddingHorizontal:16,
+      paddingBottom: 16,
       gap: 16,
     },
   });

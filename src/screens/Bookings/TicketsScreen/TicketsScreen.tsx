@@ -115,11 +115,11 @@ const TicketsScreen = () => {
     return (
       <NoResults
         image={ImageSource.noTicketsFound}
-        title="No Tickets Found"
-        subtitle="You don't have any upcoming trips. Ready to start a new journey?"
+        title="No active tickets"
+        subtitle="Your booked tickets will appear here."
         action={
           <PrimaryButton 
-            title="Explore Trips" 
+            title="Book Your shuttle" 
             onPress={handleExploreTrips}
             btnStyle={{ 
               height: 36, 

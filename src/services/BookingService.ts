@@ -118,10 +118,10 @@ class BookingService {
     return res.data;
   };
 
-  getMyBookings = async (type?: string, limit: number = 10, offset: number = 0): Promise<any> => {
+  getMyBookings = async (type?: string, limit: number = 10, offset: number = 0, date?: string, q?: string): Promise<any> => {
     const url = API_ENDPOINTS.BOOKINGS.MY_BOOKINGS;
     const res = await fetchData<any>(url, {
-      params: { type, limit, offset },
+      params: { type, limit, offset, date, q },
     });
 
     if (!res.success || !res.data) {

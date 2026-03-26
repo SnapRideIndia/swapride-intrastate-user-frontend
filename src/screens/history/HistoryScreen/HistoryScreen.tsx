@@ -1,5 +1,7 @@
-import { FlatList, ActivityIndicator, View, RefreshControl, Image } from 'react-native';
-import React, { useEffect, useState, useCallback } from 'react';
+import { FlatList, ActivityIndicator, View, RefreshControl, Image, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
+import DatePicker from 'react-native-date-picker';
+import { format } from 'date-fns';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../../theme/ThemeProvider';
 import { useStyles } from './HistoryScreen.styles';
@@ -11,16 +13,35 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../navigation/types';
 import PrimaryButton from '../../../components/common/SwButton/PrimaryButton/PrimaryButton';
-import { format } from 'date-fns';
 import { MyBookingType } from '../../../types/booking.types';
 import { ImageSource } from '../../../constants/images';
-import { ScreenNames } from '../../../navigation/constant';
+import { SwTextInput } from '../../../components/common/SwTextInput/SwTextInput';
 import { NoResults } from '../../../components/common/NoResults/NoResults';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../store';
+import { ScreenNames } from '../../../navigation/constant';
 
 const HistoryScreen = () => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const { profileData } = useSelector((store: RootState) => store.profile);
+
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [datePickerOpen, setDatePickerOpen] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleSearchChange = (text: string) => {
+    setSearchQuery(text);
+    if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    debounceTimer.current = setTimeout(() => setDebouncedSearch(text), 500);
+  };
+
+  const dateFilter = selectedDate ? format(selectedDate, 'yyyy-MM-dd') : undefined;
+
   const {
     data: bookings,
     isLoading,
@@ -30,8 +51,7 @@ const HistoryScreen = () => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useMyBookings(MyBookingType.HISTORY);
-  const [refreshing, setRefreshing] = useState(false);
+  } = useMyBookings(MyBookingType.HISTORY, 10, dateFilter, debouncedSearch || undefined);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -47,6 +67,14 @@ const HistoryScreen = () => {
       console.error('My Bookings History Error ===>', error);
     }
   }, [bookings, isError, error]);
+
+  const handleExploreTrips = () => {
+    if (profileData?.isOnboarded) {
+      navigation.navigate(ScreenNames.FIND_COMMUTE as never);
+    } else {
+      navigation.navigate(ScreenNames.SET_COMMUTE as never);
+    }
+  };
 
   if (isError) {
     return (
@@ -103,8 +131,23 @@ const HistoryScreen = () => {
     return (
       <NoResults
         image={ImageSource.noTicketsFound}
-        title="No History Yet"
-        subtitle="Your completed trips and cancellations will appear here once you start riding with us."
+        title="No ticket history"
+        subtitle="Your past tickets will appear here after your trips."
+        action={
+          <PrimaryButton 
+            title="Book Your shuttle" 
+            onPress={handleExploreTrips}
+            btnStyle={{ 
+              height: 36, 
+              paddingVertical: 0, 
+              paddingHorizontal: 20, 
+              backgroundColor: colors.primaryLight,
+              width: 'auto',
+              maxWidth: 160 
+            }}
+            textStyle={{ fontSize: 13, color: colors.primaryCtaText }}
+          />
+        }
       />
     );
   };
@@ -112,6 +155,95 @@ const HistoryScreen = () => {
   return (
     <SafeAreaView edges={['bottom']} style={styles.container}>
       <PrimaryHeader title="History" />
+      
+      <View style={{ paddingHorizontal: 16, marginTop: 16, marginBottom: 12, flexDirection: 'row', alignItems: 'center' }}>
+        <View style={{ flex: 1 }}>
+          <SwTextInput
+            placeholder="Search bookings, routes."
+            value={searchQuery}
+            onChangeText={handleSearchChange}
+            variant="rounded"
+            renderLeftIcon={() => (
+              <Image 
+                source={ImageSource.searhIcon} 
+                style={{ width: 20, height: 20, tintColor: colors.contenttertiary, marginRight: 8 }} 
+                resizeMode="contain" 
+              />
+            )}
+          />
+        </View>
+        <TouchableOpacity 
+          onPress={() => setDatePickerOpen(true)}
+          style={{ 
+            width: 46, 
+            height: 46, 
+            backgroundColor: 'transparent', 
+            borderRadius: 12, 
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            marginLeft: 12,
+            borderWidth: 1,
+            borderColor: colors.border_3,
+          }}
+        >
+          <Image 
+            source={ImageSource.calenderOutline} 
+            style={{ 
+              width: 20, 
+              height: 20, 
+              tintColor: colors.contentPrimary 
+            }} 
+            resizeMode="contain" 
+          />
+        </TouchableOpacity>
+      </View>
+
+      {selectedDate && (
+        <View style={{ paddingHorizontal: 16, marginBottom: 12, flexDirection: 'row' }}>
+          <View style={{ 
+            flexDirection: 'row', 
+            alignItems: 'center', 
+            backgroundColor: colors.primaryLight, 
+            paddingHorizontal: 12, 
+            paddingVertical: 4, 
+            borderRadius: 16,
+          }}>
+            <Text style={{ fontSize: 13, color: colors.background_primary, fontWeight: '500', marginRight: 8 }}>
+              {format(selectedDate, 'MMM dd, yyyy')}
+            </Text>
+            <TouchableOpacity onPress={() => setSelectedDate(undefined)}>
+              <Image 
+                source={ImageSource.cross} 
+                style={{ width: 10, height: 10, tintColor: colors.background_primary }} 
+                resizeMode="contain" 
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
+
+      <DatePicker
+        modal
+        mode="date"
+        open={datePickerOpen}
+        date={selectedDate ?? new Date()}
+        maximumDate={new Date()}
+        onConfirm={(date) => {
+          setDatePickerOpen(false);
+          setSelectedDate(date);
+        }}
+        onCancel={() => {
+          setDatePickerOpen(false);
+          // If the user clicked "Clear" (which is the cancel label when a date exists), clear it.
+          if (selectedDate) {
+            setSelectedDate(undefined);
+          }
+        }}
+        title="Filter by Date"
+        confirmText="Apply"
+        cancelText={selectedDate ? 'Clear' : 'Cancel'}
+      />
+
       <FlatList
         data={allBookings}
         keyExtractor={(item, index) => item.id || index.toString()}

@@ -81,16 +81,14 @@ export const useChangeSeat = (onSuccess?: (data: any) => void, onError?: (error:
   });
 };
 
-export const useMyBookings = (type?: string, limit = 10) => {
+export const useMyBookings = (type?: string, limit = 10, date?: string, q?: string) => {
   return useInfiniteQuery({
-    queryKey: ['my-bookings-infinite', type],
-    queryFn: ({ pageParam = 0 }) => BookingService.getMyBookings(type, limit, pageParam as number),
+    queryKey: ['my-bookings-infinite', type, date, q],
+    queryFn: ({ pageParam = 0 }) => BookingService.getMyBookings(type, limit, pageParam as number, date, q),
     getNextPageParam: (lastPage, allPages) => {
-      // If the last page has less than 'limit' items, there are no more pages
       if (lastPage?.data?.length < limit) {
         return undefined;
       }
-      // Otherwise, the next offset is the total number of items fetched so far
       return allPages.length * limit;
     },
     initialPageParam: 0,
