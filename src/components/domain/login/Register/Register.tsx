@@ -1,15 +1,15 @@
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Image, TouchableOpacity, View } from 'react-native';
 import React, { useState } from 'react';
 import { useTheme } from '../../../../theme/ThemeProvider';
 import { useStyles } from './Register.styles';
 import { SwTextInput as TextInput } from '../../../common/SwTextInput/SwTextInput';
 import { ImageSource } from '../../../../constants/images';
 import { SwText as Text } from '../../../common/SwText/SwText';
-import {  useRegisterUser } from '../../../../hooks/useAuth';
+import { useRegisterUser } from '../../../../hooks/useAuth';
 import PrimaryButton from '../../../common/SwButton/PrimaryButton/PrimaryButton';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../../store';
-import { AuthStep, setAccessToken, setAuthStep, setRefreshToken } from '../../../../slice/authSlice';
+import { AuthStep, setAccessToken, setAuthStep, setRefreshToken, setReferralCode } from '../../../../slice/authSlice';
 import { storage } from '../../../../utils/store';
 import { StorageKeys } from '../../../../constants/storage/storageKeys';
 import { useNavigation } from '@react-navigation/native';
@@ -18,16 +18,16 @@ import { validateEmail, validatePassword } from '../../../../utils/validation';
 import { showCustomToast } from '../../../../utils/customToast';
 
 const Register = () => {
+  const { verificationId, isNewUser, referralCode: reduxReferralCode } = useSelector((store: RootState) => store.auth);
   const [userCred, setUserCred] = useState({
     name: '',
     email: '',
     password: '',
-    refCode: '',
+    refCode: reduxReferralCode || '',
   });
   const [showPassword, setShowPassword] = useState(false);
   const { colors } = useTheme();
   const styles = useStyles(colors);
-  const { verificationId, isNewUser } = useSelector((store: RootState) => store.auth);
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
@@ -43,7 +43,12 @@ const Register = () => {
     dispatch(setRefreshToken(data.refreshToken));
     storage.set(StorageKeys.ACCESS_TOKEN, data.accessToken);
     storage.set(StorageKeys.REFRESH_TOKEN, data.refreshToken);
+    dispatch(setReferralCode(''));
     showCustomToast('success', data?.message || "Registration Successful!", '', 3000);
+    (navigation as any).reset({
+      index: 0,
+      routes: [{ name: ScreenNames.DASHBOARD_SCREEN as any }],
+    });
   };
 
   const onErrorRegistration = (error: any) => {

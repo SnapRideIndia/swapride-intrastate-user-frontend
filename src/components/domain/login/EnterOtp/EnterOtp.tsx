@@ -44,14 +44,11 @@ const EnterOtp = () => {
       storage.set(StorageKeys.ACCESS_TOKEN, data.accessToken);
       storage.set(StorageKeys.REFRESH_TOKEN, data.refreshToken);
       showCustomToast('success', '', data.message ?? "OTP verified successfully!", 3000);
-      if (isNewUser) {
-        dispatch(setAuthStep(AuthStep.Step2));
-      } else {
-        (navigation as any).reset({
-          index: 0,
-          routes: [{ name: ScreenNames.DASHBOARD_SCREEN as any }],
-        });
-      }
+      dispatch(setIsNewUser(false));
+      (navigation as any).reset({
+        index: 0,
+        routes: [{ name: ScreenNames.DASHBOARD_SCREEN as any }],
+      });
     }
   };
 
