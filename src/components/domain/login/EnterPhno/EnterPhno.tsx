@@ -10,7 +10,7 @@ import PrimaryButton from '../../../common/SwButton/PrimaryButton/PrimaryButton'
 import { useDispatch, useSelector } from 'react-redux';
 import { AuthStep, setAuthStep, setPhno } from '../../../../slice/authSlice';
 import { RootState } from '../../../../store';
-import { showToast } from '../../../../utils/showToast';
+import { showCustomToast } from '../../../../utils/customToast';
 import { validatePhone } from '../../../../utils/validation';
 import { ensureFcmToken } from '../../../../utils/notificationUtility';
 
@@ -28,12 +28,12 @@ const EnterPhno = () => {
 
   const onSuccessSendOTP = async (data: any) => {
     dispatch(setAuthStep(step < 5 ? step + 1 : step));
-    showToast("success", data?.message ?? "OTP Sent!", '', 1500);
+    showCustomToast("success", data?.message ?? "OTP Sent!", '', 1500);
   };
 
   const onErrorSendOTP = async (error: any) => {
     console.log('Error login data ===>', error);
-    showToast("error", data?.message ?? "Oops, Something went wrong!", '', 1500);
+    showCustomToast("error", data?.message ?? "Oops, Something went wrong!", '', 1500);
   };
 
   const { mutate: login } = usePhoneLogin(onSuccessSendOTP, onErrorSendOTP);
@@ -54,7 +54,7 @@ const EnterPhno = () => {
     }
 
     if(!isCheck){
-      showToast("default", "Please select terms & condition!", "", 1500);
+      showCustomToast("default", "Please select terms & condition!", "", 1500);
       return;
     }
     try {

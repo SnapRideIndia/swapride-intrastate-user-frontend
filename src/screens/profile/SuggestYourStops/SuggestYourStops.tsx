@@ -22,7 +22,7 @@ import { SwLocationSearchItem } from '../../../types/placeAutofill.types';
 import { ScreenNames } from '../../../navigation/constant';
 import type { RootStackParamList } from '../../../navigation/types';
 import SuggestionService from '../../../services/SuggestionService';
-import { showToast } from '../../../utils/showToast';
+import { showCustomToast } from '../../../utils/customToast';
 
 const SuggestYourStops = () => {
   const [selectedSlot, setSelectedSlot] = useState({ morning: true, evening: false });
@@ -172,15 +172,15 @@ const SuggestYourStops = () => {
 
   const handleSubmit = useCallback(async () => {
     if (!pickupItem || pickupItem.latitude == null || pickupItem.longitude == null) {
-      showToast('error', 'Please select a pickup location', '', 2000);
+      showCustomToast('error', 'Please select a pickup location', '', 2000);
       return;
     }
     if (!dropItem || dropItem.latitude == null || dropItem.longitude == null) {
-      showToast('error', 'Please select a drop location', '', 2000);
+      showCustomToast('error', 'Please select a drop location', '', 2000);
       return;
     }
     if (!destReachingTimeDate) {
-      showToast('error', 'Please select destination reaching time', '', 2000);
+      showCustomToast('error', 'Please select destination reaching time', '', 2000);
       return;
     }
     const reachingTime = format(destReachingTimeDate, 'h:mm a');
@@ -198,7 +198,7 @@ const SuggestYourStops = () => {
         description: desc.trim() || undefined,
         updatePrefs: isCheck,
       });
-      showToast('success', 'Suggestion submitted', '', 2000);
+      showCustomToast('success', 'Suggestion submitted', '', 2000);
       setPickupLocation('');
       setDropLocation('');
       setPickupItem(null);
@@ -208,7 +208,7 @@ const SuggestYourStops = () => {
       setIsCheck(false);
       setSelectedSlot({ morning: true, evening: false });
     } catch (e: any) {
-      showToast('error', e?.message ?? 'Failed to submit suggestion', '', 2000);
+      showCustomToast('error', e?.message ?? 'Failed to submit suggestion', '', 2000);
     } finally {
       setIsSubmitting(false);
     }

@@ -12,7 +12,7 @@ import { useNavigation } from '@react-navigation/native';
 import { ScreenNames } from '../../../../navigation/constant';
 import { useStyles } from './EnterPassword.styles';
 import { useEmailLogin } from '../../../../hooks/useAuth';
-import { showToast } from '../../../../utils/showToast';
+import { showCustomToast } from '../../../../utils/customToast';
 import { storage } from '../../../../utils/store';
 import { StorageKeys } from '../../../../constants/storage/storageKeys';
 import { validateEmailOrPhone, validatePassword } from '../../../../utils/validation';
@@ -33,7 +33,7 @@ const EnterPassword = () => {
 
   const onSuccessLogin = (data: any) => {
     if (data && data?.isNewUser) {
-      showToast('success', '', data?.message ?? "Please register here!", 1500);
+      showCustomToast('success', '', data?.message ?? "Please register here!", 1500);
       dispatch(setAuthStep(2));
       dispatch(setVerificationId(data?.verificationId));
       dispatch(setIsNewUser(true));
@@ -43,7 +43,7 @@ const EnterPassword = () => {
       dispatch(setRefreshToken(data.refreshToken));
       storage.set(StorageKeys.ACCESS_TOKEN, data.accessToken);
       storage.set(StorageKeys.REFRESH_TOKEN, data.refreshToken);
-      showToast('success', '', data.message ?? "Login Successful!", 3000);
+      showCustomToast('success', '', data.message ?? "Login Successful!", 3000);
       if (data.isNewUser) {
         (navigation as any).navigate(ScreenNames.SET_PROFILE_SCREEN as never, {
           isFromRegister: true,
@@ -55,7 +55,7 @@ const EnterPassword = () => {
   };
 
   const onErrorLogin = (error: any) => {
-    showToast("error", error?.message, "", 1500)
+    showCustomToast("error", error?.message, "", 1500)
   };
 
   const { mutate: login } = useEmailLogin(onSuccessLogin, onErrorLogin)

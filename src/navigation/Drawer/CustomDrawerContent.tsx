@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { DrawerContentComponentProps } from '@react-navigation/drawer';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -9,12 +9,14 @@ import { ImageSource } from '../../constants/images';
 import { ScreenNames } from '../constant';
 import { useFetchCurrentProfile } from '../../hooks/useProfile';
 import { useFocusEffect } from '@react-navigation/native';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setLogout } from '../../slice/authSlice';
 import { storage } from '../../utils/store';
 import { StorageKeys } from '../../constants/storage/storageKeys';
 import { useLogout } from '../../hooks/useAuth';
 import { setCurrentCoords, setProfileData } from '../../slice/profileSlice';
+import LogoutConfirmationModal from '../../components/common/LogoutConfirmationModal';
+import { RootState } from '../../store';
 
 const drawerItems = [
   {
@@ -54,7 +56,9 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
   const styles = useStyles(colors);
   const { navigation } = props;
   const dispatch = useDispatch();
+  const [isLogoutModalVisible, setIsLogoutModalVisible] = useState(false);
   const { data: profileData, isLoading, isError, error, refetch } = useFetchCurrentProfile();
+  const {fcm_token} = useSelector((store: RootState)=>store.auth)
 
   const onSuccessLogout = (data: any) => {
     console.log('This is logout reponse ===>', data);
@@ -74,7 +78,7 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
     navigation.navigate(ScreenNames.VIEW_PROFILE as never);
   };
 
-  const handlePressLogout = () => {
+  const performLogout = () => {
     try {
       dispatch(setLogout());
       dispatch(setProfileData(null));
@@ -83,10 +87,25 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
       storage.set(StorageKeys.REFRESH_TOKEN, '');
       navigation.navigate(ScreenNames.LOGIN_SCREEN as never);
       // api calling
-      logout({});
+      logout({
+        fcmToken: fcm_token 
+      });
     } catch (error) {
       console.error('Error of logout ===>', error?.toString());
     }
+  };
+
+  const handlePressLogout = () => {
+    setIsLogoutModalVisible(true);
+  };
+
+  const handleCloseLogoutModal = () => {
+    setIsLogoutModalVisible(false);
+  };
+
+  const handleConfirmLogout = () => {
+    setIsLogoutModalVisible(false);
+    performLogout();
   };
 
   useEffect(() => {
@@ -117,7 +136,7 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
                   borderRadius: 50,
                 }}
               >
-                <Image source={{ uri: profileData?.profileUrl }} style={{ width: '100%', height: '100%', borderRadius: 50 }} />
+                <Image source={profileData?.profileUrl ?{ uri: profileData?.profileUrl } : ImageSource.userOutline} style={{ width: '100%', height: '100%', borderRadius: 50 }} />
               </View>
               <View style={{ gap: 5 }}>
                 <Text variant="medium" style={styles.name}>
@@ -155,6 +174,11 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
           <Image source={ImageSource.logoutOutline} style={styles.icon} />
         </TouchableOpacity>
       </SafeAreaView>
+      <LogoutConfirmationModal
+        isVisible={isLogoutModalVisible}
+        onCancel={handleCloseLogoutModal}
+        onConfirm={handleConfirmLogout}
+      />
     </View>
   );
 };

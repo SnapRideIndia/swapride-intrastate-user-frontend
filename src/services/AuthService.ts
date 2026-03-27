@@ -49,8 +49,10 @@ class AuthService {
   };
 
   logout = async (payload: any) => {
+    console.log("This is log out payload ===>", payload)
     const url = `${this.baseUrl}/logout`;
     const res = await postData(url, payload);
+    console.log("This is logout response ===>", res)
 
     if (!res.success || !res.data) {
       handleErrorResponse(res);

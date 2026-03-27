@@ -24,7 +24,6 @@ import {
 } from '../../../components/common/SwLocationSearchBottomSheet/SwLocationSearchBottomSheet';
 import { usePlaceAutocomplete, useRecentSearch, useSavedLocations, useSaveLocation } from '../../../hooks/useSearch';
 import { SwLocationSearchItem } from '../../../types/placeAutofill.types';
-import { showToast } from '../../../utils/showToast';
 import { ScreenNames } from '../../../navigation/constant';
 
 const INITIAL_PROFILE: ProfileObj = {
@@ -348,14 +347,6 @@ const SetYourProfileScreen = () => {
 
   const handleSave = () => {
     if (!isFromRegister) {
-      if (!homeAddress || !officeAddress) {
-        showToast("error", "Please provide home address and office address", '', 1500);
-        return;
-      } if (!officeStartTime || !officeEndTime) {
-        showToast("error", "Please provide office start time and office end time ", '', 1500);
-        return;
-      }
-
       if (homeAddress) {
         updateTravelPreference({
           endpoint: "/home",
@@ -443,9 +434,9 @@ const SetYourProfileScreen = () => {
             title="Mobile Number"
             renderTitleIcon={() => <Image source={ImageSource.callOutline as ImageSourcePropType} style={styles.titleIcon} />}
             value={profileObj.mobileNumber}
-            onChangeText={v => updateProfile('mobileNumber', v)}
             placeholder="Enter mobile number"
             keyboardType="phone-pad"
+            editable={false}
           />
           <TextInput
             title="Email Address"

@@ -1,9 +1,10 @@
 import React from 'react';
-import { Modal, TouchableOpacity, View, StyleSheet, Pressable, Dimensions } from 'react-native';
+import { Modal, TouchableOpacity, View, StyleSheet, Pressable, Dimensions, Image } from 'react-native';
 import { SwText as Text } from '../SwText/SwText';
 import { useTheme } from '../../../theme/ThemeProvider';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import PrimaryButton from '../SwButton/PrimaryButton/PrimaryButton';
+import { ImageSource } from '../../../constants/images';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -37,7 +38,8 @@ export const ImagePickerBottomSheet = ({ visible, onClose, onSelectCamera, onSel
           </Text>
           <View style={styles.optionsContainer}>
             <TouchableOpacity style={[styles.option, { borderColor: colors.border_1 }]} onPress={handleCamera} activeOpacity={0.7}>
-              <FontAwesome6 name="camera" size={28} color={colors.primary} />
+              {/* <FontAwesome6 name="camera" size={28} color={colors.primary} /> */}
+              <Image source={ImageSource.camera} style={{width: 22, height: 20, tintColor: colors.primary}} />
               <View style={styles.optionTextContainer}>
                 <Text variant="semi-bold" style={[styles.optionText, { color: colors.contentPrimary }]}>
                   Take Photo
@@ -46,7 +48,8 @@ export const ImagePickerBottomSheet = ({ visible, onClose, onSelectCamera, onSel
               </View>
             </TouchableOpacity>
             <TouchableOpacity style={[styles.option, { borderColor: colors.border_1 }]} onPress={handleGallery} activeOpacity={0.7}>
-              <FontAwesome6 name="images" size={28} color={colors.primary} />
+              {/* <FontAwesome6 name="images" size={28} color={colors.primary} /> */}
+              <Image source={ImageSource.gallery} style={{width: 22, height: 22, tintColor: colors.primary}}/>
               <View style={styles.optionTextContainer}>
                 <Text variant="semi-bold" style={[styles.optionText, { color: colors.contentPrimary }]}>
                   Choose from Gallery

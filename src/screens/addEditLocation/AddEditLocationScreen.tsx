@@ -13,7 +13,7 @@ import { ImageSource } from '../../constants/images';
 import SearchService from '../../services/SearchService';
 import type { SwLocationSearchItem } from '../../types/placeAutofill.types';
 import type { RootStackParamList } from '../../navigation/types';
-import { showToast } from '../../utils/showToast';
+import { showCustomToast } from '../../utils/customToast';
 import { usePlaceAutocomplete, useRecentSearch, useSavedLocations } from '../../hooks/useSearch';
 import uuid from 'react-native-uuid';
 
@@ -128,11 +128,11 @@ export default function AddEditLocationScreen() {
   const handleSave = useCallback(async () => {
     const trimmedLabel = label.trim();
     if (!trimmedLabel) {
-      showToast('error', 'Please enter a name (e.g. Home, Office)', '', 2000);
+      showCustomToast('error', 'Please enter a name (e.g. Home, Office)', '', 2000);
       return;
     }
     if (!location) {
-      showToast('error', 'Please select a location', '', 2000);
+      showCustomToast('error', 'Please select a location', '', 2000);
       return;
     }
     setIsSaving(true);
@@ -145,14 +145,14 @@ export default function AddEditLocationScreen() {
       };
       if (mode === 'edit' && itemToEdit) {
         await SearchService.updateSavedLocation(itemToEdit.id, payload);
-        showToast('success', 'Location updated', '', 2000);
+        showCustomToast('success', 'Location updated', '', 2000);
       } else {
         await SearchService.createSavedLocation(payload);
-        showToast('success', 'Location saved', '', 2000);
+        showCustomToast('success', 'Location saved', '', 2000);
       }
       navigation.goBack();
     } catch (e: any) {
-      showToast('error', e?.message ?? 'Failed to save location', '', 2000);
+      showCustomToast('error', e?.message ?? 'Failed to save location', '', 2000);
     } finally {
       setIsSaving(false);
     }

@@ -89,4 +89,5 @@ export const ImageSource = {
   noTicketsFound: require('.././../assets/images/noTicketsFound.png'),
   noNotificationsFound: require('.././../assets/images/noNotificationsFound.png'),
   noSavedLocations: require('.././../assets/images/noSavedLocations.png'),
+  gallery: require('.././../assets/images/gallery.png'),
 };

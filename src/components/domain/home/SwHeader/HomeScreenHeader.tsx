@@ -9,6 +9,7 @@ import { useNavigation } from '@react-navigation/native';
 import { ScreenNames } from '../../../../navigation/constant';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../store';
+import { useGetNotificationStats } from '../../../../hooks/useNotification';
 import { useWeather } from '../../../../hooks/useWeather';
 
 const HomeScreenHeader = () => {
@@ -16,7 +17,11 @@ const HomeScreenHeader = () => {
   const styles = useStyles(colors);
   const navigation = useNavigation();
   const drawer = navigation.getParent();
-  const {profileData} = useSelector((store: RootState)=>store.profile);
+  const { profileData } = useSelector((store: RootState) => store.profile);
+  const { data: notificationStats } = useGetNotificationStats();
+  const unreadCount = notificationStats?.unreadCount ?? 0;
+  const showUnreadBadge = unreadCount > 0;
+  const unreadText = unreadCount > 99 ? '99+' : `${unreadCount}`;
   const { weather, loading } = useWeather();
 
   const openDrawer = () => {
@@ -40,13 +45,20 @@ const HomeScreenHeader = () => {
         <TouchableOpacity onPress={openDrawer}>
           <Image source={ImageSource.menu} style={styles.menuIcon} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={handlePressbellIcon}>
+        <TouchableOpacity onPress={handlePressbellIcon} style={styles.bellIconWrapper}>
           <Image source={ImageSource.bell} style={styles.bellIcon} />
+          {showUnreadBadge && (
+            <View style={styles.unreadBadge}>
+              <Text variant="semi-bold" style={styles.unreadBadgeText}>
+                {unreadText}
+              </Text>
+            </View>
+          )}
         </TouchableOpacity>
       </View>
       <View style={[styles.innerContainer, { marginTop: 18, marginBottom: 14 }]}>
         <Text variant="medium" style={styles.greeting}>
-          Good morning {profileData?.fullName?.split(" ")[0]},
+          Good morning {profileData?.fullName?.split(' ')[0]},
         </Text>
         {!loading && weather && (
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>

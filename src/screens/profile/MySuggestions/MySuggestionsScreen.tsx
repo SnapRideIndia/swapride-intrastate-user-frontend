@@ -10,7 +10,7 @@ import { SwText as Text } from '../../../components/common/SwText/SwText';
 import PrimaryButton from '../../../components/common/SwButton/PrimaryButton/PrimaryButton';
 import { SwPopupModal } from '../../../components/common/SwPopupModal';
 import SuggestionService from '../../../services/SuggestionService';
-import { showToast } from '../../../utils/showToast';
+import { showCustomToast } from '../../../utils/customToast';
 import type { RootStackParamList } from '../../../navigation/types';
 import type { StopSuggestionListItem } from '../../../types/suggestion.types';
 import { ImageSource } from '../../../constants/images';
@@ -87,9 +87,9 @@ export default function MySuggestionsScreen() {
       if (count === 0) {
         navigation.goBack();
       }
-      showToast('success', 'Suggestion removed', '', 2000);
+      showCustomToast('success', 'Suggestion removed', '', 2000);
     } catch (e: any) {
-      showToast('error', e?.message ?? 'Failed to delete suggestion', '', 2000);
+      showCustomToast('error', e?.message ?? 'Failed to delete suggestion', '', 2000);
     } finally {
       setIsDeleting(false);
     }
@@ -102,11 +102,13 @@ export default function MySuggestionsScreen() {
     const dropoffLng = item.dropoffLng ?? item.dropoff_lng;
     
     if (pickupLat == null || pickupLng == null || dropoffLat == null || dropoffLng == null) {
-      showToast('error', 'Location details not available', '', 2000);
+      showCustomToast('error', 'Location details not available', '', 2000);
       return;
     }
     const url = `https://www.google.com/maps/dir/?api=1&origin=${pickupLat},${pickupLng}&destination=${dropoffLat},${dropoffLng}`;
-    Linking.openURL(url);
+    Linking.openURL(url).catch(() => {
+      showCustomToast('error', 'Unable to open maps', '', 2000);
+    });
   }, []);
 
   const getStatusColor = (status: string) => {

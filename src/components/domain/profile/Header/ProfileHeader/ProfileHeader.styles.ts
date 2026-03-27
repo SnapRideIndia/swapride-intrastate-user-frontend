@@ -30,7 +30,8 @@ export const useStyles = (colors: ColorsType) =>
       overflow: 'hidden',
       justifyContent: "center",
       alignItems: "center",
-      borderWidth: 2
+      borderWidth: 2,
+      borderColor: colors.primaryCtaText
     },
     detailsSection: {
       flex: 1,
