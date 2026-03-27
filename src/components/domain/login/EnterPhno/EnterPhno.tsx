@@ -33,10 +33,10 @@ const EnterPhno = () => {
 
   const onErrorSendOTP = async (error: any) => {
     console.log('Error login data ===>', error);
-    showCustomToast("error", data?.message ?? "Oops, Something went wrong!", '', 1500);
+    showCustomToast("error", error?.response?.data?.message || error?.message || "Oops, Something went wrong!", '', 1500);
   };
 
-  const { mutate: login } = usePhoneLogin(onSuccessSendOTP, onErrorSendOTP);
+  const { mutate: login, isPending } = usePhoneLogin(onSuccessSendOTP, onErrorSendOTP);
 
   const handlePressCheck = ()=>{
     setIsCheck((prev)=>!prev);
@@ -114,7 +114,7 @@ const EnterPhno = () => {
       <View style={styles.spacer} />
 
       <View style={styles.buttonContainer}>
-        <PrimaryButton title="Send OTP" onPress={handlePressSendOtp} />
+        <PrimaryButton title="Send OTP" onPress={handlePressSendOtp} loading={isPending} />
       </View>
     </>
   );

@@ -44,21 +44,22 @@ const EnterPassword = () => {
       storage.set(StorageKeys.ACCESS_TOKEN, data.accessToken);
       storage.set(StorageKeys.REFRESH_TOKEN, data.refreshToken);
       showCustomToast('success', '', data.message ?? "Login Successful!", 3000);
-      if (data.isNewUser) {
-        (navigation as any).navigate(ScreenNames.SET_PROFILE_SCREEN as never, {
-          isFromRegister: true,
-        });
+      if (data && data?.isNewUser) {
+        dispatch(setAuthStep(2));
       } else {
-        navigation.navigate(ScreenNames.DASHBOARD_SCREEN as never);
+        (navigation as any).reset({
+          index: 0,
+          routes: [{ name: ScreenNames.DASHBOARD_SCREEN as any }],
+        });
       }
     }
   };
 
   const onErrorLogin = (error: any) => {
-    showCustomToast("error", error?.message, "", 1500)
+    showCustomToast("error", error?.response?.data?.message || error?.message || "Login failed!", "", 1500)
   };
 
-  const { mutate: login } = useEmailLogin(onSuccessLogin, onErrorLogin)
+  const { mutate: login, isPending } = useEmailLogin(onSuccessLogin, onErrorLogin)
 
   const handleChange = (key: string, value: string) => {
     setUserCred(prev => ({ ...prev, [key]: value }));
@@ -138,7 +139,7 @@ const EnterPassword = () => {
       </View>
 
       <View style={styles.buttonContainer}>
-        <PrimaryButton title="Proceed" onPress={handlePressButton} />
+        <PrimaryButton title="Proceed" onPress={handlePressButton} loading={isPending} />
       </View>
     </>
   );

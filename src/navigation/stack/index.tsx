@@ -12,7 +12,7 @@ import MySuggestionsScreen from '../../screens/profile/MySuggestions/MySuggestio
 import { storage } from '../../utils/store';
 import { StorageKeys } from '../../constants/storage/storageKeys';
 import { useDispatch } from 'react-redux';
-import { setAccessToken, setIsNewUser } from '../../slice/authSlice';
+import { setAccessToken } from '../../slice/authSlice';
 import BusSelection from '../../screens/home/BusSelection/BusSelection';
 import FullRouteScreen from '../../screens/home/FullRouteScreen/FullRouteScreen';
 import NotificationScreen from '../../screens/home/NotificationScreen/NotificationScreen';
@@ -54,15 +54,18 @@ const AppNavigation = () => {
     },
   });
 
-
   useEffect(() => {
     const token = storage.getString(StorageKeys.ACCESS_TOKEN);
-    dispatch(setAccessToken(token ?? ''));
+    if (token) {
+      dispatch(setAccessToken(token));
+    }
   }, [dispatch]);
 
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={ScreenNames.SPLASH_SCREEN as never}>
+        <Stack.Screen name={ScreenNames.SPLASH_SCREEN as never} component={SplashScreen} />
+        <Stack.Screen name={ScreenNames.LOGIN_SCREEN} component={EnterPhNo} />
         <Stack.Screen name={ScreenNames.DASHBOARD_SCREEN}>
           {() => (
             <View style={styles.tabBarContainer}>
@@ -70,7 +73,6 @@ const AppNavigation = () => {
             </View>
           )}
         </Stack.Screen>
-        <Stack.Screen name={ScreenNames.LOGIN_SCREEN} component={EnterPhNo} />
         <Stack.Screen name={ScreenNames.VIEW_PROFILE} component={ViewProfile} />
         <Stack.Screen name={ScreenNames.SUGGEST_YOUR_STOPS} component={SuggestYourStops} />
         <Stack.Screen name={ScreenNames.MY_SUGGESTIONS} component={MySuggestionsScreen} />
@@ -88,7 +90,6 @@ const AppNavigation = () => {
         <Stack.Screen name={ScreenNames.BOOKING_SUCCESS as never} component={BookingSuccess} />
         <Stack.Screen name={ScreenNames.SEAT_SELECTION as never} component={SeatSelection} />
         <Stack.Screen name={ScreenNames.TICKETS_SCREEN as never} component={TicketsScreen} />
-        <Stack.Screen name={ScreenNames.SPLASH_SCREEN as never} component={SplashScreen} />
         <Stack.Screen name={ScreenNames.SELF_BOARD_SCANNER as never} component={SelfBoardScannerScreen} />
         <Stack.Screen name={ScreenNames.SELF_BOARD_SUCCESS as never} component={SelfBoardSuccessScreen} />
         <Stack.Screen name={ScreenNames.SELF_BOARD_ERROR as never} component={SelfBoardErrorScreen} />

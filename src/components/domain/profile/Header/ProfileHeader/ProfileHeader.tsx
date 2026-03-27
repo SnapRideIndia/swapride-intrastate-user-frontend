@@ -7,6 +7,7 @@ import { ImageSource } from '../../../../../constants/images';
 import { SwText as Text } from '../../../../common/SwText/SwText';
 import { useNavigation } from '@react-navigation/native';
 import { ScreenNames } from '../../../../../navigation/constant';
+import UserAvatar from '../../../../common/UserAvatar/UserAvatar';
 
 const ProfileHeader = ({ profileData }: { profileData: any }) => {
   const { colors } = useTheme();
@@ -48,9 +49,12 @@ const ProfileHeader = ({ profileData }: { profileData: any }) => {
             {profileData?.gender}
           </Text>
         </View>
-        <View style={styles.profileContainer}>
-          <Image source={profileData.profileUrl ? { uri: profileData?.profileUrl }: ImageSource.userOutline} style={profileData.profileUrl ? { width: '100%', height: '100%', borderRadius: 100 }: {}} resizeMode="contain"/>
-        </View>
+        <UserAvatar 
+          url={profileData?.profileUrl} 
+          name={profileData?.fullName} 
+          size={91} 
+          style={{ borderWidth: 2, borderColor: colors.primaryCtaText }} 
+        />
       </View>
     </SafeAreaView>
   );

@@ -4,9 +4,9 @@ import { ColorsType } from '../../../../constants/ui/colors/colors.types';
 export const useStyles = (colors: ColorsType) =>
   StyleSheet.create({
     inputContainer: {
-      gap: 25,
+      gap: 20,
       paddingHorizontal: 24,
-      paddingVertical: 30,
+      paddingVertical: 20,
     },
     checkbox: {
       width: 18,
@@ -29,6 +29,6 @@ export const useStyles = (colors: ColorsType) =>
     },
     buttonContainer: {
       paddingHorizontal: 16,
-      paddingVertical: 16,
+      paddingVertical: 12,
     },
   });

@@ -1,4 +1,5 @@
-import { Image, View } from 'react-native';
+import { Image, TouchableOpacity, View } from 'react-native';
+
 import React, { useState } from 'react';
 import { useTheme } from '../../../../theme/ThemeProvider';
 import { SwTextInput as TextInput } from '../../../common/SwTextInput/SwTextInput';
@@ -19,7 +20,8 @@ const ResetPassword = () => {
         password: '',
         cnfPassword: '',
     });
-  const [errors, setErrors] = useState<{ password?: string; cnfPassword?: string }>({});
+    const [showPassword, setShowPassword] = useState(false);
+    const [errors, setErrors] = useState<{ password?: string; cnfPassword?: string }>({});
 
     const {verificationId} = useSelector((store: RootState)=>store.auth)
 
@@ -73,7 +75,11 @@ const ResetPassword = () => {
     }
 
     const handleRenderRightIcon = () => {
-        return <Image source={ImageSource.eyeOff} style={styles.eyeOff} />;
+        return (
+          <TouchableOpacity onPress={() => setShowPassword(prev => !prev)}>
+            <Image source={ImageSource.eyeOff} style={[styles.eyeOff, { opacity: showPassword ? 1 : 0.5 }]} />
+          </TouchableOpacity>
+        );
     };
 
     return (
@@ -83,6 +89,8 @@ const ResetPassword = () => {
                   title={'Enter password'}
                   value={userCred.password}
                   isPhno={false}
+                  renderRightIcon={handleRenderRightIcon}
+                  secureTextEntry={!showPassword}
                   onChangeText={text => handleChange('password', text)}
                   errorText={errors.password}
                 />
@@ -91,6 +99,7 @@ const ResetPassword = () => {
                     value={userCred.cnfPassword}
                     isPhno={false}
                     renderRightIcon={handleRenderRightIcon}
+                    secureTextEntry={!showPassword}
                     onChangeText={text => handleChange('cnfPassword', text)}
                     errorText={errors.cnfPassword}
                 />

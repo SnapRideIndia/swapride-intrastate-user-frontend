@@ -18,6 +18,17 @@ export const useStyles = (colors: ColorsType) =>
       color: colors.contentPrimary,
       marginBottom: 10,
     },
+    cardLabel: {
+      fontSize: 12,
+      color: colors.contentSecondary,
+      marginBottom: 2,
+    },
+    cardValue: {
+      fontSize: 15,
+      lineHeight: 22,
+      color: colors.contentPrimary,
+      fontWeight: '600',
+    },
     cardText: {
       fontSize: 14,
       lineHeight: 24,

@@ -8,16 +8,36 @@ import { ImageSource } from '../../../constants/images';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import EnterOtp from '../../../components/domain/login/EnterOtp/EnterOtp';
 import EnterPhno from '../../../components/domain/login/EnterPhno/EnterPhno';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import Register from '../../../components/domain/login/Register/Register';
 import EnterPassword from '../../../components/domain/login/EnterPassword/EnterPassword';
 import ResetPassword from '../../../components/domain/login/ResetPassword/ResetPassword';
+import { BackHandler } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import { setAuthStep } from '../../../slice/authSlice';
 
 const EnterPhNo = () => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
+  const dispatch = useDispatch();
   const { step } = useSelector((store: RootState) => store.auth);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        if (step > 0) {
+          dispatch(setAuthStep(0));
+          return true;
+        }
+        return false;
+      };
+
+      const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () => subscription.remove();
+    }, [step, dispatch]),
+  );
 
   return (
     <SafeAreaView edges={['bottom']} style={styles.container}>

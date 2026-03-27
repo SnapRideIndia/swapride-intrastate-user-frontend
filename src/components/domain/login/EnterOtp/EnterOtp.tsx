@@ -45,12 +45,12 @@ const EnterOtp = () => {
       storage.set(StorageKeys.REFRESH_TOKEN, data.refreshToken);
       showCustomToast('success', '', data.message ?? "OTP verified successfully!", 3000);
       if (isNewUser) {
-        // (navigation as any).navigate(ScreenNames.SET_PROFILE_SCREEN as never, {
-        //   isFromOtp: true,
-        // });
         dispatch(setAuthStep(AuthStep.Step2));
       } else {
-        navigation.navigate(ScreenNames.DASHBOARD_SCREEN as never);
+        (navigation as any).reset({
+          index: 0,
+          routes: [{ name: ScreenNames.DASHBOARD_SCREEN as any }],
+        });
       }
     }
   };
@@ -58,10 +58,10 @@ const EnterOtp = () => {
 
   const onErrorVerifyOTP = (error: any) => {
     console.log('This is Error of Verify OTP >>>', error);
-    showCustomToast('error', '', data.message ?? "OTP verification failed!", 3000);
+    showCustomToast('error', '', error?.response?.data?.message || error?.message || "OTP verification failed!", 3000);
   };
 
-  const { mutate: verifyOTP } = useVerifyOTP(onSuccessVerifyOTP, onErrorVerifyOTP);
+  const { mutate: verifyOTP, isPending: isVerifying } = useVerifyOTP(onSuccessVerifyOTP, onErrorVerifyOTP);
 
   const onSuccessSendOTP = async (data: any) => {
     // dispatch(setAuthStep(step < 5 ? step + 1 : step));
@@ -70,10 +70,10 @@ const EnterOtp = () => {
 
   const onErrorSendOTP = async (error: any) => {
     // console.log('Error login data ===>', error);
-    showCustomToast("error", data?.message ?? "Oops, Something went wrong!", '', 1500);
+    showCustomToast("error", error?.response?.data?.message || error?.message || "Oops, Something went wrong!", '', 1500);
   };
 
-  const { mutate: login } = usePhoneLogin(onSuccessSendOTP, onErrorSendOTP);
+  const { mutate: login, isPending: isSending } = usePhoneLogin(onSuccessSendOTP, onErrorSendOTP);
 
   const handlePressCross = () => {
     dispatch(setAuthStep(step > 0 ? step - 1 : step));
@@ -134,7 +134,7 @@ const EnterOtp = () => {
                 Get OTP on Call
               </Text>
             </View>
-            <Text variant="semi-bold" onPress={handlePressResendOtp}>Resend OTP</Text>
+            <Text variant="semi-bold" onPress={handlePressResendOtp}>{isSending ? "Sending..." : "Resend OTP"}</Text>
           </View>
         </View>
       </View>
@@ -142,7 +142,7 @@ const EnterOtp = () => {
       <View style={styles.spacer} />
 
       <View style={styles.buttonContainer}>
-        <PrimaryButton title="Verify OTP" onPress={handlePressVerifyOtp} />
+        <PrimaryButton title="Verify OTP" onPress={handlePressVerifyOtp} loading={isVerifying} />
       </View>
     </>
   );

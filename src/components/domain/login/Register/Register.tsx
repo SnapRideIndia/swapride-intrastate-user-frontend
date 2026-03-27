@@ -15,6 +15,7 @@ import { StorageKeys } from '../../../../constants/storage/storageKeys';
 import { useNavigation } from '@react-navigation/native';
 import { ScreenNames } from '../../../../navigation/constant';
 import { validateEmail, validatePassword } from '../../../../utils/validation';
+import { showCustomToast } from '../../../../utils/customToast';
 
 const Register = () => {
   const [userCred, setUserCred] = useState({
@@ -23,6 +24,7 @@ const Register = () => {
     password: '',
     refCode: '',
   });
+  const [showPassword, setShowPassword] = useState(false);
   const { colors } = useTheme();
   const styles = useStyles(colors);
   const { verificationId, isNewUser } = useSelector((store: RootState) => store.auth);
@@ -41,11 +43,12 @@ const Register = () => {
     dispatch(setRefreshToken(data.refreshToken));
     storage.set(StorageKeys.ACCESS_TOKEN, data.accessToken);
     storage.set(StorageKeys.REFRESH_TOKEN, data.refreshToken);
-    (navigation as any).navigate(ScreenNames.SET_PROFILE_SCREEN as never, { isFromRegister: true});
+    showCustomToast('success', data?.message || "Registration Successful!", '', 3000);
   };
 
   const onErrorRegistration = (error: any) => {
     console.log('This is Error of registartion >>>', error);
+    showCustomToast('error', error?.response?.data?.message || error?.message || "Registration failed!", '', 1500);
   };
 
  const handlePressLogin = ()=>{
@@ -56,7 +59,7 @@ const Register = () => {
   dispatch(setAuthStep(AuthStep.step3))
  }
 
-  const { mutate: register } = useRegisterUser(onSuccessRegistartion, onErrorRegistration);
+  const { mutate: register, isPending } = useRegisterUser(onSuccessRegistartion, onErrorRegistration);
 
   const handlePressButton = () => {
     console.log('this is usercred ===>', userCred);
@@ -91,8 +94,13 @@ const Register = () => {
   };
 
   const handleRenderRightIcon = () => {
-    return <Image source={ImageSource.eyeOff} style={styles.eyeOff} />;
+    return (
+      <TouchableOpacity onPress={() => setShowPassword(prev => !prev)}>
+        <Image source={ImageSource.eyeOff} style={[styles.eyeOff, { opacity: showPassword ? 1 : 0.5 }]} />
+      </TouchableOpacity>
+    );
   };
+
   return (
     <>
       <View style={styles.container}>
@@ -106,7 +114,6 @@ const Register = () => {
         <TextInput
           title={'Email Address'}
           isPhno={false}
-          renderRightIcon={handleRenderRightIcon}
           value={userCred.email}
           onChangeText={text => handleChange('email', text)}
           errorText={errors.email}
@@ -115,6 +122,8 @@ const Register = () => {
           <TextInput
             title={'Set Password'}
             isPhno={false}
+            renderRightIcon={handleRenderRightIcon}
+            secureTextEntry={!showPassword}
             value={userCred.password}
             onChangeText={text => handleChange('password', text)}
             errorText={errors.password}
@@ -133,7 +142,7 @@ const Register = () => {
       </View>
 
       <View style={styles.buttonContainer}>
-        <PrimaryButton title="Proceed" onPress={handlePressButton} />
+        <PrimaryButton title="Proceed" onPress={handlePressButton} loading={isPending} />
       </View>
     </>
   );

@@ -92,7 +92,7 @@ const ViewProfile = () => {
     setIsDeleteConfirmModalVisible(false);
     try {
       deleteProfile();
-    } catch (error) {
+    } catch (error: any) {
       console.log("Error in delete profile api >>>", error?.message);
     }
   };
@@ -112,7 +112,11 @@ const ViewProfile = () => {
       dispatch(setLogout());
       storage.set(StorageKeys.ACCESS_TOKEN, '');
       storage.set(StorageKeys.REFRESH_TOKEN, '');
-      navigation.navigate(ScreenNames.LOGIN_SCREEN as never);
+      showCustomToast('success', 'Logged out successfully!', '', 1500);
+      (navigation as any).reset({
+        index: 0,
+        routes: [{ name: ScreenNames.LOGIN_SCREEN as any }],
+      });
       // api calling
       logout({
          fcmToken: fcm_token
@@ -291,11 +295,10 @@ const TravelPreferenceCard = ({
   const styles = useStyles(colors);
   return (
     <View style={styles.travelPreferenceCardContainer}>
-      <Text style={styles.cardText}>{title}</Text>
+      <Text style={styles.cardLabel}>{title}</Text>
       <View style={styles.addressContainer}>
         {renderLeftIcon?.()}
-        <Text style={styles.cardText}>{description}</Text>
-        <View style={styles.spacer} />
+        <Text style={styles.cardValue} numberOfLines={2}>{description}</Text>
       </View>
     </View>
   );
@@ -312,7 +315,7 @@ const CommunicationPreferenceCard = ({ iconUri, title }: { iconUri: ImageSourceP
   return (
     <View style={styles.addressContainer}>
       <Image source={iconUri} style={styles.cardIcon} />
-      <Text style={styles.cardText}>{title}</Text>
+      <Text style={styles.cardValue}>{title}</Text>
       <View style={styles.spacer} />
 
       <Switch

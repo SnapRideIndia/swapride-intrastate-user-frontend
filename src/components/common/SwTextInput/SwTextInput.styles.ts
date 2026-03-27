@@ -41,6 +41,7 @@ export const useStyles = (colors: ColorsType) =>
       flex: 1,
       minHeight: 40,
       paddingVertical: 4,
+      color: colors.contentPrimary,
     },
     title: {
       fontSize: 14,
