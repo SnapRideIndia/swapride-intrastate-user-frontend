@@ -32,6 +32,8 @@ export const ScreenNames = {
   FIND_COMMUTE: 'FindCommute', // second time
   SEAT_SELECTION: 'SeatSelectionScreen',
   TICKETS_SCREEN: 'TicketsScreen',
+  RENTAL_REQUESTS_SCREEN: 'RentalRequestsScreen',
+  RENTAL_DETAILS_SCREEN: 'RentalDetailsScreen',
   SPLASH_SCREEN: 'SplashScreen',
   DUMMY: "DUMMY"
 } as const;

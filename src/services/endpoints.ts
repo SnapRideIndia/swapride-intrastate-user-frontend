@@ -38,4 +38,11 @@ export const API_ENDPOINTS = {
     ME: '/suggestions/me',
     DELETE: (id: string) => `/suggestions/${id}`,
   },
+  WEATHER: {
+    CURRENT: '/weather',
+  },
+  RENTALS: {
+    BASE: '/rentals',
+    MY: '/rentals/my',
+  },
 };

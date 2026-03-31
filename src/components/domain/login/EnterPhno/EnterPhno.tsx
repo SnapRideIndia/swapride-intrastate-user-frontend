@@ -8,11 +8,10 @@ import { ImageSource } from '../../../../constants/images';
 import { usePhoneLogin } from '../../../../hooks/useAuth';
 import PrimaryButton from '../../../common/SwButton/PrimaryButton/PrimaryButton';
 import { useDispatch, useSelector } from 'react-redux';
-import { AuthStep, setAuthStep, setPhno } from '../../../../slice/authSlice';
+import { AuthStep, setAuthStep, setPhno, setReferralCode } from '../../../../slice/authSlice';
 import { RootState } from '../../../../store';
 import { showCustomToast } from '../../../../utils/customToast';
 import { validatePhone } from '../../../../utils/validation';
-import { ensureFcmToken } from '../../../../utils/notificationUtility';
 
 const EnterPhno = () => {
   const [authCred, setAuthCred] = useState({
@@ -33,10 +32,10 @@ const EnterPhno = () => {
 
   const onErrorSendOTP = async (error: any) => {
     console.log('Error login data ===>', error);
-    showCustomToast("error", data?.message ?? "Oops, Something went wrong!", '', 1500);
+    showCustomToast("error", error?.response?.data?.message || error?.message || "Oops, Something went wrong!", '', 1500);
   };
 
-  const { mutate: login } = usePhoneLogin(onSuccessSendOTP, onErrorSendOTP);
+  const { mutate: login, isPending } = usePhoneLogin(onSuccessSendOTP, onErrorSendOTP);
 
   const handlePressCheck = ()=>{
     setIsCheck((prev)=>!prev);
@@ -59,6 +58,7 @@ const EnterPhno = () => {
     }
     try {
       dispatch(setPhno(authCred.phNo));
+      dispatch(setReferralCode(authCred.refcode));
       const data = {
         mobileNumber: authCred.phNo,
         ...(isForgotPassword ? { type: "FORGOT_PASSWORD" } : {}) 
@@ -114,7 +114,7 @@ const EnterPhno = () => {
       <View style={styles.spacer} />
 
       <View style={styles.buttonContainer}>
-        <PrimaryButton title="Send OTP" onPress={handlePressSendOtp} />
+        <PrimaryButton title="Send OTP" onPress={handlePressSendOtp} loading={isPending} />
       </View>
     </>
   );

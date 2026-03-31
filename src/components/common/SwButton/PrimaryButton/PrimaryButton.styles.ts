@@ -12,6 +12,9 @@ export const useStyles = (colors: ColorsType) =>
       gap: 5,
       flexDirection: 'row',
     },
+    buttonDisabled: {
+      backgroundColor: colors.contentDisabled,
+    },
     title: {
       color: colors.contentPrimary,
       fontSize: 16,

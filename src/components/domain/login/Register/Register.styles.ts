@@ -5,8 +5,8 @@ export const useStyles = (colors: ColorsType) =>
   StyleSheet.create({
     container: {
       paddingHorizontal: 24,
-      paddingVertical: 30,
-      gap: 25,
+      paddingVertical: 20,
+      gap: 12,
     },
     eyeOff: {
       width: 24,
@@ -29,5 +29,6 @@ export const useStyles = (colors: ColorsType) =>
     buttonContainer: {
       paddingHorizontal: 16,
       paddingVertical: 16,
+      paddingTop:0
     },
   });

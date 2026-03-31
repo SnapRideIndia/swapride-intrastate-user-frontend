@@ -16,7 +16,8 @@ export interface IAuth {
   verificationId: string;
   isNewUser: boolean;
   isForgotPassword: boolean;
-  fcm_token: string
+  fcm_token: string;
+  referralCode: string;
 }
 
 const initialState: IAuth = {
@@ -28,6 +29,7 @@ const initialState: IAuth = {
   isNewUser: false,
   isForgotPassword: false,
   fcm_token: "",
+  referralCode: "",
 };
 const authSlice = createSlice({
   name: 'auth',
@@ -54,6 +56,9 @@ const authSlice = createSlice({
       state.ref_token = '';
       state.step = AuthStep.Step0;
       state.verificationId = '';
+      state.referralCode = '';
+      state.isNewUser = false;
+      state.isForgotPassword = false;
     },
     setIsNewUser: (state, action) => {
       state.isNewUser = action.payload;
@@ -63,9 +68,12 @@ const authSlice = createSlice({
     },
     setFcmToken: (state, action)=>{
       state.fcm_token = action.payload;
-    }
+    },
+    setReferralCode: (state, action) => {
+      state.referralCode = action.payload;
+    },
   },
 });
 
-export const { setAccessToken, setRefreshToken, setAuthStep, setPhno, setVerificationId, setLogout, setIsNewUser, setIsForgotPassword, setFcmToken } = authSlice.actions;
+export const { setAccessToken, setRefreshToken, setAuthStep, setPhno, setVerificationId, setLogout, setIsNewUser, setIsForgotPassword, setFcmToken, setReferralCode } = authSlice.actions;
 export default authSlice.reducer;

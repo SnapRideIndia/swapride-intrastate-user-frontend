@@ -107,6 +107,7 @@ export const useStyles = (colors: ColorsType) =>
       borderWidth: 1,
       borderColor: colors.border_3,
       marginTop: 20,
+      marginBottom: 20,
     },
     helpIconContainer: {
       width: 44,

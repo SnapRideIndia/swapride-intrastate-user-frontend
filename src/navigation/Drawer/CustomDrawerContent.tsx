@@ -17,6 +17,8 @@ import { useLogout } from '../../hooks/useAuth';
 import { setCurrentCoords, setProfileData } from '../../slice/profileSlice';
 import LogoutConfirmationModal from '../../components/common/LogoutConfirmationModal';
 import { RootState } from '../../store';
+import UserAvatar from '../../components/common/UserAvatar/UserAvatar';
+import { showCustomToast } from '../../utils/customToast';
 
 const drawerItems = [
   {
@@ -85,7 +87,11 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
       dispatch(setCurrentCoords(null))
       storage.set(StorageKeys.ACCESS_TOKEN, '');
       storage.set(StorageKeys.REFRESH_TOKEN, '');
-      navigation.navigate(ScreenNames.LOGIN_SCREEN as never);
+      showCustomToast('success', 'Logged out successfully!', '', 1500);
+      (navigation as any).reset({
+        index: 0,
+        routes: [{ name: ScreenNames.LOGIN_SCREEN as any }],
+      });
       // api calling
       logout({
         fcmToken: fcm_token 
@@ -127,17 +133,7 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
         <SafeAreaView edges={['top']}>
           <TouchableOpacity style={styles.header} onPress={handlePressHeader}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 24 }}>
-              <View
-                style={{
-                  width: 44,
-                  height: 44,
-                  overflow: 'hidden',
-                  borderWidth: 1,
-                  borderRadius: 50,
-                }}
-              >
-                <Image source={profileData?.profileUrl ?{ uri: profileData?.profileUrl } : ImageSource.userOutline} style={{ width: '100%', height: '100%', borderRadius: 50 }} />
-              </View>
+              <UserAvatar url={profileData?.profileUrl} name={profileData?.fullName} size={44} />
               <View style={{ gap: 5 }}>
                 <Text variant="medium" style={styles.name}>
                   {profileData?.fullName}

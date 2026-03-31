@@ -1,4 +1,4 @@
-import { FlatList, ActivityIndicator, View, RefreshControl } from 'react-native';
+import { FlatList, ActivityIndicator, View, RefreshControl, Image } from 'react-native';
 import React, { useEffect, useState, useCallback } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../../theme/ThemeProvider';
@@ -7,12 +7,24 @@ import PrimaryHeader from '../../../components/common/SwHeader/PrimaryHeader/Pri
 import { SwText as Text } from '../../../components/common/SwText/SwText';
 import { useMyBookings } from '../../../hooks/useBooking';
 import BookingCard from '../../../components/domain/booking/card/BookingCard/BookingCard';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../../navigation/types';
+import PrimaryButton from '../../../components/common/SwButton/PrimaryButton/PrimaryButton';
 import { format } from 'date-fns';
 import { MyBookingType } from '../../../types/booking.types';
+import { ImageSource } from '../../../constants/images';
+import { ScreenNames } from '../../../navigation/constant';
+import { NoResults } from '../../../components/common/NoResults/NoResults';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../store';
 
 const TicketsScreen = () => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const { profileData } = useSelector((store: RootState) => store.profile);
+
   const {
     data: bookings,
     isLoading,
@@ -35,16 +47,35 @@ const TicketsScreen = () => {
     if (bookings) {
       console.log('My Tickets Response ===>', bookings);
     }
-  }, [bookings]);
+    if (isError) {
+      console.error('My Tickets Error ===>', error);
+    }
+  }, [bookings, isError, error]);
+
+  const handleExploreTrips = () => {
+    if (profileData?.isOnboarded) {
+      navigation.navigate(ScreenNames.FIND_COMMUTE as never);
+    } else {
+      navigation.navigate(ScreenNames.SET_COMMUTE as never);
+    }
+  };
 
   if (isError) {
     return (
       <SafeAreaView edges={['bottom']} style={styles.container}>
-        <PrimaryHeader title="My Tickets" />
-        <View style={[styles.container, { justifyContent: 'center', alignItems: 'center', padding: 20 }]}>
-          <Text variant="semi-bold" style={{ textAlign: 'center', color: colors.contentSecondary }}>
-            {(error as any)?.message || 'Failed to load tickets'}
+        <PrimaryHeader title="My Tickets" onBackBtnPress={() => navigation.goBack()} />
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 32 }}>
+          <Text variant="semi-bold" style={{ textAlign: 'center', color: colors.contentPrimary, marginBottom: 8 }}>
+            Unable to load your tickets
           </Text>
+          <Text style={{ textAlign: 'center', color: colors.contenttertiary, marginBottom: 24 }}>
+            Something went wrong while fetching your bookings. Please try again.
+          </Text>
+          <PrimaryButton 
+            title="Retry" 
+            onPress={() => refetch()}
+            btnStyle={{ width: '100%', maxWidth: 200 }}
+          />
         </View>
       </SafeAreaView>
     );
@@ -82,11 +113,26 @@ const TicketsScreen = () => {
       );
     }
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 100 }}>
-        <Text variant="medium" style={{ color: colors.contenttertiary }}>
-          No tickets found
-        </Text>
-      </View>
+      <NoResults
+        image={ImageSource.noTicketsFound}
+        title="No active tickets"
+        subtitle="Your booked tickets will appear here."
+        action={
+          <PrimaryButton 
+            title="Book Your shuttle" 
+            onPress={handleExploreTrips}
+            btnStyle={{ 
+              height: 36, 
+              paddingVertical: 0, 
+              paddingHorizontal: 20, 
+              backgroundColor: colors.primaryLight,
+              width: 'auto',
+              maxWidth: 160 
+            }}
+            textStyle={{ fontSize: 13, color: '#FFFFFF' }}
+          />
+        }
+      />
     );
   };
 

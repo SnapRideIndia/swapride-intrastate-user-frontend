@@ -1,4 +1,4 @@
-import { Image, TouchableOpacity, View, Platform, ScrollView, BackHandler } from 'react-native';
+import { Image, TouchableOpacity, View, Platform, ScrollView, BackHandler, Linking } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import React, { useRef } from 'react';
 import PrimaryHeader from '../../../components/common/SwHeader/PrimaryHeader/PrimaryHeader';
@@ -20,6 +20,7 @@ import { SwBottomSheet as BottomSheet } from '../../../components/common/BottomS
 import { BottomSheetModal as BottomSheetType, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { useTrackRide, useDriverDetails } from '../../../hooks/useBooking';
 import RouteAccordionItem, { RouteAccordionStep, RouteStepKind } from '../../../components/domain/fullRoute/RouteAccordionItem/RouteAccordionItem';
+import { Contact } from '../../../constants/contact';
 
 interface TrackRideMockData {
   busNo: string;
@@ -240,8 +241,6 @@ const TrackRideScreen = ({ route }: { route: RouteProp<RootStackParamList, typeo
         {/* Driver Detail */}
         <DriverDetail 
           name={driverData?.name || ''}
-          bookingId={ticketId}
-          driverId={driverId}
           avatar={driverData?.profileUrl ? { uri: driverData.profileUrl } : null}
           phone={driverData?.mobileNumber}
           rating={driverData?.rating}
@@ -253,19 +252,23 @@ const TrackRideScreen = ({ route }: { route: RouteProp<RootStackParamList, typeo
         title="Need Help"
         onChange={(index) => (isSheetOpen.current = index >= 0)}
       >
-        <View style={styles.helpCard}>
+        <TouchableOpacity 
+          style={styles.helpCard}
+          onPress={() => Linking.openURL(`tel:+91${Contact.support}`)}
+          activeOpacity={0.7}
+        >
           <View style={styles.helpIconContainer}>
             <Image source={ImageSource.call} style={styles.helpIcon} />
           </View>
           <View style={styles.helpTextContainer}>
             <Text variant="bold" style={styles.helpTitle}>
-              Call customer support - 9063776655
+              Call customer support
             </Text>
             <Text variant="regular" style={styles.helpSubtext}>
-              Facing an issue? Speak to someone at Swapride
+              +91 {Contact.support} • Facing an issue? Speak to us.
             </Text>
           </View>
-        </View>
+        </TouchableOpacity>
       </BottomSheet>
 
       <BottomSheet 

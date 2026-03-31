@@ -1,7 +1,7 @@
 import  { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Animated, Easing, Image, StyleSheet, Text, View } from 'react-native';
 import { ImageSource } from '../../../constants/images';
-import { lightColors } from '../../../constants/ui/colors';
+import { useTheme } from '../../../theme/ThemeProvider';
 import {
   CustomToastPayload,
   registerToastListener,
@@ -10,50 +10,19 @@ import {
 } from '../../../utils/customToast';
 
 const TOAST_OFFSET = 26;
-const TOAST_BOTTOM = 48;
-const TOAST_TOP = 58;
+const TOAST_BOTTOM = 100;
+const TOAST_TOP = 100;
 
-const getTypeStyles = (type: ToastType) => {
-  switch (type) {
-    case 'success':
-      return {
-        borderColor: '#22C55E',
-        backgroundColor: '#DCFCE7',
-        titleColor: '#166534',
-        subtitleColor: '#15803D',
-      };
-    case 'error':
-      return {
-        borderColor: '#EF4444',
-        backgroundColor: '#FEE2E2',
-        titleColor: '#991B1B',
-        subtitleColor: '#B91C1C',
-      };
-    case 'info':
-      return {
-        borderColor: '#3B82F6',
-        backgroundColor: '#DBEAFE',
-        titleColor: '#1E3A8A',
-        subtitleColor: '#1D4ED8',
-      };
-    case 'warn':
-      return {
-        borderColor: '#F59E0B',
-        backgroundColor: '#FEF3C7',
-        titleColor: '#92400E',
-        subtitleColor: '#B45309',
-      };
-    default:
-      return {
-        borderColor: '#94A3B8',
-        backgroundColor: '#F1F5F9',
-        titleColor: lightColors.primary,
-        subtitleColor: '#475569',
-      };
-  }
+const getTypeStyles = (colors: any) => {
+  const primaryColor = colors.primary || '#072A6A';
+  return {
+    titleColor: primaryColor,
+    subtitleColor: primaryColor,
+  };
 };
 
 const CustomToastProvider = () => {
+  const { colors: themeColors } = useTheme();
   const opacity = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(TOAST_OFFSET)).current;
   const hideTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -78,7 +47,7 @@ const CustomToastProvider = () => {
       }),
       Animated.timing(translateY, {
         toValue: TOAST_OFFSET,
-        duration: 180,
+        duration: 200,
         easing: Easing.out(Easing.ease),
         useNativeDriver: true,
       }),
@@ -96,10 +65,10 @@ const CustomToastProvider = () => {
         easing: Easing.out(Easing.ease),
         useNativeDriver: true,
       }),
-      Animated.timing(translateY, {
+      Animated.spring(translateY, {
         toValue: 0,
-        duration: 220,
-        easing: Easing.out(Easing.ease),
+        friction: 8,
+        tension: 40,
         useNativeDriver: true,
       }),
     ]).start();
@@ -108,10 +77,16 @@ const CustomToastProvider = () => {
   const showToast = useCallback(
     (payload: CustomToastPayload) => {
       clearPendingHide();
+      let t1 = payload.text1 ?? '';
+      let t2 = payload.text2 ?? '';
+      if (!t1 && t2) {
+        t1 = t2;
+        t2 = '';
+      }
       const normalizedPayload: CustomToastPayload = {
         type: payload.type ?? 'default',
-        text1: payload.text1 ?? '',
-        text2: payload.text2 ?? '',
+        text1: t1,
+        text2: t2,
         duration: payload.duration ?? 3000,
         autoHide: payload.autoHide ?? true,
         position: payload.position ?? 'bottom',
@@ -140,8 +115,7 @@ const CustomToastProvider = () => {
     };
   }, [showToast]);
 
-  const currentType = (visiblePayload?.type ?? 'default') as ToastType;
-  const typeStyles = useMemo(() => getTypeStyles(currentType), [currentType]);
+  const typeStyles = useMemo(() => getTypeStyles(themeColors), [themeColors]);
   const position = (visiblePayload?.position ?? 'bottom') as ToastPosition;
 
   if (!visiblePayload) {
@@ -155,16 +129,14 @@ const CustomToastProvider = () => {
           styles.toast,
           position === 'top' ? styles.top : styles.bottom,
           {
-            borderColor: typeStyles.borderColor,
-            backgroundColor: typeStyles.backgroundColor,
+            backgroundColor: themeColors.background_primary || '#FFFFFF',
             opacity,
-            transform: [{ translateY }],
+            transform: [{ translateY: translateY }],
           },
         ]}>
-        <Image source={ImageSource.splashLogo} style={styles.logo} resizeMode="contain" />
         <View style={styles.textContainer}>
           {!!visiblePayload.text1 && (
-            <Text numberOfLines={2} style={[styles.title, { color: typeStyles.titleColor }]}>
+            <Text numberOfLines={2}  style={[styles.title, { color: typeStyles.titleColor }]}>
               {visiblePayload.text1}
             </Text>
           )}
@@ -188,21 +160,20 @@ const styles = StyleSheet.create({
   },
   toast: {
     position: 'absolute',
-    left: 16,
-    right: 16,
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderRadius: 999,
-    minHeight: 64,
-    paddingVertical: 12,
-    paddingHorizontal: 14,
+    alignSelf: 'center',
+    borderRadius: 12,
+    minHeight: 40,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     shadowColor: '#000000',
-    shadowOpacity: 0.12,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 5,
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 1 },
+    elevation: 2,
+    maxWidth: '92%',
   },
   top: {
     top: TOAST_TOP,
@@ -210,24 +181,23 @@ const styles = StyleSheet.create({
   bottom: {
     bottom: TOAST_BOTTOM,
   },
-  logo: {
-    width: 34,
-    height: 34,
-    marginRight: 10,
-  },
   textContainer: {
-    flex: 1,
+    flex: 0, // No flex: 1 to ensure center content width
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   title: {
     fontSize: 14,
     fontWeight: '700',
+    textAlign: 'center',
   },
   subtitle: {
     marginTop: 2,
     fontSize: 12,
-    color: '#64748B',
     fontWeight: '500',
+    textAlign: 'center',
   },
 });
+
 
 export default CustomToastProvider;

@@ -10,6 +10,7 @@ import { ScreenNames } from '../../../../navigation/constant';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../store';
 import { useGetNotificationStats } from '../../../../hooks/useNotification';
+import { useWeather } from '../../../../hooks/useWeather';
 
 const HomeScreenHeader = () => {
   const { colors } = useTheme();
@@ -21,6 +22,7 @@ const HomeScreenHeader = () => {
   const unreadCount = notificationStats?.unreadCount ?? 0;
   const showUnreadBadge = unreadCount > 0;
   const unreadText = unreadCount > 99 ? '99+' : `${unreadCount}`;
+  const { weather, loading } = useWeather();
 
   const openDrawer = () => {
     if (drawer && 'openDrawer' in drawer) {
@@ -30,6 +32,11 @@ const HomeScreenHeader = () => {
 
   const handlePressbellIcon = () => {
     navigation.navigate(ScreenNames.NOTIFICATION_SCREEN as never);
+  };
+
+  const getWeatherIcon = () => {
+    if (!weather) return undefined;
+    return { uri: `https://openweathermap.org/img/wn/${weather.icon}@2x.png` };
   };
 
   return (
@@ -53,15 +60,17 @@ const HomeScreenHeader = () => {
         <Text variant="medium" style={styles.greeting}>
           Good morning {profileData?.fullName?.split(' ')[0]},
         </Text>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Image source={ImageSource.weather} style={styles.weatherIcon} />
-          <Text variant="semi-bold" style={styles.tempText}>
-            32c
-          </Text>
-          <Text variant="medium" style={styles.locationText}>
-            Hyderabad
-          </Text>
-        </View>
+        {!loading && weather && (
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Image source={getWeatherIcon()} style={styles.weatherIcon} />
+            <Text variant="semi-bold" style={styles.tempText}>
+              {Math.round(weather.temperature)}c
+            </Text>
+            <Text variant="medium" style={styles.locationText}>
+              {weather.city}
+            </Text>
+          </View>
+        )}
       </View>
     </SafeAreaView>
   );

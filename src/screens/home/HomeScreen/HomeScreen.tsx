@@ -11,13 +11,24 @@ import { ImageSource } from '../../../constants/images';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import { ScreenNames } from '../../../navigation/constant';
+import { useMyBookings } from '../../../hooks/useBooking';
+import { MyBookingType } from '../../../types/booking.types';
+import BookingCard from '../../../components/domain/booking/card/BookingCard/BookingCard';
+import { format } from 'date-fns';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../../navigation/types';
 
 const HomeScreen = () => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { profileData } = useSelector((store: RootState) => store.profile);
 
+  const { data: bookings } = useMyBookings(MyBookingType.UPCOMING);
+  
+  const upcomingRide = bookings?.pages?.[0]?.data?.[0];
+
+  console.log('this is profile data ===>', profileData);
 
   const handlePressOptionCard = (type: 'shuttel' | 'wallet' | 'ticket') => {
     switch (type) {
@@ -47,6 +58,38 @@ const HomeScreen = () => {
     });
   }, [navigation]);
 
+  const renderUpcomingRide = () => {
+    if (!upcomingRide) return null;
+
+    const departureDate = upcomingRide.trip?.departureTime || upcomingRide.createdAt;
+    const formattedDate = departureDate ? format(new Date(departureDate), 'dd.MM.yyyy') : '--. --. ----';
+    
+    const fromTime = upcomingRide.trip?.departureTime 
+      ? format(new Date(upcomingRide.trip.departureTime), 'hh:mm a') 
+      : '--:--';
+    
+    const toTime = upcomingRide.trip?.arrivalTime 
+      ? format(new Date(upcomingRide.trip.arrivalTime), 'hh:mm a') 
+      : '--:--';
+
+    return (
+      <View style={styles.upcomingSection}>
+        <Text style={styles.optionCardContainerTitle} variant="semi-bold">
+          Upcoming Rides
+        </Text>
+        <BookingCard
+          bookingId={upcomingRide.id}
+          seatNumber={upcomingRide.seatNumbers && upcomingRide.seatNumbers.length > 0 ? upcomingRide.seatNumbers.join(', ') : `x${upcomingRide.seatCount}`}
+          date={formattedDate}
+          fromLocation={upcomingRide.pickup}
+          toLocation={upcomingRide.dropoff}
+          fromTime={fromTime}
+          toTime={toTime}
+        />
+      </View>
+    );
+  };
+
   return (
     <SafeAreaView edges={['bottom']} style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.contentContainerStyle}>
@@ -62,6 +105,8 @@ const HomeScreen = () => {
             <OptionCard imgUri={ImageSource.ticket} title="Tickets" onPress={() => handlePressOptionCard('ticket')} />
             <OptionCard imgUri={ImageSource.wallet} title="Wallet" onPress={() => handlePressOptionCard('wallet')} />
           </View>
+
+          {renderUpcomingRide()}
         </View>
       </ScrollView>
     </SafeAreaView>

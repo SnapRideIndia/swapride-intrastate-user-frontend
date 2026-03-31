@@ -1,31 +1,33 @@
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Image, TouchableOpacity, View } from 'react-native';
 import React, { useState } from 'react';
 import { useTheme } from '../../../../theme/ThemeProvider';
 import { useStyles } from './Register.styles';
 import { SwTextInput as TextInput } from '../../../common/SwTextInput/SwTextInput';
 import { ImageSource } from '../../../../constants/images';
 import { SwText as Text } from '../../../common/SwText/SwText';
-import {  useRegisterUser } from '../../../../hooks/useAuth';
+import { useRegisterUser } from '../../../../hooks/useAuth';
 import PrimaryButton from '../../../common/SwButton/PrimaryButton/PrimaryButton';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../../store';
-import { AuthStep, setAccessToken, setAuthStep, setRefreshToken } from '../../../../slice/authSlice';
+import { AuthStep, setAccessToken, setAuthStep, setRefreshToken, setReferralCode } from '../../../../slice/authSlice';
 import { storage } from '../../../../utils/store';
 import { StorageKeys } from '../../../../constants/storage/storageKeys';
 import { useNavigation } from '@react-navigation/native';
 import { ScreenNames } from '../../../../navigation/constant';
 import { validateEmail, validatePassword } from '../../../../utils/validation';
+import { showCustomToast } from '../../../../utils/customToast';
 
 const Register = () => {
+  const { verificationId, isNewUser, referralCode: reduxReferralCode } = useSelector((store: RootState) => store.auth);
   const [userCred, setUserCred] = useState({
     name: '',
     email: '',
     password: '',
-    refCode: '',
+    refCode: reduxReferralCode || '',
   });
+  const [showPassword, setShowPassword] = useState(false);
   const { colors } = useTheme();
   const styles = useStyles(colors);
-  const { verificationId, isNewUser } = useSelector((store: RootState) => store.auth);
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
@@ -41,11 +43,17 @@ const Register = () => {
     dispatch(setRefreshToken(data.refreshToken));
     storage.set(StorageKeys.ACCESS_TOKEN, data.accessToken);
     storage.set(StorageKeys.REFRESH_TOKEN, data.refreshToken);
-    (navigation as any).navigate(ScreenNames.SET_PROFILE_SCREEN as never, { isFromRegister: true});
+    dispatch(setReferralCode(''));
+    showCustomToast('success', data?.message || "Registration Successful!", '', 3000);
+    (navigation as any).reset({
+      index: 0,
+      routes: [{ name: ScreenNames.DASHBOARD_SCREEN as any }],
+    });
   };
 
   const onErrorRegistration = (error: any) => {
     console.log('This is Error of registartion >>>', error);
+    showCustomToast('error', error?.response?.data?.message || error?.message || "Registration failed!", '', 1500);
   };
 
  const handlePressLogin = ()=>{
@@ -56,7 +64,7 @@ const Register = () => {
   dispatch(setAuthStep(AuthStep.step3))
  }
 
-  const { mutate: register } = useRegisterUser(onSuccessRegistartion, onErrorRegistration);
+  const { mutate: register, isPending } = useRegisterUser(onSuccessRegistartion, onErrorRegistration);
 
   const handlePressButton = () => {
     console.log('this is usercred ===>', userCred);
@@ -91,8 +99,13 @@ const Register = () => {
   };
 
   const handleRenderRightIcon = () => {
-    return <Image source={ImageSource.eyeOff} style={styles.eyeOff} />;
+    return (
+      <TouchableOpacity onPress={() => setShowPassword(prev => !prev)}>
+        <Image source={ImageSource.eyeOff} style={[styles.eyeOff, { opacity: showPassword ? 1 : 0.5 }]} />
+      </TouchableOpacity>
+    );
   };
+
   return (
     <>
       <View style={styles.container}>
@@ -106,7 +119,6 @@ const Register = () => {
         <TextInput
           title={'Email Address'}
           isPhno={false}
-          renderRightIcon={handleRenderRightIcon}
           value={userCred.email}
           onChangeText={text => handleChange('email', text)}
           errorText={errors.email}
@@ -115,6 +127,8 @@ const Register = () => {
           <TextInput
             title={'Set Password'}
             isPhno={false}
+            renderRightIcon={handleRenderRightIcon}
+            secureTextEntry={!showPassword}
             value={userCred.password}
             onChangeText={text => handleChange('password', text)}
             errorText={errors.password}
@@ -133,7 +147,7 @@ const Register = () => {
       </View>
 
       <View style={styles.buttonContainer}>
-        <PrimaryButton title="Proceed" onPress={handlePressButton} />
+        <PrimaryButton title="Proceed" onPress={handlePressButton} loading={isPending} />
       </View>
     </>
   );

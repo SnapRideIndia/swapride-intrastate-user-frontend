@@ -248,12 +248,24 @@ const SuggestYourStops = () => {
   useEffect(() => {
     navigation.setOptions({
       headerShown: true,
-      header: () => <PrimaryHeader title="Suggest your stops" />,
+      header: () => (
+        <PrimaryHeader 
+          title="Suggest your stops" 
+          renderRightIcon={() => (
+            <PrimaryButton 
+              title="View Suggestions"
+              onPress={() => navigation.navigate(ScreenNames.MY_SUGGESTIONS)}
+              btnStyle={{ height: 32, paddingVertical: 0, paddingHorizontal: 12, backgroundColor: colors.primaryLight }}
+              textStyle={{ fontSize: 11, color: '#FFFFFF' }}
+            />
+          )}
+        />
+      ),
     });
-  }, [navigation]);
+  }, [navigation, colors.contentPrimary]);
+
   return (
     <SafeAreaView edges={['bottom']} style={styles.container}>
-      {/* <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.contentContainerStyle}> */}
       <KeyboardAwareScrollView
         contentContainerStyle={styles.keyboardAwareScrollContainer}
         enableOnAndroid
@@ -261,7 +273,6 @@ const SuggestYourStops = () => {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        {/* input container */}
         <View style={styles.cardContainer}>
           <View style={styles.rowGap10}>
             <View style={styles.flex1Gap16}>
@@ -342,17 +353,6 @@ const SuggestYourStops = () => {
             />
           </View>
         </View>
-
-        {hasMySuggestions && (
-          <View style={styles.viewMySuggestionsWrap}>
-            <PrimaryButton
-              title="View My Suggestions"
-              onPress={() => navigation.navigate(ScreenNames.MY_SUGGESTIONS)}
-              btnStyle={styles.viewMySuggestionsButton}
-              textStyle={styles.viewMySuggestionsButtonText}
-            />
-          </View>
-        )}
       </KeyboardAwareScrollView>
 
             <SwLocationSearchBottomSheet

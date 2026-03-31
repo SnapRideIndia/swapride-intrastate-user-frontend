@@ -1,4 +1,4 @@
-import { Linking, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import React, { useEffect } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native'
@@ -12,7 +12,7 @@ import MySuggestionsScreen from '../../screens/profile/MySuggestions/MySuggestio
 import { storage } from '../../utils/store';
 import { StorageKeys } from '../../constants/storage/storageKeys';
 import { useDispatch } from 'react-redux';
-import { setAccessToken, setIsNewUser } from '../../slice/authSlice';
+import { setAccessToken } from '../../slice/authSlice';
 import BusSelection from '../../screens/home/BusSelection/BusSelection';
 import FullRouteScreen from '../../screens/home/FullRouteScreen/FullRouteScreen';
 import NotificationScreen from '../../screens/home/NotificationScreen/NotificationScreen';
@@ -37,6 +37,10 @@ import TransactionHistoryScreen from '../../screens/transactions/TransactionHist
 import TransactionDetailScreen from '../../screens/transactions/TransactionDetailScreen/TransactionDetailScreen';
 import SavedLocationsScreen from '../../screens/savedLocations/SavedLocationsScreen';
 import AddEditLocationScreen from '../../screens/addEditLocation/AddEditLocationScreen';
+import RentBusScreen from '../../screens/rentals/RentBusScreen/RentBusScreen';
+import RentalRequestsScreen from '../../screens/rentals/RentalRequestsScreen/RentalRequestsScreen';
+import RentalDetailsScreen from '../../screens/rentals/RentalDetailsScreen/RentalDetailsScreen';
+
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const AppNavigation = () => {
@@ -50,15 +54,18 @@ const AppNavigation = () => {
     },
   });
 
-
   useEffect(() => {
     const token = storage.getString(StorageKeys.ACCESS_TOKEN);
-    dispatch(setAccessToken(token ?? ''));
+    if (token) {
+      dispatch(setAccessToken(token));
+    }
   }, [dispatch]);
 
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={ScreenNames.SPLASH_SCREEN as never}>
+        <Stack.Screen name={ScreenNames.SPLASH_SCREEN as never} component={SplashScreen} />
+        <Stack.Screen name={ScreenNames.LOGIN_SCREEN} component={EnterPhNo} />
         <Stack.Screen name={ScreenNames.DASHBOARD_SCREEN}>
           {() => (
             <View style={styles.tabBarContainer}>
@@ -66,7 +73,6 @@ const AppNavigation = () => {
             </View>
           )}
         </Stack.Screen>
-        <Stack.Screen name={ScreenNames.LOGIN_SCREEN} component={EnterPhNo} />
         <Stack.Screen name={ScreenNames.VIEW_PROFILE} component={ViewProfile} />
         <Stack.Screen name={ScreenNames.SUGGEST_YOUR_STOPS} component={SuggestYourStops} />
         <Stack.Screen name={ScreenNames.MY_SUGGESTIONS} component={MySuggestionsScreen} />
@@ -84,7 +90,6 @@ const AppNavigation = () => {
         <Stack.Screen name={ScreenNames.BOOKING_SUCCESS as never} component={BookingSuccess} />
         <Stack.Screen name={ScreenNames.SEAT_SELECTION as never} component={SeatSelection} />
         <Stack.Screen name={ScreenNames.TICKETS_SCREEN as never} component={TicketsScreen} />
-        <Stack.Screen name={ScreenNames.SPLASH_SCREEN as never} component={SplashScreen} />
         <Stack.Screen name={ScreenNames.SELF_BOARD_SCANNER as never} component={SelfBoardScannerScreen} />
         <Stack.Screen name={ScreenNames.SELF_BOARD_SUCCESS as never} component={SelfBoardSuccessScreen} />
         <Stack.Screen name={ScreenNames.SELF_BOARD_ERROR as never} component={SelfBoardErrorScreen} />
@@ -92,6 +97,9 @@ const AppNavigation = () => {
         <Stack.Screen name={ScreenNames.TRANSACTION_DETAIL_SCREEN as never} component={TransactionDetailScreen} />
         <Stack.Screen name={ScreenNames.SAVED_PLACES_SCREEN as never} component={SavedLocationsScreen} />
         <Stack.Screen name={ScreenNames.ADD_EDIT_LOCATION_SCREEN as never} component={AddEditLocationScreen} />
+        <Stack.Screen name={ScreenNames.RENT_A_BUS_SCREEN as never} component={RentBusScreen} />
+        <Stack.Screen name={ScreenNames.RENTAL_REQUESTS_SCREEN as never} component={RentalRequestsScreen} />
+        <Stack.Screen name={ScreenNames.RENTAL_DETAILS_SCREEN as never} component={RentalDetailsScreen} />
         <Stack.Screen name={ScreenNames.DUMMY as never} component={Dummy} />
       </Stack.Navigator>
     </NavigationContainer>

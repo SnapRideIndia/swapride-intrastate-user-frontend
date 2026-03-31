@@ -7,13 +7,7 @@ export const useStyles = (colors: ColorsType) =>
       flex: 1,
       backgroundColor: colors.background_primary,
     },
-    scrollWrap: {
-      flex: 1,
-    },
-    scrollView: {
-      flex: 1,
-    },
-    contentContainer: {
+    listContent: {
       paddingHorizontal: 20,
       paddingTop: 16,
       paddingBottom: 40,
@@ -25,28 +19,35 @@ export const useStyles = (colors: ColorsType) =>
       borderColor: colors.border_2,
       padding: 16,
       marginBottom: 16,
-      elevation: 2,
+      elevation: 1,
       shadowColor: colors.background_black,
       shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.08,
+      shadowOpacity: 0.1,
       shadowRadius: 4,
     },
     cardHeader: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      marginBottom: 12,
+      marginBottom: 16,
     },
     statusBadge: {
-      paddingHorizontal: 10,
-      paddingVertical: 4,
-      borderRadius: 20,
+      flexDirection: 'row',
+      alignItems: 'center',
       backgroundColor: colors.background_secondary,
+      paddingHorizontal: 10,
+      paddingVertical: 5,
+      borderRadius: 20,
+      gap: 6,
+    },
+    statusDot: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
     },
     statusText: {
       fontSize: 10,
       color: colors.contentPrimary,
-      fontWeight: '600',
       textTransform: 'uppercase',
     },
     dateText: {
@@ -91,8 +92,8 @@ export const useStyles = (colors: ColorsType) =>
     cardFooter: {
       flexDirection: 'row',
       alignItems: 'center',
-      gap: 10,
-      paddingTop: 12,
+      gap: 12,
+      paddingTop: 16,
       borderTopWidth: 1,
       borderTopColor: colors.border_2,
     },
@@ -114,78 +115,38 @@ export const useStyles = (colors: ColorsType) =>
       fontSize: 12,
       color: colors.contentSecondary,
     },
-    actionButtons: {
-      flexDirection: 'row',
+    arrowIcon: {
+      width: 14,
+      height: 14,
       marginLeft: 'auto',
-      gap: 12,
-    },
-    actionIconButton: {
-      padding: 4,
-    },
-    actionIcon: {
-      width: 18,
-      height: 18,
       tintColor: colors.contenttertiary,
     },
-    viewOnMapButton: {
+    centerContainer: {
+      flex: 1,
       justifyContent: 'center',
-      paddingVertical: 4,
-      paddingHorizontal: 8,
-    },
-    viewOnMapText: {
-      fontSize: 12,
-      color: colors.primary,
-      textDecorationLine: 'underline',
-    },
-    deleteIcon: {
-      tintColor: '#EF4444',
-    },
-    descriptionBox: {
-      marginTop: 12,
-      backgroundColor: colors.background_secondary,
-      padding: 10,
-      borderRadius: 10,
-    },
-    descriptionText: {
-      fontSize: 12,
-      color: colors.contentSecondary,
-      fontStyle: 'italic',
-      lineHeight: 18,
-    },
-    deleteModalContent: {
       alignItems: 'center',
-      width: '100%',
     },
-    deleteModalMessage: {
+    emptyContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingTop: 100,
+    },
+    emptyIcon: {
+      width: 48,
+      height: 48,
+      tintColor: colors.border_3,
+      marginBottom: 16,
+    },
+    emptyTitle: {
+      fontSize: 18,
+      color: colors.contentPrimary,
+      marginBottom: 8,
+    },
+    emptySubtitle: {
       fontSize: 14,
-      color: colors.contentSecondary,
+      color: colors.contenttertiary,
       textAlign: 'center',
-      lineHeight: 20,
-      marginVertical: 20,
-    },
-    deleteModalButtonRow: {
-      flexDirection: 'row',
-      gap: 12,
-      width: '100%',
-    },
-    cancelButton: {
-      flex: 1,
-      height: 44,
-      borderRadius: 12,
-      borderWidth: 1,
-      borderColor: colors.border_2,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    cancelText: {
-      fontSize: 14,
-      fontWeight: '600',
-      color: colors.contentSecondary,
-    },
-    confirmDeleteButton: {
-      flex: 1,
-      height: 44,
-      borderRadius: 12,
-      backgroundColor: '#EF4444',
+      paddingHorizontal: 40,
     },
   });
