@@ -19,6 +19,7 @@ import { RootState } from '../../store';
 import UserAvatar from '../../components/common/UserAvatar/UserAvatar';
 import { SwModal } from '../../components/common/SwModal';
 import { showCustomToast } from '../../utils/customToast';
+import { queryClient } from '../../utils/queryClient';
 
 const drawerItems = [
   {
@@ -83,8 +84,7 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
   const performLogout = () => {
     try {
       dispatch(setLogout());
-      dispatch(setProfileData(null));
-      dispatch(setCurrentCoords(null))
+      queryClient.clear();
       storage.set(StorageKeys.ACCESS_TOKEN, '');
       storage.set(StorageKeys.REFRESH_TOKEN, '');
       showCustomToast('success', 'Logged out successfully!', '', 1500);

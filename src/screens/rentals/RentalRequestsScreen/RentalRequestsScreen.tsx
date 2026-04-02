@@ -12,6 +12,7 @@ import { rentalService } from '../../../services/RentalService';
 import { ScreenNames } from '../../../navigation/constant';
 import { RootStackParamList } from '../../../navigation/types';
 import PrimaryButton from '../../../components/common/SwButton/PrimaryButton/PrimaryButton';
+import { NoResults } from '../../../components/common/NoResults/NoResults';
 
 const RentalRequestsScreen = () => {
   const { colors } = useTheme();
@@ -149,11 +150,12 @@ const RentalRequestsScreen = () => {
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />
           }
           ListEmptyComponent={
-            <View style={styles.emptyContainer}>
-              <Image source={ImageSource.clock} style={styles.emptyIcon} />
-              <Text variant="semi-bold" style={styles.emptyTitle}>No Requests Yet</Text>
-              <Text style={styles.emptySubtitle}>Your bus rental inquiries will appear here.</Text>
-            </View>
+            <NoResults
+              image={ImageSource.clock}
+              title="No Requests Yet"
+              subtitle="Your bus rental inquiries will appear here."
+              imageStyle={{ tintColor: colors.contentDisabled }}
+            />
           }
         />
       )}

@@ -1,6 +1,9 @@
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { storage } from '../utils/store';
 import { StorageKeys } from '../constants/storage/storageKeys';
+import { store } from '../store';
+import { setLogout } from '../slice/authSlice';
+import { queryClient } from '../utils/queryClient';
 
 // Base configuration
 // http://swapride-intrastate-staging-env-1.eba-hgachq5q.ap-south-2.elasticbeanstalk.com/api
@@ -59,16 +62,8 @@ const REFRESH_ENDPOINT = 'users/auth/refresh';
 /** Single in-flight refresh promise so concurrent 401s trigger only one refresh */
 let refreshPromise: Promise<string | null> | null = null;
 
-/**
- * Call refresh API (no Bearer token), save new tokens to MMKV, return new access token.
- * Used by 401 interceptor and by AuthService.refreshAccessToken.
- */
 export const refreshSession = async (refreshToken: string): Promise<{ accessToken: string; refreshToken?: string }> => {
-  const { data } = await noAuthApi.post<{
-    data?: { accessToken?: string; access_token?: string; refreshToken?: string; refresh_token?: string };
-    accessToken?: string;
-    refreshToken?: string;
-  }>(REFRESH_ENDPOINT, { refreshToken });
+  const { data } = await noAuthApi.post<any>(REFRESH_ENDPOINT, { refreshToken });
   const raw = data?.data ?? data;
   const accessToken = raw?.accessToken ?? raw?.access_token ?? '';
   const newRefreshToken = raw?.refreshToken ?? raw?.refresh_token;
@@ -108,6 +103,8 @@ const attachResponseInterceptors = (instance: AxiosInstance) => {
         if (!newAccessToken) {
           storage.delete(StorageKeys.ACCESS_TOKEN);
           storage.delete(StorageKeys.REFRESH_TOKEN);
+          store.dispatch(setLogout());
+          queryClient.clear();
           return Promise.reject(error);
         }
         originalRequest._retry = true;
@@ -119,6 +116,8 @@ const attachResponseInterceptors = (instance: AxiosInstance) => {
         refreshPromise = null;
         storage.delete(StorageKeys.ACCESS_TOKEN);
         storage.delete(StorageKeys.REFRESH_TOKEN);
+        store.dispatch(setLogout());
+        queryClient.clear();
         return Promise.reject(error);
       }
     },

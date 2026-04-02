@@ -1,4 +1,4 @@
-import { Platform, View, Image, TouchableOpacity, ImageSourcePropType, Modal } from 'react-native';
+import { Platform, View, Image, TouchableOpacity, ImageSourcePropType, Modal, PermissionsAndroid } from 'react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
@@ -189,7 +189,18 @@ const SetYourProfileScreen = () => {
     setShowImagePickerSheet(true);
   };
 
-  const handleSelectCamera = () => {
+  const handleSelectCamera = async () => {
+    if (Platform.OS === 'android') {
+      try {
+        const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA);
+        if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+          return;
+        }
+      } catch (err) {
+        console.warn(err);
+        return;
+      }
+    }
     launchCamera(
       {
         mediaType: 'photo',

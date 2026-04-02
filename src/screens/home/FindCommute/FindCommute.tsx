@@ -370,7 +370,6 @@ const FindCommute = () => {
           isSavedAddressesLoading={isSavedAndRecentLoading}
           isRecentSearchesLoading={isSavedAndRecentLoading}
           showUseCurrentLocation
-          onPressUseCurrentLocation={handleUseCurrentLocation}
           savedAddresses={savedAddresses}
           recentSearches={recentSearches}
           onPressItem={handleSelectLocation}

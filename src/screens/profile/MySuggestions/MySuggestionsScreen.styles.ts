@@ -152,4 +152,10 @@ export const useStyles = (colors: ColorsType) =>
       fontStyle: 'italic',
       lineHeight: 18,
     },
+    centerContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 32,
+    },
   });

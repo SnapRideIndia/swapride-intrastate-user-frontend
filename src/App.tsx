@@ -4,8 +4,7 @@ import { Provider } from 'react-redux';
 import AppWrapper from './components/common/AppWrapper/AppWrapper';
 import { store } from './store';
 import { handleInitialNotification, initNotifications } from './utils/notificationUtility';
-
-const queryClient = new QueryClient();
+import { queryClient } from './utils/queryClient';
 
 const App = () => {
   useEffect(() => {
