@@ -46,7 +46,7 @@ export const useStyles = (colors: ColorsType) =>
     },
     drawerItemTitle: {
       fontSize: 16,
-      color: '#081C42',
+      color: colors.primary,
     },
     spacer: {
       flex: 1,

@@ -81,10 +81,11 @@ export const FindCommuteCard = ({
                 key={t.id}
                 onPress={() => onPressDateTab(idx)}
                 activeOpacity={0.8}
-                style={[styles.dateTab, { borderColor: isActive ? colors.primary : colors.border_4 }]}
+                style={[styles.dateTab, isActive && styles.activeDateTab]}
               >
-                {isActive && <Image source={ImageSource.checkCircle} style={styles.checkIcon} />}
-                <Text>{t.title}</Text>
+                <Text style={isActive ? styles.activeDateText : styles.inactiveDateText}>
+                  {t.title}
+                </Text>
               </TouchableOpacity>
             );
           })}

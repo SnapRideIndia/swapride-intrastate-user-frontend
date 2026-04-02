@@ -18,13 +18,13 @@ import { useInitiateRoundTrip } from '../../../hooks/useBooking';
 import { format, isToday, addDays } from 'date-fns';
 import { FindCommuteCard } from '../../../components/domain/booking/FindCommuteCard/FindCommuteCard';
 import { SwTopModal } from '../../../components/common/SwTopModal/SwTopModal';
-import { ActivityIndicator, Alert } from 'react-native';
+import { Alert } from 'react-native';
 import { SwLocationSearchBottomSheet } from '../../../components/common/SwLocationSearchBottomSheet/SwLocationSearchBottomSheet';
 import type { SwLocationSearchItem } from '../../../types/placeAutofill.types';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import uuid from 'react-native-uuid';
 import { useLocationSheetBackHandler } from '../../../hooks/useLocationSheetBackHandler';
-import { EmptyCommuteData } from '../../../components/domain/busSelection/EmptyCommuteData';
+import { NoResults } from '../../../components/common/NoResults/NoResults';
 import DatePicker from 'react-native-date-picker';
 import { CommuteDateTab } from '../../../types/commuteDates.types';
 import { RootStackParamList } from '../../../navigation/types';
@@ -436,7 +436,14 @@ const BusSelection = () => {
           <BusSelectionCard key={`${item.routeId}-${idx}`} showLabel={true} data={item} onProceed={timing => handleProceed(item, timing)} />
         ))}
 
-        {!isSearchingTrips && commuteData !== null && commuteData.length === 0 && <EmptyCommuteData />}
+        {!isSearchingTrips && commuteData !== null && commuteData.length === 0 && (
+          <NoResults
+            image={ImageSource.shuttel}
+            title="No buses available"
+            subtitle="We couldn't find buses on this route. Try another route or nearby stop."
+            imageStyle={{ width: 140, height: 140 }}
+          />
+        )}
       </ScrollView>
 
       <SwTopModal isVisible={isEditModalVisible} onClose={() => setIsEditModalVisible(false)} title="Search Bus">

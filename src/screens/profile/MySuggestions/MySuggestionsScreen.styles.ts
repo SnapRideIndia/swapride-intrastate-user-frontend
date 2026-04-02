@@ -138,7 +138,7 @@ export const useStyles = (colors: ColorsType) =>
       textDecorationLine: 'underline',
     },
     deleteIcon: {
-      tintColor: '#EF4444',
+      tintColor: colors.contentRed,
     },
     descriptionBox: {
       marginTop: 12,
@@ -151,41 +151,5 @@ export const useStyles = (colors: ColorsType) =>
       color: colors.contentSecondary,
       fontStyle: 'italic',
       lineHeight: 18,
-    },
-    deleteModalContent: {
-      alignItems: 'center',
-      width: '100%',
-    },
-    deleteModalMessage: {
-      fontSize: 14,
-      color: colors.contentSecondary,
-      textAlign: 'center',
-      lineHeight: 20,
-      marginVertical: 20,
-    },
-    deleteModalButtonRow: {
-      flexDirection: 'row',
-      gap: 12,
-      width: '100%',
-    },
-    cancelButton: {
-      flex: 1,
-      height: 44,
-      borderRadius: 12,
-      borderWidth: 1,
-      borderColor: colors.border_2,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    cancelText: {
-      fontSize: 14,
-      fontWeight: '600',
-      color: colors.contentSecondary,
-    },
-    confirmDeleteButton: {
-      flex: 1,
-      height: 44,
-      borderRadius: 12,
-      backgroundColor: '#EF4444',
     },
   });

@@ -47,7 +47,7 @@ const BookingSuccess = ({ navigation }: any) => {
           btnStyle={styles.viewTicketBtn}
         />
         <PrimaryButton
-          title="view ride"
+          title="View Ride"
           onPress={() =>
             navigation.dispatch(
               CommonActions.reset({

@@ -38,6 +38,17 @@ export const useStyles = (colors: ColorsType) =>
       height: 23,
       justifyContent: 'center',
       borderRadius: 6,
+      borderColor: colors.border_4,
+    },
+    activeDateTab: {
+      backgroundColor: colors.primaryLight,
+      borderColor: colors.primaryLight,
+    },
+    activeDateText: {
+      color: colors.background_primary,
+    },
+    inactiveDateText: {
+      color: colors.contentPrimary,
     },
     checkIcon: {
       width: 11,
@@ -46,7 +57,7 @@ export const useStyles = (colors: ColorsType) =>
     calendarIcon: {
       width: 24,
       height: 24,
-      tintColor: colors.contentPrimary,
+      tintColor: colors.primaryLight,
     },
     btnContainer: {
       marginTop: 12,

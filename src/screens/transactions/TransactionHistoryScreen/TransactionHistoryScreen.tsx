@@ -114,11 +114,13 @@ const TransactionHistoryScreen = () => {
   );
 
   const renderEmpty = () => (
-    <NoResults
-      image={ImageSource.noTicketsFound}
-      title="No transactions found"
-      subtitle="Your transactions will appear here."
-    />
+    <View style={styles.emptyContainer}>
+      <NoResults
+        image={ImageSource.noTicketsFound}
+        title="No transactions found"
+        subtitle="Your transactions will appear here."
+      />
+    </View>
   );
 
   const renderFooter = () => {
@@ -228,9 +230,10 @@ const TransactionHistoryScreen = () => {
           keyExtractor={item => item.id}
           renderItem={renderItem}
           ListEmptyComponent={renderEmpty}
-          contentContainerStyle={
-            transactions.length === 0 ? styles.contentContainer : styles.listContent
-          }
+          contentContainerStyle={[
+            transactions.length === 0 ? styles.emptyContainer : styles.listContent,
+            transactions.length === 0 && { flexGrow: 1 },
+          ]}
           ListFooterComponent={renderFooter}
           onEndReached={handleLoadMore}
           onEndReachedThreshold={0.4}

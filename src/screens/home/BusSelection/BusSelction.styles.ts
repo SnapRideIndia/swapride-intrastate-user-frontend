@@ -20,6 +20,8 @@ export const useStyles = (colors: ColorsType) =>
       borderRadius: 10,
       paddingHorizontal: 29,
       gap: 20,
+      borderWidth: 1,
+      borderColor: colors.border_2,
     },
     bannerText: {
       fontSize: 14,

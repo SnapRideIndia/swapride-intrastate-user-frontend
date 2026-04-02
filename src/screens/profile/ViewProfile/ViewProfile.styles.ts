@@ -73,7 +73,7 @@ export const useStyles = (colors: ColorsType) =>
       backgroundColor: colors.background_primary,
     },
     textStyle: {
-      color: '#FF3B30',
+      color: colors.contentRed,
     },
     deleteSheetBackground: {
       backgroundColor: colors.background_primary,
@@ -139,10 +139,10 @@ export const useStyles = (colors: ColorsType) =>
     deleteSheetConfirmBtn: {
       flex: 1,
       height: 44,
-      backgroundColor: '#FF3B30',
+      backgroundColor: colors.contentRed,
     },
     deleteSheetConfirmText: {
-      color: '#FFFFFF',
+      color: colors.primaryCtaText,
     },
     headerTitle: {
       fontSize: 16,

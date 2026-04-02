@@ -9,20 +9,22 @@ export const useStyles = (colors: ColorsType) =>
     },
     contentContainer: {
       flexGrow: 1,
-      paddingHorizontal: 15,
-      paddingVertical: 30,
-      gap: 20,
+      paddingHorizontal: 16,
+      paddingVertical: 20,
+      gap: 12,
     },
     cardContainer: {
-      padding: 15,
+      padding: 16,
+      borderRadius: 14,
+      backgroundColor: colors.background_primary,
       borderWidth: 1,
-      borderColor: colors.border_1,
-      borderRadius: 10,
+      borderColor: colors.border_3,
+      elevation: 1.5,
     },
     cardHeader: {
       flexDirection: 'row',
       alignItems: 'center',
-      gap: 10
+      gap: 12,
     },
     shuttelIcon: {
       width: 26,
@@ -31,26 +33,33 @@ export const useStyles = (colors: ColorsType) =>
     iconContainer: {
       width: 46,
       height: 46,
-      borderRadius: 50,
+      borderRadius: 23,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: '#ECEFFA',
+      backgroundColor: colors.background_lightBlue,
     },
     title: {
-      fontSize: 18,
+      fontSize: 15,
       color: colors.contentPrimary,
-      width: 150
+      flex: 1,
     },
     subTitle: {
       fontSize: 13,
-      color: colors.contentPrimary,
-      textAlign: 'left'
+      color: colors.contentSecondary,
+      textAlign: 'left',
+      lineHeight: 18,
     },
     min: {
-      fontSize: 13,
-      color: colors.contentSecondary,
+      fontSize: 12,
+      color: colors.contenttertiary,
     },
-    unreadStyle:{
-      backgroundColor: "lightBlue"
-    }
+    unreadStyle: {
+      backgroundColor: colors.background_lightBlue,
+      borderColor: colors.border_8,
+    },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
   });

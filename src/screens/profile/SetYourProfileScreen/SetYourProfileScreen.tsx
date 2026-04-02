@@ -25,6 +25,7 @@ import {
 import { usePlaceAutocomplete, useRecentSearch, useSavedLocations, useSaveLocation } from '../../../hooks/useSearch';
 import { SwLocationSearchItem } from '../../../types/placeAutofill.types';
 import { ScreenNames } from '../../../navigation/constant';
+import UserAvatar from '../../../components/common/UserAvatar/UserAvatar';
 
 const INITIAL_PROFILE: ProfileObj = {
   fullName: '',
@@ -346,43 +347,85 @@ const SetYourProfileScreen = () => {
   }, [locationQuery, getPlaceAutocompleteItems]);
 
   const handleSave = () => {
+    // Check if anything changed
+    const p = currentProfile as any;
+    const tp = travelPreferences as any;
+
+    const isProfileUnchanged =
+      profileObj.fullName === (p?.fullName ?? '') &&
+      profileObj.email === (p?.email ?? '') &&
+      profileObj.gender === (p?.gender ?? '') &&
+      profileObj.dateOfBirth === apiDateToDisplay(p?.dateOfBirth ?? '') &&
+      profileObj.bloodGroup === (p?.bloodGroup ?? '') &&
+      profileImage === (p?.profileUrl ?? null);
+
+    let arePreferencesUnchanged = true;
     if (!isFromRegister) {
-      if (homeAddress) {
+      const isHomeUnchanged = homeAddress?.title === (tp?.home?.address ?? undefined);
+      const isOfficeUnchanged = officeAddress?.title === (tp?.office?.address ?? undefined);
+
+      const currentTimings =
+        officeStartTime && officeEndTime
+          ? `${getTimeDisplayValue(officeStartTime)} - ${getTimeDisplayValue(officeEndTime)}`
+          : undefined;
+      const isTimingsUnchanged = currentTimings === (tp?.officeTimings ?? undefined);
+
+      arePreferencesUnchanged = isHomeUnchanged && isOfficeUnchanged && isTimingsUnchanged;
+    }
+
+    if (isProfileUnchanged && arePreferencesUnchanged) {
+      navigation.navigate(ScreenNames.DASHBOARD_SCREEN as never);
+      return;
+    }
+
+    if (!isFromRegister) {
+      if (homeAddress && homeAddress.title !== tp?.home?.address) {
         updateTravelPreference({
-          endpoint: "/home",
+          endpoint: '/home',
           payload: {
             address: homeAddress.title,
             latitude: homeAddress.latitude,
-            longitude: homeAddress.longitude
-          }
+            longitude: homeAddress.longitude,
+          },
         });
       }
-      if (officeAddress) {
+      if (officeAddress && officeAddress.title !== tp?.office?.address) {
         updateTravelPreference({
-          endpoint: "/office",
+          endpoint: '/office',
           payload: {
             address: officeAddress.title,
             latitude: officeAddress.latitude,
-            longitude: officeAddress.longitude
-          }
+            longitude: officeAddress.longitude,
+          },
         });
       }
-      if (officeStartTime && officeEndTime) {
+      const currentTimings =
+        officeStartTime && officeEndTime
+          ? `${getTimeDisplayValue(officeStartTime)} - ${getTimeDisplayValue(officeEndTime)}`
+          : undefined;
+      if (currentTimings && currentTimings !== tp?.officeTimings) {
         updateOfficeTimings({
           payload: {
-            timings: `${getTimeDisplayValue(officeStartTime)} - ${getTimeDisplayValue(officeEndTime)}`
-          }
-        })
+            timings: currentTimings,
+          },
+        });
       }
     }
-    updateProfileApi(
-      { profileObj, profileImageUri: profileImage },
-      {
-        onSuccess: () => {
-         navigation.navigate(ScreenNames.DASHBOARD_SCREEN as never);
+
+    // Only call profile update if profile data changed
+    if (!isProfileUnchanged) {
+      updateProfileApi(
+        { profileObj, profileImageUri: profileImage },
+        {
+          onSuccess: () => {
+            navigation.navigate(ScreenNames.DASHBOARD_SCREEN as never);
+          },
         },
-      },
-    );
+      );
+    } else {
+      // If only preferences changed, they are handled above, so just navigate
+      navigation.navigate(ScreenNames.DASHBOARD_SCREEN as never);
+    }
   };
 
   return (
@@ -396,13 +439,12 @@ const SetYourProfileScreen = () => {
       >
         <TouchableOpacity style={styles.imageOuterContainer} onPress={handleOpenImagePicker} activeOpacity={0.8}>
           <View style={styles.imageWrapper}>
-            <View style={styles.imageContainer}>
-              {profileImage ? (
-                <Image source={{ uri: profileImage }} style={styles.profileImage} resizeMode="cover" />
-              ) : (
-                <Image source={ImageSource.userOutline as ImageSourcePropType} style={styles.placeholderIcon} resizeMode="contain" />
-              )}
-            </View>
+            <UserAvatar
+              url={profileImage || undefined}
+              name={profileObj.fullName}
+              size={125}
+              style={styles.imageContainer}
+            />
             <View style={[styles.cameraIconContainer]}>
               {/* <FontAwesome6 name="camera" size={16} color={colors.primary} /> */}
               <Image source={ImageSource.camera} style={styles.cameraIcon} />
@@ -425,6 +467,7 @@ const SetYourProfileScreen = () => {
           )}
           <TextInput
             title="Full Name"
+            titleStyle={{ color: colors.contentPrimary }}
             renderTitleIcon={() => <Image source={ImageSource.userOutline as ImageSourcePropType} style={styles.titleIcon} />}
             value={profileObj.fullName}
             onChangeText={v => updateProfile('fullName', v)}
@@ -432,6 +475,7 @@ const SetYourProfileScreen = () => {
           />
           <TextInput
             title="Mobile Number"
+            titleStyle={{ color: colors.contentPrimary }}
             renderTitleIcon={() => <Image source={ImageSource.callOutline as ImageSourcePropType} style={styles.titleIcon} />}
             value={profileObj.mobileNumber}
             placeholder="Enter mobile number"
@@ -440,6 +484,7 @@ const SetYourProfileScreen = () => {
           />
           <TextInput
             title="Email Address"
+            titleStyle={{ color: colors.contentPrimary }}
             renderTitleIcon={() => <Image source={ImageSource.emailOutline as ImageSourcePropType} style={styles.titleIcon} />}
             value={profileObj.email}
             onChangeText={v => updateProfile('email', v)}
@@ -451,6 +496,7 @@ const SetYourProfileScreen = () => {
               <TouchableOpacity onPress={() => setShowGenderModal(true)}>
                 <TextInput
                   title="Gender"
+                  titleStyle={{ color: colors.contentPrimary }}
                   renderTitleIcon={() => (
                     <Image source={ImageSource.genderOutline as ImageSourcePropType} style={styles.titleIcon} />
                   )}
@@ -465,6 +511,7 @@ const SetYourProfileScreen = () => {
               <TouchableOpacity onPress={() => setShowDatePicker(true)}>
                 <TextInput
                   title="Date of Birth"
+                  titleStyle={{ color: colors.contentPrimary }}
                   renderTitleIcon={() => <Image source={ImageSource.calenderOutline as ImageSourcePropType} style={styles.titleIcon} />}
                   value={getDobDisplayValue()}
                   editable={false}
@@ -479,6 +526,7 @@ const SetYourProfileScreen = () => {
               <TouchableOpacity onPress={() => setShowBloodGroupModal(true)}>
                 <TextInput
                   title="Blood Group"
+                  titleStyle={{ color: colors.contentPrimary }}
                   renderTitleIcon={() => (
                     <Image source={ImageSource.bloodOutline as ImageSourcePropType} style={styles.titleIcon} />
                   )}
@@ -508,6 +556,7 @@ const SetYourProfileScreen = () => {
             <TouchableOpacity onPress={() => openLocationSheet('home')}>
               <TextInput
                 title="Home Address"
+                titleStyle={{ color: colors.contentPrimary }}
                 renderTitleIcon={() => (
                   <Image source={ImageSource.Home as ImageSourcePropType} style={styles.titleIcon} />
                 )}
@@ -521,6 +570,7 @@ const SetYourProfileScreen = () => {
             <TouchableOpacity onPress={() => openLocationSheet('office')}>
               <TextInput
                 title="Office Address"
+                titleStyle={{ color: colors.contentPrimary }}
                 renderTitleIcon={() => (
                   <Image source={ImageSource.office as ImageSourcePropType} style={styles.titleIcon} />
                 )}
@@ -534,7 +584,7 @@ const SetYourProfileScreen = () => {
             <View style={styles.timeInputContainer}>
               <View style={styles.inputTitle}>
                 <Image source={ImageSource.clock} style={styles.clock} />
-                <Text>Office Timing</Text>
+                <Text style={{ color: colors.contentPrimary }}>Office Timing</Text>
               </View>
               <View style={styles.timeInputsWrapper}>
                 <TouchableOpacity style={styles.timeInput} activeOpacity={0.8} onPress={() => openTimePicker('start')}>

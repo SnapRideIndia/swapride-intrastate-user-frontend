@@ -47,7 +47,7 @@ const Register = () => {
     showCustomToast('success', data?.message || "Registration Successful!", '', 3000);
     (navigation as any).reset({
       index: 0,
-      routes: [{ name: ScreenNames.DASHBOARD_SCREEN as any }],
+      routes: [{ name: isNewUser ? ScreenNames.SET_PROFILE_SCREEN : ScreenNames.DASHBOARD_SCREEN as any }],
     });
   };
 

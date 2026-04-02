@@ -1,5 +1,5 @@
 import { StyleSheet, View, Image, TouchableOpacity } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import { useTheme } from '../../../../theme/ThemeProvider';
 import { useStyles } from './EnterOtp.styles';
 import { SwText as Text } from '../../../common/SwText/SwText';
@@ -24,6 +24,7 @@ const EnterOtp = () => {
   const dispatch = useDispatch();
   const { phNo, isNewUser, isForgotPassword, fcm_token } = useSelector((store: RootState) => store.auth);
   const navigation = useNavigation();
+  const [otp, setOtp] = useState('');
   console.log("This is fcm_token: ", fcm_token)
 
   const onSuccessVerifyOTP = (data: any) => {
@@ -77,11 +78,15 @@ const EnterOtp = () => {
   };
 
   const handlePressVerifyOtp = async () => {
+    if (otp.length !== 6) {
+      showCustomToast('error', '', "Please enter 6 digit OTP", 2000);
+      return;
+    }
     try {
       const fcmToken = fcm_token || await ensureFcmToken();
       const payload = {
         mobileNumber: phNo,
-        otp: '543210',
+        otp: otp,
         "fcmToken": fcmToken,
         ...(isForgotPassword ? { type: "FORGOT_PASSWORD" } : {})
       };
@@ -122,7 +127,7 @@ const EnterOtp = () => {
           </TouchableOpacity>
         </View>
         <View style={styles.otpContainer}>
-          <OTPInput />
+          <OTPInput onFilled={(text) => setOtp(text)} />
 
           <View style={styles.resendOtpContainer}>
             <View style={[styles.resendOtpContainer, { gap: 8 }]}>
@@ -131,7 +136,9 @@ const EnterOtp = () => {
                 Get OTP on Call
               </Text>
             </View>
-            <Text variant="semi-bold" onPress={handlePressResendOtp}>{isSending ? "Sending..." : "Resend OTP"}</Text>
+            <Text variant="semi-bold" style={styles.resend} onPress={handlePressResendOtp}>
+              {isSending ? "Sending..." : "Resend OTP"}
+            </Text>
           </View>
         </View>
       </View>

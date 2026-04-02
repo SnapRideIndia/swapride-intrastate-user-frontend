@@ -45,7 +45,7 @@ export const useStyles = (colors: ColorsType) =>
     },
     title: {
       fontSize: 14,
-      color: colors.contentPrimary,
+      color: colors.primary,
     },
     errorText: {
       marginTop: 4,

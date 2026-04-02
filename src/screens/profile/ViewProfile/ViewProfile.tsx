@@ -1,4 +1,4 @@
-import { Image, ImageSourcePropType, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Image, ImageSourcePropType, ScrollView, TouchableOpacity, View } from 'react-native';
 import React, { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../../../theme/ThemeProvider';
@@ -26,7 +26,7 @@ import { StorageKeys } from '../../../constants/storage/storageKeys';
 import { ScreenNames } from '../../../navigation/constant';
 import { setCurrentCoords, setProfileData } from '../../../slice/profileSlice';
 import { Switch } from 'react-native-switch';
-import LogoutConfirmationModal from '../../../components/common/LogoutConfirmationModal';
+import { SwModal } from '../../../components/common/SwModal';
 import { RootState } from '../../../store';
 
 const ViewProfile = () => {
@@ -60,7 +60,6 @@ const ViewProfile = () => {
   };
 
   const { mutate: logout } = useLogout(onSuccessLogout, onErrorLogout);
-
   const { mutate: deleteProfile } = useDeleteProfile(onSuccessfulDeleteProfile, onErrorDeleteProfile)
 
   console.log('This is travelPreference data ==>', travelPreferences);
@@ -262,19 +261,24 @@ const ViewProfile = () => {
           </View>
         </BottomSheetView>
       </BottomSheetModal>
-      <LogoutConfirmationModal
+      <SwModal
         isVisible={isLogoutModalVisible}
-        onCancel={handleCloseLogoutModal}
+        onClose={handleCloseLogoutModal}
         onConfirm={handleConfirmLogout}
+        title="Confirm logout"
+        subTitle="Are you sure you want to log out from this account?"
+        confirmText="Logout"
+        isDestructive
       />
-      <LogoutConfirmationModal
+
+      <SwModal
         isVisible={isDeleteConfirmModalVisible}
-        onCancel={handleCloseDeleteConfirmModal}
+        onClose={handleCloseDeleteConfirmModal}
         onConfirm={handleConfirmDeleteAccount}
         title="Confirm account deletion"
-        description="Are you sure you want to delete your account?"
+        subTitle="Are you sure you want to delete your account?"
         confirmText="Delete"
-        cancelText="Cancel"
+        isDestructive
       />
     </SafeAreaView>
   );

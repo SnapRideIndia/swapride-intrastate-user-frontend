@@ -335,7 +335,7 @@ const SuggestYourStops = () => {
           <View style={styles.descriptionWrap}>
             <TextInput
               placeholder="Please provide a detailed description for your suggestion"
-              placeholderTextColor={colors.contenttertiary}
+              placeholderTextColor={colors.contentSecondary}
               multiline
               numberOfLines={6}
               value={desc}

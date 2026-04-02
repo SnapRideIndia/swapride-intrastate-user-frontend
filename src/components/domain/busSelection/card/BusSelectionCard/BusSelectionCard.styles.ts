@@ -121,7 +121,7 @@ export const useStyles = (colors: ColorsType) =>
       borderRadius: 10,
     },
     timeSlotContainerSelected: {
-      borderColor: colors.primary,
+      borderColor: colors.primaryLight,
     },
     ratingAndButtoncontainer: {
       flexDirection: 'row',
@@ -235,7 +235,7 @@ export const useStyles = (colors: ColorsType) =>
       backgroundColor: colors.background_primary,
     },
     timingRowSelected: {
-      borderColor: colors.primary,
+      borderColor: colors.primaryLight,
     },
     timingLeft: {
       flex: 1,

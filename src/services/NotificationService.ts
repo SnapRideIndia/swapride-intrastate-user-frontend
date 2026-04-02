@@ -8,7 +8,6 @@ class NotificationService {
   getNotificationStats = async () => {
     const url = `${this.baseUrl}/stats`;
     const res = await fetchData(url);
-    console.log('this is notification stats response ===>', res);
 
     if (!res.success || !res.data) {
       handleErrorResponse(res);
@@ -22,7 +21,6 @@ class NotificationService {
   getNotificationList = async () => {
     const url = `${this.baseUrl}`;
     const res = await fetchData(url);
-    console.log('this is notification List response ===>', res);
 
     if (!res.success || !res.data) {
       handleErrorResponse(res);
@@ -35,7 +33,6 @@ class NotificationService {
   getNotificationDetails = async ({ id }: { id: string }) => {
     const url = `${this.baseUrl}/${id}`;
     const res = await fetchData(url);
-    console.log('this is notification details response ===>', res);
 
     if (!res.success || !res.data) {
       handleErrorResponse(res);
@@ -48,7 +45,6 @@ class NotificationService {
   markSingleNotificationRead = async ( id : string) => {
     const url = `${this.baseUrl}/${id}/read`;
     const res = await patchData(url, {});
-    console.log('this is single notification mark read response ===>', res);
 
     if (!res.success || !res.data) {
       handleErrorResponse(res);
@@ -61,7 +57,6 @@ class NotificationService {
   markAllNotificationsRead = async () => {
     const url = `${this.baseUrl}/read-all`;
     const res = await patchData(url, {});
-    console.log('this is all notifications mark as read response ===>', res);
 
     if (!res.success || !res.data) {
       handleErrorResponse(res);
