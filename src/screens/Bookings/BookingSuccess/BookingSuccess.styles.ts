@@ -52,10 +52,11 @@ export const useStyles = (colors: ColorsType) =>
       borderRadius: 12,
       height: 52,
       borderWidth: 1,
-      borderColor: colors.primary, 
+      borderColor: colors.primaryLight,
+      elevation: 0,
+      shadowOpacity: 0,
     },
     viewRideBtnText: {
-      color: colors.primary,
-      textTransform: 'lowercase',
+      color: colors.primaryLight,
     },
   });

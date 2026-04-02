@@ -11,6 +11,7 @@ export const useStyles = (colors: ColorsType) =>
       backgroundColor: colors.button_primary,
       gap: 5,
       flexDirection: 'row',
+      elevation: 1,
     },
     buttonDisabled: {
       backgroundColor: colors.contentDisabled,

@@ -41,7 +41,7 @@ export const useStyles = (colors: ColorsType) =>
     },
     addressLine: {
       fontSize: 13,
-      color: colors.contenttertiary,
+      color: colors.contentPrimary,
       lineHeight: 18,
     },
     actions: {
@@ -53,8 +53,8 @@ export const useStyles = (colors: ColorsType) =>
       padding: 6,
     },
     editIcon: {
-      width: 20,
-      height: 20,
+      width: 18,
+      height: 18,
       tintColor: colors.contentPrimary,
     },
     deleteIcon: {

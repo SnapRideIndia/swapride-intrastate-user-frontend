@@ -156,13 +156,15 @@ const HistoryScreen = () => {
     <SafeAreaView edges={['bottom']} style={styles.container}>
       <PrimaryHeader title="History" />
       
-      <View style={{ paddingHorizontal: 16, marginTop: 16, marginBottom: 12, flexDirection: 'row', alignItems: 'center' }}>
-        <View style={{ flex: 1 }}>
+      <View style={styles.searchRow}>
+        <View style={styles.searchInputContainer}>
           <SwTextInput
             placeholder="Search bookings, routes."
             value={searchQuery}
             onChangeText={handleSearchChange}
             variant="rounded"
+            inputContainerStyle={styles.searchInput}
+            containerStyle={{ marginBottom: 0 }}
             renderLeftIcon={() => (
               <Image 
                 source={ImageSource.searhIcon} 
@@ -174,25 +176,11 @@ const HistoryScreen = () => {
         </View>
         <TouchableOpacity 
           onPress={() => setDatePickerOpen(true)}
-          style={{ 
-            width: 46, 
-            height: 46, 
-            backgroundColor: 'transparent', 
-            borderRadius: 12, 
-            justifyContent: 'center', 
-            alignItems: 'center', 
-            marginLeft: 12,
-            borderWidth: 1,
-            borderColor: colors.border_3,
-          }}
+          style={styles.dateButton}
         >
           <Image 
             source={ImageSource.calenderOutline} 
-            style={{ 
-              width: 20, 
-              height: 20, 
-              tintColor: colors.contentPrimary 
-            }} 
+            style={styles.dateIcon} 
             resizeMode="contain" 
           />
         </TouchableOpacity>

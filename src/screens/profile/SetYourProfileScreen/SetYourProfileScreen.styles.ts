@@ -70,7 +70,7 @@ export const useStyles = (colors: ColorsType) =>
       backgroundColor: colors.border_3,
     },
     inputContainer: {
-      paddingVertical: 52,
+      paddingVertical: 20,
       paddingHorizontal: 26,
       gap: 20,
     },

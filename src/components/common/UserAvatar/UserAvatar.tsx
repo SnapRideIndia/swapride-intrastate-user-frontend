@@ -21,7 +21,7 @@ const UserAvatar = ({ url, name, size = 44, style }: UserAvatarProps) => {
   };
 
   const initials = getInitials(name);
-  const hasValidUrl = typeof url === 'string' && url.trim().length > 0 && url.startsWith('http');
+  const hasValidUrl = typeof url === 'string' && url.trim().length > 0 && (url.startsWith('http') || url.startsWith('file://') || url.startsWith('content://'));
 
   return (
     <View 

@@ -60,7 +60,7 @@ export const useStyles = (colors: ColorsType) =>
 
     footer: {
       padding: 16,
-      marginTop: 'auto', 
+      marginTop: 'auto',
     },
     proceedBtn: {
       borderRadius: 12,

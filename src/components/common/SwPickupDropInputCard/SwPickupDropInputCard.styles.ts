@@ -56,7 +56,7 @@ export const useStyles = (colors: ColorsType) =>
     },
     swapButton: {
       position: 'absolute',
-      right: -16,
+      right: -5,
       bottom: -15,
       backgroundColor: colors.background_primary,
       borderRadius: 999,

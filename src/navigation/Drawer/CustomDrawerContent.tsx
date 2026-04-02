@@ -15,9 +15,9 @@ import { storage } from '../../utils/store';
 import { StorageKeys } from '../../constants/storage/storageKeys';
 import { useLogout } from '../../hooks/useAuth';
 import { setCurrentCoords, setProfileData } from '../../slice/profileSlice';
-import LogoutConfirmationModal from '../../components/common/LogoutConfirmationModal';
 import { RootState } from '../../store';
 import UserAvatar from '../../components/common/UserAvatar/UserAvatar';
+import { SwModal } from '../../components/common/SwModal';
 import { showCustomToast } from '../../utils/customToast';
 
 const drawerItems = [
@@ -45,12 +45,12 @@ const drawerItems = [
     title: 'Rent a bus',
     navigateTo: ScreenNames.RENT_A_BUS_SCREEN,
   },
-  {
-    id: 5,
-    iconUri: ImageSource.settingsOutline,
-    title: 'Account setting',
-    navigateTo: ScreenNames.ACCOUNT_SETTING_SCREEN,
-  },
+//   {
+//     id: 5,
+//     iconUri: ImageSource.settingsOutline,
+//     title: 'Account setting',
+//     navigateTo: ScreenNames.ACCOUNT_SETTING_SCREEN,
+//   },
 ];
 
 const CustomDrawerContent = (props: DrawerContentComponentProps) => {
@@ -170,10 +170,14 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
           <Image source={ImageSource.logoutOutline} style={styles.icon} />
         </TouchableOpacity>
       </SafeAreaView>
-      <LogoutConfirmationModal
+      <SwModal
         isVisible={isLogoutModalVisible}
-        onCancel={handleCloseLogoutModal}
+        onClose={handleCloseLogoutModal}
         onConfirm={handleConfirmLogout}
+        title="Confirm logout"
+        subTitle="Are you sure you want to log out from this account?"
+        confirmText="Logout"
+        isDestructive
       />
     </View>
   );

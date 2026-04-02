@@ -1,4 +1,4 @@
-import { StyleSheet, TextInput, TextInputProps, View, ViewStyle, StyleProp } from 'react-native';
+import { StyleSheet, TextInput, TextInputProps, View, ViewStyle, StyleProp, TextStyle } from 'react-native';
 import React, { ReactNode } from 'react';
 import { useTheme } from '../../../theme/ThemeProvider';
 import { useStyles } from './SwTextInput.styles';
@@ -13,17 +13,19 @@ interface IInputProps extends TextInputProps {
   variant?: 'default' | 'rounded';
   errorText?: string;
   inputContainerStyle?: StyleProp<ViewStyle>;
+  containerStyle?: StyleProp<ViewStyle>;
+  titleStyle?: StyleProp<TextStyle>;
 }
 
-export const SwTextInput = ({ variant = 'default', errorText, ...props }: IInputProps) => {
+export const SwTextInput = ({ variant = 'default', errorText, titleStyle, containerStyle, ...props }: IInputProps) => {
   const { colors } = useTheme();
   const styles = useStyles(colors);
   return (
-    <View style={styles.inputOuterContainer}>
+    <View style={[styles.inputOuterContainer, containerStyle]}>
       {props.title ? (
         <View style={styles.iconWithTitle}>
           {props.renderTitleIcon?.()}
-          <Text variant="semi-bold" style={styles.title}>
+          <Text variant="semi-bold" style={[styles.title, titleStyle]}>
             {props.title}
           </Text>
         </View>

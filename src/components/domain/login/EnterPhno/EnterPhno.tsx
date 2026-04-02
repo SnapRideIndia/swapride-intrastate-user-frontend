@@ -101,7 +101,7 @@ const EnterPhno = () => {
         <TouchableOpacity style={styles.checkBoxAndConditionContainer} onPress={handlePressCheck} activeOpacity={1}>
           <Image source={isCheck ? ImageSource.greenCheckbox : ImageSource.uncheckbox} style={styles.checkbox} />
           <Text>
-            I agree to share my Personally identifiable Information like name,email,mobile number , etc. I agree to the Terms of service and
+            I agree to share my Personally identifiable Information like name, email, mobile number etc. I agree to the Terms of service and
             Privacy Policy of swapride app
           </Text>
         </TouchableOpacity>

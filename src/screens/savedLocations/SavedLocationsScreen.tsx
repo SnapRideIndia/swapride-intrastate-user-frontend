@@ -1,15 +1,14 @@
 import React, { useCallback, useState } from 'react';
-import { ScrollView, TouchableOpacity, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useTheme } from '../../theme/ThemeProvider';
 import { useStyles } from './SavedLocationsScreen.styles';
 import PrimaryHeader from '../../components/common/SwHeader/PrimaryHeader/PrimaryHeader';
 import PrimaryButton from '../../components/common/SwButton/PrimaryButton/PrimaryButton';
-import { SwText as Text } from '../../components/common/SwText/SwText';
 import { NoResults } from '../../components/common/NoResults/NoResults';
 import { SavedLocationCard, SavedLocationCardShimmer } from '../../components/domain/savedLocations/SavedLocationCard';
-import { SwPopupModal } from '../../components/common/SwPopupModal';
+import { SwModal } from '../../components/common/SwModal';
 import { ImageSource } from '../../constants/images';
 import SearchService from '../../services/SearchService';
 import type { SavedLocationDto } from '../../types/search.types';
@@ -117,36 +116,16 @@ export default function SavedLocationsScreen() {
         />
       </View>
 
-      <SwPopupModal
+      <SwModal
         isVisible={deleteModalVisible}
         onClose={closeDeleteModal}
+        onConfirm={handleConfirmDelete}
         title="Delete Saved Location ?"
-        variant="compact"
-        centerTitle
-      >
-        <View style={styles.deleteModalContent}>
-          <Text style={styles.deleteModalMessage}>
-            Are you sure you want to delete <Text style={styles.deleteModalMessageBold}>{itemToDelete?.label ?? ''}</Text> from your saved location
-          </Text>
-          <View style={styles.deleteModalButtonRow}>
-            <TouchableOpacity
-              style={styles.deleteModalCancelButton}
-              onPress={closeDeleteModal}
-              disabled={isDeleting}
-              activeOpacity={0.7}
-            >
-              <Text style={styles.deleteModalCancelText}>Cancel</Text>
-            </TouchableOpacity>
-            <PrimaryButton
-              title="Delete"
-              onPress={handleConfirmDelete}
-              disabled={isDeleting}
-              btnStyle={styles.deleteModalDeleteButton}
-              textStyle={styles.deleteModalDeleteText}
-            />
-          </View>
-        </View>
-      </SwPopupModal>
+        subTitle={`Are you sure you want to delete ${itemToDelete?.label ?? ''} from your saved location`}
+        confirmText="Delete"
+        isConfirmLoading={isDeleting}
+        isDestructive
+      />
     </SafeAreaView>
   );
 }

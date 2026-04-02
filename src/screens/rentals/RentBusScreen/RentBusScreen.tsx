@@ -191,6 +191,7 @@ const RentBusScreen = () => {
               <View pointerEvents="none">
                 <SwTextInput
                   title="Trip origin"
+                  titleStyle={{ color: colors.contentPrimary }}
                   placeholder="Select pickup location"
                   value={pickupItem?.title || ''}
                   renderTitleIcon={() => renderIcon(ImageSource.Home)}
@@ -203,6 +204,7 @@ const RentBusScreen = () => {
               <View pointerEvents="none">
                 <SwTextInput
                   title="Trip destination"
+                  titleStyle={{ color: colors.contentPrimary }}
                   placeholder="Select destination"
                   value={dropItem?.title || ''}
                   renderTitleIcon={() => renderIcon(ImageSource.office)}
@@ -215,6 +217,7 @@ const RentBusScreen = () => {
               <View pointerEvents="none">
                 <SwTextInput
                   title="Date of departure"
+                  titleStyle={{ color: colors.contentPrimary }}
                   placeholder="Select departure date"
                   value={departureDate ? format(departureDate, 'do MMM, yyyy') : ''}
                   renderTitleIcon={() => renderIcon(ImageSource.calenderOutline)}
@@ -227,6 +230,7 @@ const RentBusScreen = () => {
               <View pointerEvents="none">
                 <SwTextInput
                   title="Date of arrival"
+                  titleStyle={{ color: colors.contentPrimary }}
                   placeholder="Select arrival date"
                   value={arrivalDate ? format(arrivalDate, 'do MMM, yyyy') : ''}
                   renderTitleIcon={() => renderIcon(ImageSource.calenderOutline)}

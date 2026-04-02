@@ -148,11 +148,13 @@ const WalletScreen = () => {
       );
     }
     return (
-      <NoResults
-        image={ImageSource.noTicketsFound}
-        title="No wallet transactions found"
-        subtitle="Your wallet transactions will appear here."
-      />
+      <View style={{ flex: 1, justifyContent: 'center' }}>
+        <NoResults
+          image={ImageSource.noTicketsFound}
+          title="No wallet transactions found"
+          subtitle="Your wallet transactions will appear here."
+        />
+      </View>
     );
   };
 
@@ -167,7 +169,7 @@ const WalletScreen = () => {
         ListFooterComponent={renderFooter}
         ListEmptyComponent={renderEmpty}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.transactionContainer}
+        contentContainerStyle={[styles.transactionContainer, transactions.length === 0 && { flexGrow: 1 }]}
         refreshControl={
           <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} tintColor={colors.primary} />
         }

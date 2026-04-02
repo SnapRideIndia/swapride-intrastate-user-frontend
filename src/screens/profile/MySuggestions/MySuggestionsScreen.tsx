@@ -7,8 +7,7 @@ import { useTheme } from '../../../theme/ThemeProvider';
 import { useStyles } from './MySuggestionsScreen.styles';
 import PrimaryHeader from '../../../components/common/SwHeader/PrimaryHeader/PrimaryHeader';
 import { SwText as Text } from '../../../components/common/SwText/SwText';
-import PrimaryButton from '../../../components/common/SwButton/PrimaryButton/PrimaryButton';
-import { SwPopupModal } from '../../../components/common/SwPopupModal';
+import { SwModal } from '../../../components/common/SwModal';
 import SuggestionService from '../../../services/SuggestionService';
 import { showCustomToast } from '../../../utils/customToast';
 import type { RootStackParamList } from '../../../navigation/types';
@@ -60,7 +59,7 @@ export default function MySuggestionsScreen() {
     useCallback(() => {
       loadList().then(count => {
         if (count === 0) {
-          showToast('info', 'No suggestions yet', '', 2000);
+          showCustomToast('info', 'No suggestions yet', '', 2000);
           navigation.goBack();
         }
       });
@@ -203,30 +202,16 @@ export default function MySuggestionsScreen() {
         </ScrollView>
       </View>
 
-      <SwPopupModal
+      <SwModal
         isVisible={deleteModalVisible}
         onClose={closeDeleteModal}
+        onConfirm={handleConfirmDelete}
         title="Remove Suggestion?"
-        variant="compact"
-        centerTitle
-      >
-        <View style={styles.deleteModalContent}>
-          <Text style={styles.deleteModalMessage}>
-            Are you sure you want to remove this suggestion from our records?
-          </Text>
-          <View style={styles.deleteModalButtonRow}>
-            <TouchableOpacity style={styles.cancelButton} onPress={closeDeleteModal} disabled={isDeleting}>
-              <Text style={styles.cancelText}>Cancel</Text>
-            </TouchableOpacity>
-            <PrimaryButton
-              title={isDeleting ? "Removing..." : "Remove"}
-              onPress={handleConfirmDelete}
-              disabled={isDeleting}
-              btnStyle={styles.confirmDeleteButton}
-            />
-          </View>
-        </View>
-      </SwPopupModal>
+        subTitle="Are you sure you want to remove this suggestion from our records?"
+        confirmText={isDeleting ? 'Removing...' : 'Remove'}
+        isConfirmLoading={isDeleting}
+        isDestructive
+      />
     </SafeAreaView>
   );
 }

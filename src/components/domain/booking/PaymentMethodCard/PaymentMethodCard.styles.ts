@@ -12,7 +12,7 @@ export const useStyles = (colors: ColorsType) =>
       padding: 16,
       marginBottom: 16,
       borderWidth: 1,
-      borderColor: 'transparent',
+      borderColor: colors.border_2,
     },
     selectedContainer: {
       borderColor: colors.primaryLight,

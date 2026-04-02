@@ -1,8 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { ColorsType } from '../../../constants/ui/colors/colors.types';
 
-const SCREEN_BG_YELLOW = '#FFFBEB';
-
 export const useStyles = (colors: ColorsType) =>
   StyleSheet.create({
     container: {
@@ -22,7 +20,7 @@ export const useStyles = (colors: ColorsType) =>
     },
     cardContainer: {
       paddingVertical: 24,
-      paddingHorizontal: 24,
+      paddingHorizontal: 16,
       borderRadius: 16,
       borderWidth: 1,
       borderColor: colors.border_2,
@@ -115,21 +113,18 @@ export const useStyles = (colors: ColorsType) =>
     descriptionInput: {
       borderWidth: 1,
       height: 162,
-      borderRadius: 15,
+      borderRadius: 20,
       paddingHorizontal: 24,
       paddingVertical: 20,
       textAlignVertical: 'top',
-      backgroundColor: colors.background_primary,
-      borderColor: colors.border_2,
+      backgroundColor: colors.dropdown_primary,
+      borderColor: colors.contenttertiary,
       color: colors.contentPrimary,
+      fontSize: 14,
     },
     submitButton: {
       height: 45,
-      elevation: 2,
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.12,
-      shadowRadius: 4,
+      elevation: 1,
     },
     viewMySuggestionsWrap: {
       marginTop: 24,

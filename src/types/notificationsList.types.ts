@@ -22,6 +22,8 @@ export interface Metadata {
   referenceId?: string
   bookingId?: string
   images?: string[]
+  rentalId?: string
+  suggestionId?: string
 }
 
 export interface IPagination {
