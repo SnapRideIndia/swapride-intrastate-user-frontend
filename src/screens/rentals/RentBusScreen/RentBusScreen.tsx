@@ -285,7 +285,6 @@ const RentBusScreen = () => {
         recentSearches={recentSearches}
         onPressItem={handleSelectLocation}
         showUseCurrentLocation
-        onPressUseCurrentLocation={handleUseCurrentLocation}
       />
 
       <DatePicker

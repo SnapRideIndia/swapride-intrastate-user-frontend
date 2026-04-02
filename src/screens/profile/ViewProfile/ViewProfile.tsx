@@ -28,6 +28,7 @@ import { setCurrentCoords, setProfileData } from '../../../slice/profileSlice';
 import { Switch } from 'react-native-switch';
 import { SwModal } from '../../../components/common/SwModal';
 import { RootState } from '../../../store';
+import { queryClient } from '../../../utils/queryClient';
 
 const ViewProfile = () => {
   const [phNo, setPhNo] = useState('');
@@ -106,9 +107,8 @@ const ViewProfile = () => {
 
   const performLogout = () => {
     try {
-      dispatch(setProfileData(null));
-      dispatch(setCurrentCoords(null))
       dispatch(setLogout());
+      queryClient.clear();
       storage.set(StorageKeys.ACCESS_TOKEN, '');
       storage.set(StorageKeys.REFRESH_TOKEN, '');
       showCustomToast('success', 'Logged out successfully!', '', 1500);

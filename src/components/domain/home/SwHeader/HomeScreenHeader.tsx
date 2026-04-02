@@ -64,7 +64,7 @@ const HomeScreenHeader = () => {
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Image source={getWeatherIcon()} style={styles.weatherIcon} />
             <Text variant="semi-bold" style={styles.tempText}>
-              {Math.round(weather.temperature)}c
+              {Math.round(weather.temperature)}°C
             </Text>
             <Text variant="medium" style={styles.locationText}>
               {weather.city}

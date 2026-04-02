@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { ActivityIndicator, Linking, ScrollView, TouchableOpacity, View, Image } from 'react-native';
+import { ActivityIndicator, Linking, FlatList, TouchableOpacity, View, Image, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -14,6 +14,7 @@ import type { RootStackParamList } from '../../../navigation/types';
 import type { StopSuggestionListItem } from '../../../types/suggestion.types';
 import { ImageSource } from '../../../constants/images';
 import { format } from 'date-fns';
+import { NoResults } from '../../../components/common/NoResults/NoResults';
 
 type ListItem = StopSuggestionListItem & {
   pickupLat?: number;
@@ -39,6 +40,7 @@ export default function MySuggestionsScreen() {
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<ListItem | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const loadList = useCallback(async () => {
     setLoading(true);
@@ -52,18 +54,19 @@ export default function MySuggestionsScreen() {
       return 0;
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   }, []);
 
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    loadList();
+  }, [loadList]);
+
   useFocusEffect(
     useCallback(() => {
-      loadList().then(count => {
-        if (count === 0) {
-          showCustomToast('info', 'No suggestions yet', '', 2000);
-          navigation.goBack();
-        }
-      });
-    }, [loadList, navigation]),
+      loadList();
+    }, [loadList]),
   );
 
   const openDeleteModal = useCallback((item: ListItem) => {
@@ -82,10 +85,7 @@ export default function MySuggestionsScreen() {
     try {
       await SuggestionService.deleteSuggestion(itemToDelete.id);
       closeDeleteModal();
-      const count = await loadList();
-      if (count === 0) {
-        navigation.goBack();
-      }
+      await loadList();
       showCustomToast('success', 'Suggestion removed', '', 2000);
     } catch (e: any) {
       showCustomToast('error', e?.message ?? 'Failed to delete suggestion', '', 2000);
@@ -182,25 +182,34 @@ export default function MySuggestionsScreen() {
     );
   };
 
-  if (loading && list.length === 0) {
-    return (
-      <SafeAreaView edges={['bottom']} style={styles.container}>
-        <PrimaryHeader title="My Suggestions" />
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <ActivityIndicator size="large" color={colors.primary} />
-        </View>
-      </SafeAreaView>
-    );
-  }
-
   return (
     <SafeAreaView edges={['bottom']} style={styles.container}>
-      <PrimaryHeader title="My Suggestions" />
-      <View style={styles.scrollWrap}>
-        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false} contentContainerStyle={styles.contentContainer}>
-          {list.map(renderCard)}
-        </ScrollView>
-      </View>
+      <PrimaryHeader title="My Suggestions" onBackBtnPress={() => navigation.goBack()} />
+      
+      {loading && list.length === 0 ? (
+        <View style={styles.centerContainer}>
+          <ActivityIndicator size="large" color={colors.primary} />
+        </View>
+      ) : (
+        <FlatList
+          data={list}
+          renderItem={({ item }) => renderCard(item)}
+          keyExtractor={item => item.id}
+          contentContainerStyle={styles.contentContainer}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />
+          }
+          ListEmptyComponent={
+            <NoResults
+              image={ImageSource.suggestYourStops}
+              title="No Suggestions Yet"
+              subtitle="Your stop recommendations will appear here once you submit them."
+              imageStyle={{ tintColor: colors.contentDisabled }}
+            />
+          }
+        />
+      )}
 
       <SwModal
         isVisible={deleteModalVisible}

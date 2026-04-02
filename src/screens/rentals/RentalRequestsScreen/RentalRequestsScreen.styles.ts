@@ -126,27 +126,4 @@ export const useStyles = (colors: ColorsType) =>
       justifyContent: 'center',
       alignItems: 'center',
     },
-    emptyContainer: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      paddingTop: 100,
-    },
-    emptyIcon: {
-      width: 48,
-      height: 48,
-      tintColor: colors.border_3,
-      marginBottom: 16,
-    },
-    emptyTitle: {
-      fontSize: 18,
-      color: colors.contentPrimary,
-      marginBottom: 8,
-    },
-    emptySubtitle: {
-      fontSize: 14,
-      color: colors.contenttertiary,
-      textAlign: 'center',
-      paddingHorizontal: 40,
-    },
   });

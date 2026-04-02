@@ -397,7 +397,6 @@ const SetCommuteScreen = () => {
           isSavedAddressesLoading={isSavedAndRecentLoading}
           isRecentSearchesLoading={isSavedAndRecentLoading}
           showUseCurrentLocation
-          onPressUseCurrentLocation={handleUseCurrentLocation}
           savedAddresses={savedAddresses}
           recentSearches={recentSearches}
           onPressItem={handleSelectLocation}

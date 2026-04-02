@@ -18,6 +18,10 @@ import { LocationSearchRowSkeleton } from '../../domain/locationSearch';
 import { SwTextInput } from '../SwTextInput/SwTextInput';
 import PrimaryButton from '../SwButton/PrimaryButton/PrimaryButton';
 import { SwPopupModal } from '../SwPopupModal';
+import useGetLocation from '../../../hooks/permissions/geoLocation';
+import { useReverseGeocode } from '../../../hooks/useSearch';
+import { showCustomToast } from '../../../utils/customToast';
+import uuid from 'react-native-uuid';
 
 type Props = {
   title: string;
@@ -27,7 +31,6 @@ type Props = {
   searchResults?: SwLocationSearchItem[];
 
   showUseCurrentLocation?: boolean;
-  onPressUseCurrentLocation?: () => void;
 
   savedAddresses?: SwLocationSearchItem[];
   recentSearches?: SwLocationSearchItem[];
@@ -56,7 +59,6 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
       onChangeQuery,
       searchResults = [],
       showUseCurrentLocation = true,
-      onPressUseCurrentLocation,
       savedAddresses = [],
       recentSearches = [],
       isSearchResultsLoading = false,
@@ -77,6 +79,51 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
     const [saveLocationModalVisible, setSaveLocationModalVisible] = useState(false);
     const [saveLocationItem, setSaveLocationItem] = useState<SwLocationSearchItem | null>(null);
     const [saveAsLabel, setSaveAsLabel] = useState('');
+
+    const { getCurrentLocation, isLocationPermissionGranted, requestPermission } = useGetLocation();
+    const { getReverseGeocodeItems } = useReverseGeocode();
+    const [isCurrentLocationLoading, setIsCurrentLocationLoading] = useState(false);
+
+    const handleUseCurrentLocation = useCallback(async () => {
+      try {
+        setIsCurrentLocationLoading(true);
+        if (!isLocationPermissionGranted) {
+          const granted = await requestPermission();
+          if (!granted) {
+            showCustomToast('error', 'Location permission denied', '', 2000);
+            setIsCurrentLocationLoading(false);
+            return;
+          }
+        }
+        const loc = await getCurrentLocation();
+        if (loc?.coords) {
+          const { latitude, longitude } = loc.coords;
+          let title = 'Current Location';
+          let subtitle = `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
+          let id = 'current';
+
+          try {
+             // In background reverse geocode
+             const items = await getReverseGeocodeItems(latitude, longitude, String(uuid.v4()));
+             if (items && items.length > 0) {
+               onPressItem?.({ ...items[0], latitude, longitude, iconSource: ImageSource.gpsIcon });
+             } else {
+               showCustomToast('error', 'Reverse geocode returned 0 results', '', 2000);
+               onPressItem?.({ id, title, subtitle, latitude, longitude, iconSource: ImageSource.gpsIcon });
+             }
+          } catch(e: any) {
+             showCustomToast('error', `Reverse geocode failed: ${e?.message || 'Unknown error'}`, '', 4000);
+             onPressItem?.({ id, title, subtitle, latitude, longitude, iconSource: ImageSource.gpsIcon });
+          }
+        } else {
+          showCustomToast('error', 'Failed to get current location', '', 2000);
+        }
+      } catch (error) {
+         showCustomToast('error', 'Failed to get current location', '', 2000);
+      } finally {
+        setIsCurrentLocationLoading(false);
+      }
+    }, [isLocationPermissionGranted, requestPermission, getCurrentLocation, getReverseGeocodeItems, onPressItem]);
 
     const openSaveLocationModal = useCallback((item: SwLocationSearchItem) => {
       setSaveLocationItem(item);
@@ -209,88 +256,92 @@ export const SwLocationSearchBottomSheet = forwardRef<BottomSheetModal, Props>(
             {showSavedAndRecentSection && (
               <>
                 {showUseCurrentLocation && (
-                  <TouchableOpacity onPress={onPressUseCurrentLocation} activeOpacity={0.85} style={styles.useCurrentLocationRow}>
+                  <TouchableOpacity onPress={handleUseCurrentLocation} activeOpacity={0.85} style={styles.useCurrentLocationRow}>
                     <View style={styles.useCurrentLocationIconWrap}>
                       <Image source={ImageSource.gpsIcon} style={styles.useCurrentLocationIcon} />
                     </View>
                     <Text variant="semi-bold" style={styles.useCurrentLocationText}>
-                      Use current location
+                      {isCurrentLocationLoading ? 'Finding location...' : 'Use current location'}
                     </Text>
                   </TouchableOpacity>
                 )}
 
-                <Text variant="semi-bold" style={styles.sectionTitle}>
-                  Saved Addresses
-                </Text>
-                {isSavedAddressesLoading &&
-                  Array.from({ length: SAVED_RECENT_SKELETON_COUNT }).map((_, i) => (
-                    <LocationSearchRowSkeleton key={i} iconSize={45} showSubtitle />
-                  ))}
-                {!isSavedAddressesLoading && savedAddresses.length === 0 && (
-                  <Text style={styles.emptyStateText}>No saved addresses yet</Text>
+                {(isSavedAddressesLoading || savedAddresses.length > 0) && (
+                  <>
+                    <Text variant="semi-bold" style={styles.sectionTitle}>
+                      Saved Addresses
+                    </Text>
+                    {isSavedAddressesLoading &&
+                      Array.from({ length: SAVED_RECENT_SKELETON_COUNT }).map((_, i) => (
+                        <LocationSearchRowSkeleton key={i} iconSize={45} showSubtitle />
+                      ))}
+                    {!isSavedAddressesLoading &&
+                      savedAddresses.map(item => (
+                        <View key={item.id}>
+                          <TouchableOpacity activeOpacity={0.85} onPress={() => onPressItem?.(item)} style={styles.listRow}>
+                            <View style={styles.listIconWrap}>
+                              <Image source={item.iconSource ?? ImageSource.Home} style={styles.listIcon} />
+                            </View>
+                            <View style={styles.listTextWrap}>
+                              <Text variant="medium" style={styles.listTitle}>
+                                {item.title}
+                              </Text>
+                              {!!item.subtitle && <Text style={styles.listSubtitle}>{item.subtitle}</Text>}
+                            </View>
+                          </TouchableOpacity>
+                        </View>
+                      ))}
+                  </>
                 )}
-                {!isSavedAddressesLoading &&
-                  savedAddresses.map(item => (
-                    <View key={item.id}>
-                      <TouchableOpacity activeOpacity={0.85} onPress={() => onPressItem?.(item)} style={styles.listRow}>
-                        <View style={styles.listIconWrap}>
-                          <Image source={item.iconSource ?? ImageSource.Home} style={styles.listIcon} />
-                        </View>
-                        <View style={styles.listTextWrap}>
-                          <Text variant="medium" style={styles.listTitle}>
-                            {item.title}
-                          </Text>
-                          {!!item.subtitle && <Text style={styles.listSubtitle}>{item.subtitle}</Text>}
-                        </View>
-                      </TouchableOpacity>
-                    </View>
-                  ))}
 
-                <Text style={styles.sectionTitle}>Recent Searches</Text>
-                {isRecentSearchesLoading &&
-                  Array.from({ length: SAVED_RECENT_SKELETON_COUNT }).map((_, i) => (
-                    <LocationSearchRowSkeleton key={i} iconSize={45} showSubtitle />
-                  ))}
-                {!isRecentSearchesLoading && recentSearches.length === 0 && (
-                  <Text style={styles.emptyStateText}>No recent searches yet</Text>
+                {(isRecentSearchesLoading || recentSearches.length > 0) && (
+                  <>
+                    <Text variant="semi-bold" style={styles.sectionTitle}>
+                      Recent Searches
+                    </Text>
+                    {isRecentSearchesLoading &&
+                      Array.from({ length: SAVED_RECENT_SKELETON_COUNT }).map((_, i) => (
+                        <LocationSearchRowSkeleton key={i} iconSize={45} showSubtitle />
+                      ))}
+                    {!isRecentSearchesLoading &&
+                      recentSearches.map(item => (
+                        <View key={item.id} style={styles.listRow}>
+                          <TouchableOpacity
+                            activeOpacity={0.85}
+                            onPress={() => onPressItem?.(item)}
+                            style={styles.listRowMain}
+                          >
+                            <View style={styles.listIconWrap}>
+                              <Image source={item.iconSource ?? ImageSource.clock} style={styles.listIcon} />
+                            </View>
+                            <View style={styles.listTextWrap}>
+                              <Text variant="semi-bold" style={styles.listTitle}>
+                                {item.title}
+                              </Text>
+                              {!!item.subtitle && <Text style={styles.listSubtitle}>{item.subtitle}</Text>}
+                            </View>
+                          </TouchableOpacity>
+                          {item.isSaved ? (
+                            <View style={styles.listRowBookmarkWrap}>
+                              <Image
+                                source={ImageSource.bookmarkOutline}
+                                style={[styles.listRowBookmarkIcon, { tintColor: colors.primaryLight }]}
+                              />
+                            </View>
+                          ) : (
+                            <TouchableOpacity
+                              style={styles.listRowBookmarkWrap}
+                              onPress={() => (onSaveLocationPress ? onSaveLocationPress(item) : openSaveLocationModal(item))}
+                              accessibilityRole="button"
+                              accessibilityLabel="Save location"
+                            >
+                              <Image source={ImageSource.bookmarkOutline} style={styles.listRowBookmarkIcon} />
+                            </TouchableOpacity>
+                          )}
+                        </View>
+                      ))}
+                  </>
                 )}
-                {!isRecentSearchesLoading &&
-                  recentSearches.map(item => (
-                    <View key={item.id} style={styles.listRow}>
-                      <TouchableOpacity
-                        activeOpacity={0.85}
-                        onPress={() => onPressItem?.(item)}
-                        style={styles.listRowMain}
-                      >
-                        <View style={styles.listIconWrap}>
-                          <Image source={item.iconSource ?? ImageSource.clock} style={styles.listIcon} />
-                        </View>
-                        <View style={styles.listTextWrap}>
-                          <Text variant="semi-bold" style={styles.listTitle}>
-                            {item.title}
-                          </Text>
-                          {!!item.subtitle && <Text style={styles.listSubtitle}>{item.subtitle}</Text>}
-                        </View>
-                      </TouchableOpacity>
-                      {item.isSaved ? (
-                        <View style={styles.listRowBookmarkWrap}>
-                          <Image
-                            source={ImageSource.bookmarkOutline}
-                            style={[styles.listRowBookmarkIcon, { tintColor: colors.primaryLight }]}
-                          />
-                        </View>
-                      ) : (
-                        <TouchableOpacity
-                          style={styles.listRowBookmarkWrap}
-                          onPress={() => (onSaveLocationPress ? onSaveLocationPress(item) : openSaveLocationModal(item))}
-                          accessibilityRole="button"
-                          accessibilityLabel="Save location"
-                        >
-                          <Image source={ImageSource.bookmarkOutline} style={styles.listRowBookmarkIcon} />
-                        </TouchableOpacity>
-                      )}
-                    </View>
-                  ))}
               </>
             )}
           </BottomSheetScrollView>

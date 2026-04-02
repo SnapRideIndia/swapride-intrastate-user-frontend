@@ -365,7 +365,6 @@ const SuggestYourStops = () => {
               isSavedAddressesLoading={savedRecentLoading}
               isRecentSearchesLoading={savedRecentLoading}
               showUseCurrentLocation
-              onPressUseCurrentLocation={handleUseCurrentLocation}
               savedAddresses={savedAddresses}
               recentSearches={recentSearches}
               onPressItem={handleSelectLocation}
